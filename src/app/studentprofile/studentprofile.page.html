@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{student.firstName}}'s Profile</ion-title>
+    <ion-buttons slot="start">
+      <app-goback></app-goback>
+    </ion-buttons>
+    <ion-buttons slot="end">
+       <ion-button (click)="goToEdit(student.id)">
+        Edit
+       </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+  <div class="profile-image">
+    <img src="{{picture}}" />
+  </div>
+  <div class="text text-box">
+    <p class="text id">
+      <span class="bold label">ID: </span>{{student.id}}
+    </p>
+    <p class="text">
+      <span class="bold label">Name: </span> {{student.firstName}}
+      <span *ngIf="student.initial">{{student.initial}}</span> {{student.lastName}}
+    </p>
+    <p class="text">
+      <span class="bold label">Address: </span>{{student.address}}
+    </p>
+    <p class="text" *ngIf="student.phoneNumber">
+      <span class="bold label">Phone Number: </span>{{student.phoneNumber}}
+    </p>
+    <p class="text">
+      <span class="bold label">City: </span>{{student.town}}
+    </p>
+    <p class="text">
+      <span class="bold label">State: </span>{{student.state}}
+    </p>
+    <p class="text">
+      <span class="bold label">Class: </span>{{student.class}}
+    </p>
+    <p class="text">
+      <span class="bold label">Gender: </span>{{student.gender}}
+    </p>
+    <p class="text">
+      <span class="bold label">Father's Name: </span> {{student.fatherName}}
+    </p>
+    <p class="text">
+      <span class="bold label">Mother's Name: </span> {{student.motherName}}
+    </p>
+    <h2> Emergency Contact </h2>
+    <p class="text">
+      <span class="bold label"> Name: </span>{{student.emergencyContactName}}
+    </p>
+    <p class="text">
+      <span class="bold label">Relationship: </span>{{student.emergencyRelationship}}
+    </p>
+    <p class="text">
+      <span class="bold label">Phone Number: </span>{{student.emergencyContactPhoneNumber}}
+    </p>
+    <div class="text">
+      <p *ngIf="student.isActive == true">
+        *Student is currently active on the roster.*
+      </p>
+      <p *ngIf="student.isActive == false">
+        *Student is currently inactive on the roster.*
+      </p>
+    </div>
+    <h2>Notes: </h2>
+    <div class="text" id="notes">
+        <ul id="notes-text" *ngFor="let note of notes">
+          <li><span class="bold label">Date: </span> {{note.date}}</li>
+          <li><span class="bold label">Notes: </span> {{note.note}}</li>
+        </ul>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,22 @@
+<div class="calendar">
+  <div>
+    <div>
+      <ion-button fill="clear" (click)="nextMonth()">
+          <ion-icon name="arrow-round-up"></ion-icon>
+              </ion-button>
+      <ion-button fill="clear" (click)="previousMonth()">
+          <ion-icon name="arrow-round-down"></ion-icon>
+      </ion-button>
+      <span class="date">
+        {{monthsLabels[month] + ' ' + year}}
+      </span>
+    </div>
+  </div>
+  <ul class="weekdays">
+    <li *ngFor="let weekDay of weekDaysLabels">{{weekDay}}</li>
+  </ul>
+  <ul class="days">
+    <li class="ripple" [style.color]="this.chosen == date.day ? '#fff' : ''" [style.background-color]="this.chosen == date.day ? '#ffcccc' : ''"
+      *ngFor="let date of calendarDays" (click)="choseDay(date)">{{date.day}}</li>
+  </ul>
+</div>

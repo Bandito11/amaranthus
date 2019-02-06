@@ -1,0 +1,33 @@
+<ion-tabs>
+
+  <ion-tab-bar slot="bottom">
+
+    <ion-tab-button tab="home">
+      <!--was MainPage in v3-->
+      <ion-icon name="home"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="calendar">
+      <ion-icon name="calendar"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="stats">
+      <!--Was TablePage in v3-->
+      <ion-icon name="stats"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="roster">
+      <ion-icon name="people"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="login" *ngIf=" this.platform.is('desktop') || ( this.platform.is('mobile') && (this.platform.is('ipad') || this.platform.is('tablet') ) )">
+      <ion-icon name="log-in"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="settings">
+      <ion-icon name="cog"></ion-icon>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+
+</ion-tabs>
