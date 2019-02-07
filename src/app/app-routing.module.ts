@@ -4,9 +4,6 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 const routes: Routes = [
   { path: '', redirectTo: 'tabs', pathMatch: 'full' },
   { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
-  // { path: 'create', loadChildren: './create/create.module#CreatePageModule' },
-  // { path: 'events', loadChildren: './events/events-home/events.module#EventsPageModule' },
-  // { path: 'profile/:id', loadChildren: './studentprofile/studentprofile.module#StudentProfilePageModule' }
 ];
 
 @NgModule({

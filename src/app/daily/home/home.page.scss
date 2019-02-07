@@ -1,24 +1,21 @@
 #home {
-    // .amaranthus{
-        .label{
-            font-weight: bolder; 
-        }
-        .name{
-            font-size: 120%;
-        }
-        .left{
-            float: left;
-        }
-        .right{
-            font-size: 60%;
-            // float:right;
-            color:rgb(141, 162, 247);
-        }
-        .attended{
-            color:rgb(230, 164, 164);
-        }
-        textarea{
-            width:100%
-        }
-    // }
-    }
+  .label {
+    font-weight: bolder;
+  }
+  .name {
+    font-size: 120%;
+  }
+  .left {
+    float: left;
+  }
+  .right {
+    font-size: 60%;
+    color: rgb(141, 162, 247);
+  }
+  .attended {
+    color: rgb(230, 164, 164);
+  }
+  textarea {
+    width: 100%;
+  }
+}

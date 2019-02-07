@@ -1,9 +1,77 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>stats</ion-title>
+    <ion-title>Stats</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="students.length > 0" (click)="toExportPage()">
+        Export
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding id="stats">
+  <ion-item>
+    <ion-label>Filter by: </ion-label>
+    <ion-select interface="popover" (ionCancel)="initializeStudents()" multiple="false" #filter (ionChange)="queryData(filter.value)">
+      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <div *ngIf="query == 'Date'">
+    <ion-item>
+      <ion-label>Year</ion-label>
+      <ion-select interface="popover" multiple="false" #year (ionChange)="queryDataByYear(year.value)">
+        <ion-select-option *ngFor="let year of years" value="{{year}}">{{year}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Months: </ion-label>
+      <ion-select interface="popover" multiple="false" #month (ionChange)="queryDataByMonth(month.value)">
+        <ion-select-option *ngFor="let month of months" value="{{month}}">{{month}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+  <div id="table">
+    <table>
+      <caption [ngSwitch]="query">
+        <ng-template ngSwitchWhen="Date">Students attendance in {{months[currentDate.getMonth()]}},
+          {{currentDate.getFullYear()}}</ng-template>
+        <ng-template ngSwitchDefault>Students attendance in {{monthQuery}}, {{yearQuery}}</ng-template>
+      </caption>
+      <tr>
+        <th>
+          Id
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Attendance
+        </th>
+        <th>
+          Absence
+        </th>
+        <th>
+          Attendance %
+        </th>
+      </tr>
+      <tr *ngFor="let student of students">
+        <td>
+          {{student.id}}
+        </td>
+        <td>
+          {{student.fullName}}
+        </td>
+        <td>
+          {{student.attendance}}
+        </td>
+        <td>
+          {{student.absence}}
+        </td>
+        <td>
+          {{student.percent}}
+        </td>
+      </tr>
+    </table>
+  </div>
 
 </ion-content>

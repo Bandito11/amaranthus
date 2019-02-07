@@ -17,6 +17,10 @@ const routes: Routes = [
           {
             path: 'profile/:id',
             loadChildren: '../studentprofile/studentprofile.module#StudentProfilePageModule'
+          },
+          {
+            path: 'events',
+            loadChildren: '../events/events-home/events.module#EventsPageModule'
           }
         ]
       },

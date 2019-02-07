@@ -10,8 +10,23 @@ export const MONTHSLABELS = [
   'September',
   'October',
   'November',
-  'December'];
+  'December'
+];
 
+  export enum MONTHS {
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  }
 const RELEASEDATE = 2017;
 let YEARS = [RELEASEDATE];
 for (let i = 1; i <= 5; i++) {

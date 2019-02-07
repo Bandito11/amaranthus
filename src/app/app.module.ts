@@ -18,6 +18,8 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { CreatePageModule } from './create/create.module';
 import { EditPage } from './edit/edit.page';
 import { GobackComponent } from './components/goback/goback.component';
+import { ExportPage } from './export/export.page';
+import { ExportPageModule } from './export/export.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +28,8 @@ import { GobackComponent } from './components/goback/goback.component';
     EditPage,
     LoaderComponent,
     GobackComponent,
-    CancelComponent
+    CancelComponent,
+    ExportPage
   ],
   imports: [
     BrowserModule,
@@ -35,6 +38,7 @@ import { GobackComponent } from './components/goback/goback.component';
     CreatePageModule,
     EditPageModule,
     ComponentsModule,
+    ExportPageModule,
     IonicStorageModule.forRoot()
   ],
   providers: [
