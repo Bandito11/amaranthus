@@ -5,6 +5,7 @@ import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { filterStudentsList } from 'src/app/common/search';
 import { AlertController } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-calendar',
@@ -22,13 +23,19 @@ export class CalendarPage implements OnInit {
 
   toggle: string;
   search: string;
-
+  event;
   constructor(
+    private route: ActivatedRoute,
     public alertCtrl: AlertController,
     public db: AmaranthusDBProvider
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.event = this.route.snapshot.paramMap.get('event');
+    if (!this.event) {
+      this.event = '';
+    }
+  }
 
   ionViewWillEnter() {
     this.timer = 0;
@@ -65,7 +72,10 @@ export class CalendarPage implements OnInit {
     }, 1000);
   }
 
-  updateNotes(opts: { id: string; notes: string }) {
+  updateNotes(opts: {
+    id: string;
+    notes: string
+  }) {
     const index = this.students.findIndex(student => {
       if (student.id === opts.id) {
         return true;
@@ -81,9 +91,15 @@ export class CalendarPage implements OnInit {
    * Will get all Students queried by today's date.
    */
   getStudentsRecords(opts: ICalendar) {
-    const date = { ...opts, month: opts.month + 1 };
+    const date = {
+      ...opts,
+      month: opts.month + 1
+    };
     try {
-      const response = this.db.getStudentsRecordsByDate({ date: date });
+      const response = this.db.getStudentsRecordsByDate({
+        date: date,
+        event: this.event
+      });
       if (response.success === true) {
         this.students = [...response.data];
         this.unfilteredStudents = [...response.data];
@@ -111,7 +127,11 @@ export class CalendarPage implements OnInit {
   }
 
   addAttendance(opts: { id: string }) {
-    const response = this.db.addAttendance({ date: this.date, id: opts.id });
+    const response = this.db.addAttendance({
+      event: this.event,
+      date: this.date,
+      id: opts.id
+    });
     if (response.success === true) {
       this.updateStudentAttendance({
         id: opts.id,
@@ -129,7 +149,11 @@ export class CalendarPage implements OnInit {
   }
 
   addAbsence(opts: { id: string }) {
-    const response = this.db.addAbsence({ date: this.date, id: opts.id });
+    const response = this.db.addAbsence({
+      event: this.event,
+      date: this.date,
+      id: opts.id
+    });
     if (response.success === true) {
       this.updateStudentAttendance({
         id: opts.id,

@@ -8,11 +8,11 @@ import { handleError } from '../common/handleError';
 import { EditPage } from '../edit/edit.page';
 
 @Component({
-  selector: 'app-studentprofile',
-  templateUrl: './studentprofile.page.html',
-  styleUrls: ['./studentprofile.page.scss'],
+  selector: 'app-profile',
+  templateUrl: './profile.page.html',
+  styleUrls: ['./profile.page.scss'],
 })
-export class StudentProfilePage implements OnInit {
+export class ProfilePage implements OnInit {
 
   picture = '';
   gender = 'male';

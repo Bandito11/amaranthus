@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IonicStorageAdapter } from './adapter';
 import * as Loki from 'lokijs';
 import { IStudent, IRecord, IEvent, INote, IResponse, ICalendar } from 'src/app/common/models';
-import { trimEvent, trimText } from 'src/app/common/formatted';
+import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import {Storage} from '@ionic/storage';
 

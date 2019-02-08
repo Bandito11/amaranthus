@@ -5,7 +5,7 @@ import { IStudent, IResponse, ISimpleAlertOptions } from '../common/models';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { AlertController, NavController, NavParams, Platform, ModalController } from '@ionic/angular';
 import { handleError } from '../common/handleError';
-import { trimText } from '../common/formatted';
+import { trimText } from '../common/format';
 
 @Component({
   selector: 'app-edit',

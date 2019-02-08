@@ -6,13 +6,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CalendarPage } from './calendar.page';
-import { CalendarComponent } from '../../components/calendar/calendar.component';
+import { CreateEventPage } from './create-event.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: CalendarPage
+    component: CreateEventPage
   }
 ];
 
@@ -24,6 +23,6 @@ const routes: Routes = [
     ComponentsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [CalendarPage]
+  declarations: [CreateEventPage]
 })
-export class CalendarPageModule {}
+export class CreateEventPageModule {}

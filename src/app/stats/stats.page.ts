@@ -1,5 +1,6 @@
-import { MONTHS } from './../../common/constants';
-import { ExportPage } from './../../export/export.page';
+import { ActivatedRoute } from '@angular/router';
+import { MONTHS } from './../common/constants';
+import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
@@ -24,11 +25,13 @@ export class StatsPage implements OnInit {
   selectOptions: string[] = ['Id', 'Attendance', 'Absence', 'Date', 'Name', 'None'];
   bought: boolean;
   @ViewChild('filter') filterElement;
+  event;
 
   constructor(
     private db: AmaranthusDBProvider,
     private alertCtrl: AlertController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private route: ActivatedRoute
   ) { }
 
   ionViewWillEnter() {
@@ -38,6 +41,10 @@ export class StatsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.event = this.route.snapshot.paramMap.get('event');
+    if (!this.event) {
+      this.event = '';
+    }
     this.monthQuery = this.months[this.currentDate.getMonth()];
     this.yearQuery = this.currentDate.getFullYear().toString();
   }
@@ -46,6 +53,12 @@ export class StatsPage implements OnInit {
     this.students = [...this.untouchedStudentList];
   }
 
+  /**
+   *
+   *
+   * @param {string} option
+   * @memberof StatsPage
+   */
   queryData(option: string) {
     this.initializeStudents();
     switch (option) {
@@ -70,6 +83,12 @@ export class StatsPage implements OnInit {
     }
   }
 
+  /**
+   *
+   *
+   * @param {number} year
+   * @memberof StatsPage
+   */
   queryDataByYear(year: number) {
     const date: ICalendar = {
       year: +year,
@@ -77,7 +96,7 @@ export class StatsPage implements OnInit {
       day: null
     };
     try {
-      const response = this.db.getQueriedRecordsByDate({ date: date });
+      const response = this.db.getQueriedRecordsByDate({ event: this.event, date: date });
       if (response.success === true) {
         this.students = [...response.data];
       }
@@ -86,6 +105,12 @@ export class StatsPage implements OnInit {
     }
   }
 
+  /**
+   *
+   *
+   * @param {*} month
+   * @memberof StatsPage
+   */
   queryDataByMonth(month) {
     let date: ICalendar;
     const index = parseInt(MONTHS[month]);
@@ -95,7 +120,7 @@ export class StatsPage implements OnInit {
       day: null
     };
     try {
-      const response = this.db.getQueriedRecordsByDate({ date: date });
+      const response = this.db.getQueriedRecordsByDate({ event: this.event, date: date });
       if (response.success === true) {
         this.students = [...response.data];
       }
@@ -104,10 +129,14 @@ export class StatsPage implements OnInit {
     }
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   getStudentsRecords() {
-    // Will get all Students queried by today's date.
     try {
-      const response = this.db.getQueriedRecords({ query: this.query });
+      const response = this.db.getQueriedRecords({ event: this.event, query: this.query });
       if (response.success === true) {
         this.students = [...response.data];
         this.untouchedStudentList = [...response.data];
@@ -121,6 +150,11 @@ export class StatsPage implements OnInit {
     }
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   queryStudentsName() {
     this.students = [
       ...this.students.sort((a, b) => {
@@ -135,6 +169,11 @@ export class StatsPage implements OnInit {
     ];
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   queryStudentsbyAttendance() {
     this.students = [
       ...this.students.sort((a, b) => {
@@ -149,6 +188,11 @@ export class StatsPage implements OnInit {
     ];
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   queryStudentsbyAbsence() {
     this.students = [
       ...this.students.sort((a, b) => {
@@ -163,6 +207,11 @@ export class StatsPage implements OnInit {
     ];
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   queryStudentsbyId() {
     this.students = [
       ...this.students.sort((a, b) => {
@@ -177,6 +226,11 @@ export class StatsPage implements OnInit {
     ];
   }
 
+  /**
+   *
+   *
+   * @memberof StatsPage
+   */
   async toExportPage() {
     const modal = await this.modalCtrl.create({
       component: ExportPage,
@@ -184,12 +238,27 @@ export class StatsPage implements OnInit {
     });
     modal.present();
     modal.onDidDismiss().then(response => {
-      if (response.data) {
-        this.showSimpleAlert({ buttons: ['OK'], title: 'Information!', subTitle: response.data });
+      try {
+        if (response.data) {
+          this.showSimpleAlert({
+            buttons: ['OK'],
+            title: 'Information!',
+            subTitle: response.data
+          });
+        }
+      } catch (error) {
+        console.error(error);
       }
     });
   }
 
+  /**
+   *
+   *
+   * @private
+   * @param {ISimpleAlertOptions} options
+   * @memberof StatsPage
+   */
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({

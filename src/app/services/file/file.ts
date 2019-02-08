@@ -7,8 +7,23 @@ import { IWriteOptions, File } from '@ionic-native/file/ngx';
 @Injectable({ providedIn: 'root' })
 export class FileProvider {
 
-  constructor(private fileOpener: FileOpener, private file: File, private platform: Platform) { }
+  constructor(
+    private fileOpener: FileOpener,
+    private file: File,
+    private platform: Platform
+  ) { }
 
+  /**
+   *
+   *
+   * @param {{
+   *     fileName: string,
+   *     text: any,
+   *     type: string
+   *   }} opts
+   * @returns {Promise<IResponse<any>>}
+   * @memberof FileProvider
+   */
   exportFile(opts: {
     fileName: string,
     text: any,
@@ -22,13 +37,23 @@ export class FileProvider {
       }
       if (this.platform.is('android')) {
         this.writeToAndroid(opts)
-          .then(response => resolve(response))
+          .then(response => {
+            return resolve(response);
+          })
           .catch(error => reject(error));
       }
-
+      const message =  'This feature is still not available for the web :\'(';
+      reject(message);
     });
   }
 
+  /**
+   *
+   *
+   * @param {{ fileName: string, text: any, type: string }} opts
+   * @returns {Promise<IResponse<any>>}
+   * @memberof FileProvider
+   */
   writeToAndroid(opts: { fileName: string, text: any, type: string }): Promise<IResponse<any>> {
     const options: IWriteOptions = {
       replace: true
@@ -70,6 +95,13 @@ export class FileProvider {
     });
   }
 
+  /**
+   *
+   *
+   * @param {{ fileName: string, text: any, type: string }} opts
+   * @returns {Promise<IResponse<any>>}
+   * @memberof FileProvider
+   */
   writeToIOS(opts: { fileName: string, text: any, type: string }): Promise<IResponse<any>> {
     const options: IWriteOptions = {
       replace: true
@@ -111,6 +143,13 @@ export class FileProvider {
     });
   }
 
+  /**
+   *
+   *
+   * @param {{ fileName: string, text: any, type: string, path, directory }} opts
+   * @returns {Promise<IResponse<any>>}
+   * @memberof FileProvider
+   */
   toFileOpener(opts: { fileName: string, text: any, type: string, path, directory }): Promise<IResponse<any>> {
     return new Promise((resolve, reject) => {
       let response: IResponse<string> = {
@@ -125,7 +164,7 @@ export class FileProvider {
           data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`
         };
         this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`,
-         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .then(() => resolve(response))
           .catch(error => reject('There was an error opening the file, please try again!'));
       }

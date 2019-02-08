@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { IStudent, ISimpleAlertOptions } from '../common/models';
-import { trimText } from '../common/formatted';
+import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { DomSanitizer } from '@angular/platform-browser';
 

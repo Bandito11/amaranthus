@@ -12,15 +12,15 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../daily/home/home.module#HomePageModule'
+            loadChildren: '../home/home.module#HomePageModule'
           },
           {
             path: 'profile/:id',
-            loadChildren: '../studentprofile/studentprofile.module#StudentProfilePageModule'
+            loadChildren: '../profile/profile.module#ProfilePageModule'
           },
           {
             path: 'events',
-            loadChildren: '../events/events-home/events.module#EventsPageModule'
+            loadChildren: '../events/events/events.module#EventsPageModule'
           }
         ]
       },
@@ -29,7 +29,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../daily/calendar/calendar.module#CalendarPageModule'
+            loadChildren: '../calendar/calendar.module#CalendarPageModule'
           }
         ]
       },
@@ -38,7 +38,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../daily/stats/stats.module#StatsPageModule'
+            loadChildren: '../stats/stats.module#StatsPageModule'
           }
         ]
       },
@@ -51,7 +51,7 @@ const routes: Routes = [
           },
           {
             path: 'profile/:id',
-            loadChildren: '../studentprofile/studentprofile.module#StudentProfilePageModule'
+            loadChildren: '../profile/profile.module#ProfilePageModule'
           }
         ]
       },
