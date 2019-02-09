@@ -162,7 +162,7 @@ export class StudentListPage implements OnInit {
     const alert = await this.alertCtrl
       .create({
         header: options.title,
-        subHeader: options.subTitle,
+        message: options.subTitle,
         buttons: options.buttons
       });
     alert.present();

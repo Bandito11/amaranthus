@@ -1,9 +1,6 @@
-import { CreateEventPageModule } from './events/create-event/create-event.module';
-import { CreateEventPage } from './events/create-event/create-event.page';
+import { CreateEventPageModule } from './create-event/create-event.module';
+import { CreateEventPage } from './create-event/create-event.page';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { CancelComponent } from './components/cancel/cancel.component';
-import { LoaderComponent } from './components/loader/loader.component';
-import { ComponentsModule } from './components/components.module';
 import { EditPageModule } from './edit/edit.module';
 import { CreatePage } from './create/create.page';
 import { NgModule } from '@angular/core';
@@ -20,11 +17,12 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera/ngx';
 import { CreatePageModule } from './create/create.module';
 import { EditPage } from './edit/edit.page';
-import { GobackComponent } from './components/goback/goback.component';
 import { ExportPage } from './export/export.page';
 import { ExportPageModule } from './export/export.module';
 import { File } from '@ionic-native/file/ngx';
 import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
+import { EditEventPage } from './editevent/editevent.page';
+import { EditEventPageModule } from './editevent/editevent.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -32,10 +30,8 @@ import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
     CreatePage,
     EditPage,
     CreateEventPage,
-    LoaderComponent,
-    GobackComponent,
-    CancelComponent,
-    ExportPage
+    ExportPage,
+    EditEventPage
   ],
   imports: [
     BrowserModule,
@@ -44,8 +40,8 @@ import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
     CreatePageModule,
     EditPageModule,
     CreateEventPageModule,
-    ComponentsModule,
     ExportPageModule,
+    EditEventPageModule,
     IonicStorageModule.forRoot()
   ],
   providers: [

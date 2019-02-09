@@ -19,6 +19,7 @@ export class HomePage implements OnInit {
   date: ICalendar;
   toggle;
   timer;
+  homeURL = '/tabs/tabs/home';
   @ViewChild('notes') notesElement;
   @ViewChild('sort') sortElement;
 
@@ -52,7 +53,11 @@ export class HomePage implements OnInit {
   }
 
   goToProfile(id) {
-    this.navCtrl.navigateForward(`/tabs/tabs/home/profile/${id}`);
+    this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
+  }
+
+  goToEvents() {
+    this.navCtrl.navigateForward(`${this.homeURL}/events`);
   }
 
   showNotes(id) {
@@ -230,7 +235,7 @@ export class HomePage implements OnInit {
     const alert = await this.alertCtrl
       .create({
         header: options.title,
-        subHeader: options.subTitle,
+        message: options.subTitle,
         buttons: options.buttons
       });
     alert.present();

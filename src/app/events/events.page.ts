@@ -2,8 +2,7 @@ import { CreateEventPage } from './../create-event/create-event.page';
 import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
-import { formatDate } from '../../common/format';
-
+import { formatDate } from '../common/format';
 @Component({
   selector: 'app-events',
   templateUrl: './events.page.html',
@@ -14,6 +13,7 @@ export class EventsPage {
   selectOptions: string[] = ['Attendance', 'Absence', 'Name', 'Date', 'None'];
   events: any[] = [];
   unfilteredEvents: any[] = [];
+  homeURL = '/tabs/tabs/home/events';
 
   constructor(
     public navCtrl: NavController,
@@ -140,6 +140,10 @@ export class EventsPage {
     });
     modal.present();
     modal.onDidDismiss().then(_ => this.getEvents());
+  }
+
+  async goToEventProfile(id) {
+    this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
   }
 
 }

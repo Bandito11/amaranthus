@@ -20,7 +20,17 @@ const routes: Routes = [
           },
           {
             path: 'events',
-            loadChildren: '../events/events/events.module#EventsPageModule'
+            children: [
+              {
+                path: '',
+                loadChildren: '../events/events.module#EventsPageModule'
+              },
+              {
+                path: 'profile/:id',
+                loadChildren: '../eventprofile/eventprofile.module#EventProfilePageModule'
+              },
+
+            ]
           }
         ]
       },
@@ -93,4 +103,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class TabsPageRoutingModule {}
+export class TabsPageRoutingModule { }

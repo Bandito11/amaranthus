@@ -19,6 +19,12 @@ export interface IStudent {
   fullName?: string;
   notes?: string;
 }
+
+export interface eventControls {
+  members;
+  endDate;
+  startDate;
+}
 export interface INote {
   id: string;
   notes: string;

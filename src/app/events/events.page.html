@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Events</ion-title>
+    <ion-buttons slot="start">
+      <app-goback></app-goback>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToCreateEvent()">Add Event</ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-item>
+    <ion-label>Sort By:</ion-label>
+    <ion-select interface="popover" multiple="false" placeholder="None"  #sort (ionChange)="sortData(sort.value)">
+      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-card *ngFor="let event of events" (click)="goToEventProfile(event.$loki)">
+    <img src={{event.logo}} />
+    <ion-card-content>
+      <ion-card-title>
+        {{event.name}}
+      </ion-card-title>
+      <div *ngIf="!event.infiniteDates else infiniteDatesIsTrue">
+        <h3><span>Start Date:</span> {{event.startDate}}</h3>
+        <h3 *ngIf="event.endDate"><span>End Date:</span> {{event.endDate}}</h3>
+        <!-- <br> -->
+        <p><span>Total Attendance:</span> {{event.totalAttendance}}</p>
+        <p><span>Total Absence:</span> {{event.totalAbsence}}</p>
+      </div>
+      <ng-template #infiniteDatesIsTrue>
+        <p><span>Totals Members:</span> {{event.totalMembers}}</p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

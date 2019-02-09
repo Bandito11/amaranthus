@@ -1,11 +1,11 @@
-import { DomSanitizer } from '@angular/platform-browser';
-import { CameraOptions, Camera } from '@ionic-native/camera/ngx';
-import { Component, OnInit } from '@angular/core';
+import { OnInit, Component } from '@angular/core';
 import { IStudent, IResponse, ISimpleAlertOptions } from '../common/models';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { AlertController, NavController, NavParams, Platform, ModalController } from '@ionic/angular';
+import { DomSanitizer } from '@angular/platform-browser';
 import { handleError } from '../common/handleError';
 import { trimText } from '../common/format';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-edit',
@@ -48,7 +48,6 @@ export class EditPage implements OnInit {
     private navParams: NavParams,
     private sanitizer: DomSanitizer,
     private camera: Camera,
-    private platform: Platform,
     private modalCtrl: ModalController
   ) { }
 
@@ -138,7 +137,7 @@ export class EditPage implements OnInit {
       };
       const alert = await this.alertCtrl.create({
         header: 'Warning!',
-        subHeader: `Are you sure you want to edit ${opts.firstName} ${opts.lastName} record?`,
+        message: `Are you sure you want to edit ${opts.firstName} ${opts.lastName} record?`,
         buttons: [
           {
             text: 'No'
