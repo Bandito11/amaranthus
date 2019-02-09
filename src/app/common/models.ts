@@ -20,7 +20,7 @@ export interface IStudent {
   notes?: string;
 }
 
-export interface eventControls {
+export interface IEventControls {
   members;
   endDate;
   startDate;

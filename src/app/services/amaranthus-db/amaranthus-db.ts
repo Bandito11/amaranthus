@@ -281,18 +281,14 @@ export class AmaranthusDBProvider {
     }
   }
 
-  removeEvent(event: IEvent & LokiObj) {
+  removeEvent(event: IEvent) {
     const response: IResponse<null> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const results: any = eventsColl.findOne({
-        '$loki': {
-          '$eq': event.$loki
-        }
-      });
+      const results: any = eventsColl.get(event.$loki);
       eventsColl.remove(results);
       return { ...response, success: true };
     } catch (error) {
@@ -300,18 +296,14 @@ export class AmaranthusDBProvider {
     }
   }
 
-  updateEvent(event: IEvent & LokiObj) {
+  updateEvent(event) {
     const response = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const results: any = eventsColl.findOne({
-        '$loki': {
-          '$eq': event.$loki
-        }
-      });
+      const results: any = eventsColl.get(event.$loki);
       if (results) {
         eventsColl.update(event);
         return {
@@ -359,17 +351,13 @@ export class AmaranthusDBProvider {
   }
 
   getEvent(id) {
-    let response: IResponse<IEvent & LokiObj> = {
+    let response: IResponse<IEvent> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const results = eventsColl.findOne({
-        '$loki': {
-          '$eq': id
-        }
-      });
+      const results = eventsColl.get(id);
       if (results) {
         response = {
           ...response,
@@ -378,7 +366,7 @@ export class AmaranthusDBProvider {
         };
       } else {
         throw new Error(`Couldn't find any members participating in this event.`);
-      }
+      };
       return response;
     } catch (error) {
       response = {
@@ -681,8 +669,8 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getStudentById(student: IStudent): IResponse<IStudent & LokiObj> {
-    let response: IResponse<IStudent & LokiObj> = {
+  getStudentById(student: IStudent): IResponse<IStudent> {
+    let response: IResponse<IStudent> = {
       success: false,
       error: null,
       data: undefined

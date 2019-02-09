@@ -27,9 +27,21 @@ const routes: Routes = [
               },
               {
                 path: 'profile/:id',
-                loadChildren: '../eventprofile/eventprofile.module#EventProfilePageModule'
-              },
-
+                children: [
+                  {
+                    path: '',
+                    loadChildren: '../eventprofile/eventprofile.module#EventProfilePageModule'
+                  },
+                  {
+                    path: 'calendar/:event',
+                    loadChildren: '../calendar/calendar.module#CalendarPageModule'
+                  },
+                  {
+                    path: 'stats/:event',
+                    loadChildren: '../stats/stats.module#StatsPageModule'
+                  },
+                ]
+              }
             ]
           }
         ]

@@ -1,14 +1,12 @@
-import { CalendarPage } from './../calendar/calendar.page';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { IEvent, eventControls, ISimpleAlertOptions } from '../common/models';
+import { IEvent, ISimpleAlertOptions, IEventControls } from '../common/models';
 import { NavController, AlertController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { formatDate } from '../common/format';
 import { handleError } from '../common/handleError';
 import { EditEventPage } from '../editevent/editevent.page';
-import { StatsPage } from '../stats/stats.page';
 
 @Component({
   selector: 'app-eventprofile',
@@ -17,21 +15,6 @@ import { StatsPage } from '../stats/stats.page';
 })
 export class EventProfilePage implements OnInit {
 
-  /**
-   * This is the data show on the Page
-   */
-  eventControls: IEvent & LokiObj & eventControls = <IEvent & LokiObj & eventControls>{};
-  /**
-   * This is the data that is to be used for CRUD
-   */
-  event: IEvent & LokiObj = <IEvent & LokiObj>{};
-
-  id;
-
-  currentDate: string;
-
-  infiniteDate: boolean;
-
   constructor(
     public navCtrl: NavController,
     public route: ActivatedRoute,
@@ -39,6 +22,23 @@ export class EventProfilePage implements OnInit {
     public alertCtrl: AlertController,
     public modal: ModalController
   ) { }
+
+  /**
+   * This is the data show on the Page
+   */
+  eventControls: IEvent & IEventControls = <IEvent & IEventControls>{};
+  /**
+   * This is the data that is to be used for CRUD
+   */
+  event: IEvent = <IEvent>{};
+
+  id;
+
+  currentDate: string;
+
+  infiniteDate: boolean;
+
+  homeURL = '/tabs/tabs/home/events/profile';
 
 
   ngOnInit() {
@@ -245,14 +245,15 @@ export class EventProfilePage implements OnInit {
    * @memberof EventProfilePage
    */
   async goToCalendar() {
-    const modal = await this.modal.create({
-      component: CalendarPage,
-      componentProps: { event: this.event.name }
-    });
-    modal.present();
-    modal.onDidDismiss().then(_ => {
-      this.getEventProfile(this.id);
-    });
+    // const modal = await this.modal.create({
+    //   component: CalendarPage,
+    //   componentProps: { event: this.event.name }
+    // });
+    // modal.present();
+    // modal.onDidDismiss().then(_ => {
+    //   this.getEventProfile(this.id);
+    // });
+    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/calendar/${this.event.name}`);
   }
 
   /**
@@ -261,10 +262,11 @@ export class EventProfilePage implements OnInit {
    * @memberof EventProfilePage
    */
   async goToStats() {
-    const modal = await this.modal.create({
-      component: StatsPage,
-      componentProps: { event: this.event.name }
-    });
-    modal.present();
+    //   const modal = await this.modal.create({
+    //     component: StatsPage,
+    //     componentProps: { event: this.event.name }
+    //   });
+    //   modal.present();
+    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/stats/${this.event.name}`);
   }
 }

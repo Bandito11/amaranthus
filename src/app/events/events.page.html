@@ -7,7 +7,6 @@
     <ion-buttons slot="end">
       <ion-button (click)="goToCreateEvent()">Add Event</ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
@@ -24,15 +23,16 @@
       <ion-card-title>
         {{event.name}}
       </ion-card-title>
-      <div *ngIf="!event.infiniteDates else infiniteDatesIsTrue">
+      <div *ngIf="!event.infiniteDates; else: infiniteDatesIsTrue">
         <h3><span>Start Date:</span> {{event.startDate}}</h3>
         <h3 *ngIf="event.endDate"><span>End Date:</span> {{event.endDate}}</h3>
         <!-- <br> -->
-        <p><span>Total Attendance:</span> {{event.totalAttendance}}</p>
+        <p><span>Total Attended:</span> {{event.totalAttendance}}</p>
         <p><span>Total Absence:</span> {{event.totalAbsence}}</p>
+        <p><span>Total Members:</span> {{event.totalMembers}}</p>
       </div>
       <ng-template #infiniteDatesIsTrue>
-        <p><span>Totals Members:</span> {{event.totalMembers}}</p>
+        <p><span>Total Members:</span> {{event.totalMembers}}</p>
       </ng-template>
     </ion-card-content>
   </ion-card>

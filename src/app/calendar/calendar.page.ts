@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './calendar.page.html',
   styleUrls: ['./calendar.page.scss'],
 })
-export class CalendarPage implements OnInit {
+export class CalendarPage {
   currentDate: string;
   students: IRecord[];
   private unfilteredStudents: IRecord[];
@@ -30,22 +30,13 @@ export class CalendarPage implements OnInit {
     public db: AmaranthusDBProvider
   ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
+    this.timer = 0;
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
     }
-  }
-
-  ionViewWillEnter() {
-    this.timer = 0;
-    const studentInterval = setInterval(() => {
-      this.getStudentsRecords(this.date);
-      if (this.students.length > 0) {
-        clearInterval(studentInterval);
-        this.db.convertLegacyData();
-      }
-    }, 50);
+    this.getStudentsRecords(this.date);
   }
 
   showNotes(id) {
@@ -58,6 +49,7 @@ export class CalendarPage implements OnInit {
       }, 0);
     }
   }
+  
   addNotes(opts: { id: string; notes: string }) {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {

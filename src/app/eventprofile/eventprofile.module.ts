@@ -1,12 +1,12 @@
-import { ComponentsModule } from './../components/components.module';
+import { Routes, RouterModule } from '@angular/router';
+import { EventProfilePage } from './eventprofile.page';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
 import { IonicModule } from '@ionic/angular';
+import { ComponentsModule } from '../components/components.module';
+import { CalendarPageModule } from '../calendar/calendar.module';
 
-import { EventProfilePage } from './eventprofile.page';
 
 const routes: Routes = [
   {
@@ -25,4 +25,4 @@ const routes: Routes = [
   ],
   declarations: [EventProfilePage]
 })
-export class EventProfilePageModule {}
+export class EventProfilePageModule { }

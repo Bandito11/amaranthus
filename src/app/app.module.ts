@@ -1,3 +1,5 @@
+import { CalendarPageModule } from './calendar/calendar.module';
+import { CalendarPage } from './calendar/calendar.page';
 import { CreateEventPageModule } from './create-event/create-event.module';
 import { CreateEventPage } from './create-event/create-event.page';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -7,7 +9,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { Market } from '@ionic-native/market/ngx';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, NavParams } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
@@ -23,6 +25,8 @@ import { File } from '@ionic-native/file/ngx';
 import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
 import { EditEventPage } from './editevent/editevent.page';
 import { EditEventPageModule } from './editevent/editevent.module';
+import { StatsPage } from './stats/stats.page';
+import { StatsPageModule } from './stats/stats.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,7 +35,8 @@ import { EditEventPageModule } from './editevent/editevent.module';
     EditPage,
     CreateEventPage,
     ExportPage,
-    EditEventPage
+    EditEventPage,
+    StatsPage
   ],
   imports: [
     BrowserModule,
@@ -42,6 +47,7 @@ import { EditEventPageModule } from './editevent/editevent.module';
     CreateEventPageModule,
     ExportPageModule,
     EditEventPageModule,
+    StatsPageModule,
     IonicStorageModule.forRoot()
   ],
   providers: [
