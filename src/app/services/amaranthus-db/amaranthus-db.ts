@@ -288,7 +288,7 @@ export class AmaranthusDBProvider {
       data: undefined
     };
     try {
-      const results: any = eventsColl.get(event.$loki);
+      const results: any = eventsColl.get(event['$loki']);
       eventsColl.remove(results);
       return { ...response, success: true };
     } catch (error) {
@@ -366,7 +366,7 @@ export class AmaranthusDBProvider {
         };
       } else {
         throw new Error(`Couldn't find any members participating in this event.`);
-      };
+      }
       return response;
     } catch (error) {
       response = {
@@ -749,7 +749,8 @@ export class AmaranthusDBProvider {
     let response = {
       success: true,
       error: null,
-      data: []
+      data: [],
+      event: null
     };
     try {
       const students = studentsColl.find({

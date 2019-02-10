@@ -15,7 +15,7 @@ import { handleError } from 'src/app/common/handleError';
 })
 export class StatsPage implements OnInit {
   students: IRecord[] = [];
-  private untouchedStudentList: IRecord[] = [];
+  private unfilteredStudents: IRecord[] = [];
   query: string;
   monthQuery: string;
   months: string[] = [...MONTHSLABELS];
@@ -26,6 +26,7 @@ export class StatsPage implements OnInit {
   bought: boolean;
   @ViewChild('filter') filterElement;
   event;
+  studentIds: string[];
 
   constructor(
     private db: AmaranthusDBProvider,
@@ -35,22 +36,27 @@ export class StatsPage implements OnInit {
   ) { }
 
   ionViewWillEnter() {
-    this.getStudentsRecords();
     this.filterElement.value = 'None';
     this.query = '';
-  }
-
-  ngOnInit() {
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
     }
+    try {
+      this.studentIds = this.route.snapshot.paramMap.get('ids').split(',');
+    } catch (error) {
+      this.studentIds = [];
+    }
+    this.getStudentsRecords();
+  }
+
+  ngOnInit() {
     this.monthQuery = this.months[this.currentDate.getMonth()];
     this.yearQuery = this.currentDate.getFullYear().toString();
   }
 
   initializeStudents() {
-    this.students = [...this.untouchedStudentList];
+    this.students = [...this.unfilteredStudents];
   }
 
   /**
@@ -61,6 +67,7 @@ export class StatsPage implements OnInit {
    */
   queryData(option: string) {
     this.initializeStudents();
+    this.query = '';
     switch (option) {
       case 'Id':
         this.queryStudentsbyId();
@@ -138,8 +145,15 @@ export class StatsPage implements OnInit {
     try {
       const response = this.db.getQueriedRecords({ event: this.event, query: this.query });
       if (response.success === true) {
-        this.students = [...response.data];
-        this.untouchedStudentList = [...response.data];
+        if (this.studentIds.length > 0) {
+          for (const id of this.studentIds) {
+            this.students = [...this.students, response.data.find(student => id === student.id)];
+          }
+          this.unfilteredStudents = [...this.students];
+        } else {
+          this.students = [...response.data];
+          this.unfilteredStudents = [...response.data];
+        }
       } else {
         // TODO:  implement an alert message if it fails message should say no students
         // can be retrieved.

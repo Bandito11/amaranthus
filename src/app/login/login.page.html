@@ -1,9 +1,24 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>login</ion-title>
+    <ion-title>Login</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding id="clientlogin">
+  <div id="card">
+    <img src="assets/cartoon-desk.jpg" alt="A cluttered desk">
+    <form #clientLoginForm (ngSubmit)="checkUser({username: username.value, password: password.value} )">
+      <ion-item>
+        <ion-label position="stacked">ID or Full Name with a space between First Name and Last Name</ion-label>
+        <ion-input #username type="text" value=""></ion-input>
+      </ion-item>
 
+      <ion-item>
+        <ion-label position="stacked">Phone Number</ion-label>
+        <ion-input #password type="password"></ion-input>
+      </ion-item>
+
+      <ion-button type="submit" full large>Submit</ion-button>
+    </form>
+  </div>
 </ion-content>

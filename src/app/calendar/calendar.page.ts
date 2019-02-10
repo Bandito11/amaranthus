@@ -24,6 +24,7 @@ export class CalendarPage {
   toggle: string;
   search: string;
   event;
+  studentIds: string[];
   constructor(
     private route: ActivatedRoute,
     public alertCtrl: AlertController,
@@ -35,6 +36,11 @@ export class CalendarPage {
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
+    }
+    try {
+      this.studentIds = this.route.snapshot.paramMap.get('ids').split(',');
+    } catch (error) {
+      this.studentIds = [];
     }
     this.getStudentsRecords(this.date);
   }
@@ -49,7 +55,7 @@ export class CalendarPage {
       }, 0);
     }
   }
-  
+
   addNotes(opts: { id: string; notes: string }) {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
@@ -87,14 +93,23 @@ export class CalendarPage {
       ...opts,
       month: opts.month + 1
     };
+    this.students = [];
+    this.unfilteredStudents = [];
     try {
       const response = this.db.getStudentsRecordsByDate({
         date: date,
         event: this.event
       });
       if (response.success === true) {
-        this.students = [...response.data];
-        this.unfilteredStudents = [...response.data];
+        if (this.studentIds.length > 0) {
+          for (const id of this.studentIds) {
+            this.students = [...this.students, response.data.find(student => id === student.id)];
+          }
+          this.unfilteredStudents = [...this.students];
+        } else {
+          this.students = [...response.data];
+          this.unfilteredStudents = [...response.data];
+        }
       } else {
         handleError(response.error);
       }

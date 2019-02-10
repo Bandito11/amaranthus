@@ -61,38 +61,52 @@
     <ion-label>Run Indefinitely</ion-label>
     <ion-checkbox [(ngModel)]="infiniteDates" color="primary" checked="false"></ion-checkbox>
   </ion-item>
-  <ion-list lines="no-lines">
+  <ion-list lines="none">
     <ion-searchbar (ionInput)="search($event)"></ion-searchbar>
-    <ion-item *ngFor="let student of students">
-      <ion-avatar>
-        <img src="{{student.picture}}" alt="{{student.firstName}}'s profile image">
-      </ion-avatar>
-      <p>
-        <span class="label name">Name: </span>
-        <span class="name">{{student.firstName}} <span *ngIf="student.initial">{{student.initial}}</span>
-          {{student.lastName}}</span>
-      </p>
-      <p>
-        <span class="label">ID: </span>{{student.id}}
-      </p>
-      <p *ngIf="student.phoneNumber">
-        <span class="label">Phone Number: </span>{{student.phoneNumber}}
-      </p>
-      <ion-button size="small" color="primary" (click)="addToEvent(student.id)">
-        Add
-      </ion-button>
-      <ion-button size="small" color="secondary" (click)="removeFromEvent(student.id)">
-        Remove
-      </ion-button>
-      <div>
-        <p class="left attended" *ngIf="ifOnEventList(student.id)">
-          {{student.firstName}} was added to events list!
-        </p>
-        <p class="left attended" *ngIf="!ifOnEventList(student.id)">
-          {{student.firstName}} wasn't added to events list!
-        </p>
-      </div>
-    </ion-item>
+    <ion-grid>
+      <ion-row *ngFor="let student of students">
+        <ion-col size="2">
+          <ion-avatar>
+            <img src="{{student.picture}}" alt="{{student.firstName}}'s profile image">
+          </ion-avatar>
+        </ion-col>
+        <ion-col size="10">
+          <ion-item>
+              <ion-label text-wrap>
+                <span class="label name">Name: </span>
+                <span class="name">{{student.firstName}} <span *ngIf="student.initial">{{student.initial}}</span>
+                  {{student.lastName}}</span>
+              </ion-label>
+          </ion-item>
+          <ion-item>
+              <ion-label>
+                <span class="label">ID: </span>{{student.id}}
+              </ion-label>
+          </ion-item>
+          <ion-item *ngIf="student.phoneNumber">
+              <ion-label text-wrap>
+                <span class="label">Phone Number: </span><span class="wrap">{{student.phoneNumber}}</span>
+              </ion-label>
+          </ion-item>
+        </ion-col>
+        <ion-buttons>
+          <ion-button fill="solid" color="primary" (click)="addToEvent(student.id)">
+            Add
+          </ion-button>
+          <ion-button fill="solid" color="secondary" (click)="removeFromEvent(student.id)">
+            Remove
+          </ion-button>
+        </ion-buttons>
+        <ion-item>
+          <ion-label class="left attended" *ngIf="ifOnEventList(student.id)">
+            {{student.firstName}} was added to events list!
+          </ion-label>
+          <ion-label class="left attended" *ngIf="!ifOnEventList(student.id)">
+            {{student.firstName}} wasn't added to events list!
+          </ion-label>
+        </ion-item>
+      </ion-row>
+    </ion-grid>
   </ion-list>
   <ion-button expand="block" (click)="createNewEvent()">Create</ion-button>
   <!-- <ion-fab vertical="bottom" horizontal="end" edge="true" slot="fixed">

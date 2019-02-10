@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
 import { NavController, NavParams, Platform, ModalController, AlertController } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
-import { ViewController } from '@ionic/core';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -227,7 +226,9 @@ export class EditEventPage implements OnInit {
       );
     } else {
       // Only for Dev Purposes
-      this.logo = 'https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com/o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857f97';
+      this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
+      /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
+      f97`;
     }
   }
 
@@ -282,10 +283,10 @@ export class EditEventPage implements OnInit {
           // begin the alert's dismiss transition
           alert.dismiss()
             .then(() => {
-              if (options['event'] === 'remove') {
+              if (options['event'] === 'delete') {
                 this.navCtrl.navigateRoot('/tabs/tabs/home/events').then(() => this.modalCtrl.dismiss());
               } else {
-                this.modalCtrl.dismiss();
+                this.modalCtrl.dismiss(this.id);
               }
             });
           return false;

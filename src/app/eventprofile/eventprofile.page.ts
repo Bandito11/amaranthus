@@ -34,6 +34,8 @@ export class EventProfilePage implements OnInit {
 
   id;
 
+  studentIds: string[] = [];
+
   currentDate: string;
 
   infiniteDate: boolean;
@@ -55,12 +57,14 @@ export class EventProfilePage implements OnInit {
    * @memberof EventProfilePage
    */
   getEventProfile(id) {
+    this.eventControls = <IEvent & LokiObj>{};
     const date = new Date();
     const response = this.db.getEvent(id);
     if (response.success) {
       this.event = { ...response.data };
       let members = [];
       for (const member of response.data.members) {
+        this.studentIds = [...this.studentIds, member.id];
         const studentResponse = this.db.getStudentById(<any>member);
         if (studentResponse.success) {
           if (this.event.infiniteDates) {
@@ -236,7 +240,13 @@ export class EventProfilePage implements OnInit {
       componentProps: { id: this.id }
     });
     modal.present();
-    modal.onDidDismiss().then(data => (data ? this.getEventProfile(data) : this.navCtrl.back()));
+    modal.onDidDismiss().then(res => {
+      if (res.data === 'delete') {
+        this.navCtrl.back();
+      } else if (res.data) {
+        this.getEventProfile(res.data);
+      }
+    });
   }
 
   /**
@@ -253,7 +263,7 @@ export class EventProfilePage implements OnInit {
     // modal.onDidDismiss().then(_ => {
     //   this.getEventProfile(this.id);
     // });
-    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/calendar/${this.event.name}`);
+    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/calendar/${this.event.name}/${this.studentIds}`);
   }
 
   /**
@@ -267,6 +277,6 @@ export class EventProfilePage implements OnInit {
     //     componentProps: { event: this.event.name }
     //   });
     //   modal.present();
-    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/stats/${this.event.name}`);
+    this.navCtrl.navigateForward(`${this.homeURL}/${this.id}/stats/${this.event.name}/${this.studentIds}`);
   }
 }

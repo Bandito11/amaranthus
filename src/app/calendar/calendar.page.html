@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Calendar</ion-title>
-    <ion-buttons slot="start">
+    <ion-buttons *ngIf="event" slot="start">
       <app-goback></app-goback>
     </ion-buttons>
   </ion-toolbar>

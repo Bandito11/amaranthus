@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Stats</ion-title>
+    <ion-buttons *ngIf="event" slot="start">
+      <app-goback></app-goback>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button *ngIf="students.length > 0" (click)="toExportPage()">
         Export
@@ -12,7 +15,8 @@
 <ion-content padding id="stats">
   <ion-item>
     <ion-label>Filter by: </ion-label>
-    <ion-select interface="popover" (ionCancel)="initializeStudents()" multiple="false" #filter (ionChange)="queryData(filter.value)">
+    <ion-select interface="popover" (ionCancel)="initializeStudents()" multiple="false" #filter
+      (ionChange)="queryData(filter.value)">
       <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
     </ion-select>
   </ion-item>

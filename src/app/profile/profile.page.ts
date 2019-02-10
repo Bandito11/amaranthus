@@ -17,7 +17,7 @@ export class ProfilePage implements OnInit {
   picture = '';
   gender = 'male';
   isActive = false;
-  student: IStudent & LokiObj = <IStudent & LokiObj>{};
+  student: IStudent = <IStudent>{};
   headerName: string;
   notes: { note: string; date: string }[] = [];
 
@@ -79,7 +79,8 @@ export class ProfilePage implements OnInit {
         this.picture = response.data.picture;
         this.student = {
           ...response.data,
-          gender: response.data.gender[0].toUpperCase() + response.data.gender.slice(1, response.data.gender.length)
+          gender: response.data.gender[0].toUpperCase() +
+           response.data.gender.slice(1, response.data.gender.length)
         };
       }
     } catch (error) {

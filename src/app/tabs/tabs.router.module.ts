@@ -33,11 +33,11 @@ const routes: Routes = [
                     loadChildren: '../eventprofile/eventprofile.module#EventProfilePageModule'
                   },
                   {
-                    path: 'calendar/:event',
+                    path: 'calendar/:event/:ids',
                     loadChildren: '../calendar/calendar.module#CalendarPageModule'
                   },
                   {
-                    path: 'stats/:event',
+                    path: 'stats/:event/:ids',
                     loadChildren: '../stats/stats.module#StatsPageModule'
                   },
                 ]

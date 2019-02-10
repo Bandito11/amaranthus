@@ -22,7 +22,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding id="event-profile">
   <img src="{{eventControls.logo}}" />
   <div *ngIf="!eventControls.infiniteDates; else: infiniteDatesIsTrue">
     <h5>
@@ -32,7 +32,7 @@
   <ng-template #infiniteDatesIsTrue>
     <h5>Today is: {{currentDate}}</h5>
   </ng-template>
-  <ion-list *ngFor="let member of eventControls.members" no-lines>
+  <ion-list *ngFor="let member of eventControls.members">
     <ion-item>
       <ion-avatar> <img src="{{member.picture}}" alt="An image of user" /> </ion-avatar>
       <div class="amaranthus">
