@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Export</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
@@ -11,10 +11,10 @@
   <ion-button color="primary" (click)="exportTextTabToFile()" expand="block">
     Export as Text Tab Delimited
     </ion-button>
-    <ion-button color="primary" (click)="exportCSVToFile()" expand="block">
+    <ion-button color="secondary" (click)="exportCSVToFile()" expand="block">
       Export as CSV
     </ion-button>
-    <ion-button color="primary" (click)="exportXLSXToFile()" expand="block">
+    <ion-button color="tertiary" (click)="exportXLSXToFile()" expand="block">
       Export as XLSX
     </ion-button>
 

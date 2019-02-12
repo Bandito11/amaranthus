@@ -5,7 +5,7 @@ import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
-import { Camera, CameraOptions} from '@ionic-native/camera/ngx';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -23,6 +23,8 @@ export class CreateEventPage implements OnInit {
   endDate;
   hasEndDate;
   infiniteDates: boolean;
+  currentDate = new Date();
+
   constructor(
     public navCtrl: NavController,
     public camera: Camera,
@@ -39,10 +41,8 @@ export class CreateEventPage implements OnInit {
     this.studentIds = [];
     this.getStudents();
     const currentDate = new Date();
-    this.startDate = `
-    ${currentDate.getFullYear()}-${addZeroInFront(currentDate.getMonth() + 1)}-${addZeroInFront(currentDate.getDate())}
-    `;
-    this.endDate = '';
+    this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(currentDate.getMonth() + 1)}-${addZeroInFront(currentDate.getDate())}`;
+    this.endDate = ``;
   }
 
   resetEndDate() {
@@ -103,11 +103,20 @@ export class CreateEventPage implements OnInit {
           startDate: this.startDate
         };
       }
-      if (this.endDate && !newEvent.infiniteDates) {
-        newEvent = {
-          ...newEvent,
-          endDate: this.endDate
-        };
+      if (this.endDate && !newEvent.infiniteDates) {console.log(this.startDate)
+        if (!this.startDate) {
+          this.showSimpleAlert({
+            title: 'Error!',
+            subTitle: 'If the event had an end date it has to have a start date~'
+          });
+        } else {
+          newEvent = {
+            ...newEvent,
+            endDate: this.endDate
+          };
+        }
+      } else if (!this.hasEndDate) {
+        this.resetEndDate();
       }
       const alert = await this.alertCtrl.create({
         header: 'Warning!',

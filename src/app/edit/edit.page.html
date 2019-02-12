@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Edit</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
@@ -19,7 +19,10 @@
         motherName:motherName.value,
         emergencyContactName:emergencyContactName.value,
         emergencyRelationship:emergencyRelationship.value,
-        emergencyContactPhoneNumber:emergencyContactPhoneNumber.value
+        emergencyContactPhoneNumber:emergencyContactPhoneNumber.value,
+        picture:null,
+        gender: null,
+        isActive: null
         })">
         Save
       </ion-button>
@@ -48,7 +51,10 @@
         motherName:motherName.value,
         emergencyContactName:emergencyContactName.value,
         emergencyRelationship:emergencyRelationship.value,
-        emergencyContactPhoneNumber:emergencyContactPhoneNumber.value
+        emergencyContactPhoneNumber:emergencyContactPhoneNumber.value,
+        picture:null,
+        gender: null,
+        isActive: null
         })">
     <ion-item-group>
       <ion-button (click)="browsePicture()" color="primary">Change</ion-button>
@@ -98,19 +104,19 @@
       </ion-item>
       <ion-list lines="none">
         <ion-radio-group [(ngModel)]="gender" name="gender" ngDefaultControl>
-      <ion-list-header>Gender</ion-list-header>
-        <ion-item>
-          <ion-label>Male</ion-label>
-          <ion-radio slot="start" value="male" checked></ion-radio>
-        </ion-item>
-        <ion-item>
-          <ion-label>Female</ion-label>
-          <ion-radio slot="start" value="female"></ion-radio>
-        </ion-item>
-        <ion-item>
-          <ion-label>Undisclosed</ion-label>
-          <ion-radio slot="start" value="undisclosed"></ion-radio>
-        </ion-item>
+          <ion-list-header>Gender</ion-list-header>
+          <ion-item>
+            <ion-label>Male</ion-label>
+            <ion-radio slot="start" value="male" checked></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Female</ion-label>
+            <ion-radio slot="start" value="female"></ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-label>Undisclosed</ion-label>
+            <ion-radio slot="start" value="undisclosed"></ion-radio>
+          </ion-item>
         </ion-radio-group>
       </ion-list>
       <h6>Father</h6>

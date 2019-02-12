@@ -19,13 +19,13 @@ export class SettingsPage implements OnInit {
   bought: boolean;
 
   constructor(
-    private emailComposer: EmailComposer,
-    private loading: LoadingController,
-    private storage: Storage,
-    private platform: Platform,
-    private iap: AppPurchaseProvider,
-    private alertCtrl: AlertController,
-    private market: Market
+    public emailComposer: EmailComposer,
+    public loading: LoadingController,
+    public storage: Storage,
+    public platform: Platform,
+    public iap: AppPurchaseProvider,
+    public alertCtrl: AlertController,
+    public market: Market
   ) { }
 
   ngOnInit() {
@@ -41,22 +41,20 @@ export class SettingsPage implements OnInit {
         this.bought = false;
       }
     });
-    if (this.platform.is('cordova')) {
-      this.getProducts();
-    }
   }
 
-
   ionViewWillEnter() {
-    if (this.platform.is('cordova')) {
-      this.storage.get('products').then(products => {
-        if (products) {
-          this.products = products;
-          this.noProducts = false;
-        } else {
-          this.getProducts();
-        }
-      });
+    if (this.products.length < 1) {
+      if (this.platform.is('cordova')) {
+        this.storage.get('products').then(products => {
+          if (products) {
+            this.products = products;
+            this.noProducts = false;
+          } else {
+            this.getProducts();
+          }
+        });
+      }
     }
   }
 
@@ -104,18 +102,18 @@ export class SettingsPage implements OnInit {
   }
 
   getProducts() {
-    this.iap
-      .getProducts()
-      .then(products => {
-        this.noProducts = false;
-        this.products = [...products];
-        this.storage.set('products', products);
-      })
-      .catch(err => this.showSimpleAlert({
-        buttons: ['OK'],
-        title: 'Error!',
-        subTitle: err
-      }));
+    this.iap.getProducts().then(products => {
+      this.noProducts = false;
+      this.products = [...products];
+      this.storage.set('products', products);
+    })
+      .catch(err => {
+        this.showSimpleAlert({
+          buttons: ['OK'],
+          title: 'Error!',
+          subTitle: err
+        }).then(_ => this.noProducts = false);
+      });
   }
 
   async restorePurchases() {
@@ -124,52 +122,48 @@ export class SettingsPage implements OnInit {
     });
     loading.present();
     if (this.platform.is('android')) {
-      this.iap
-        .restoreAndroidPurchase()
-        .then(products => {
-          products.forEach(product => {
-            const receipt = JSON.parse(product.receipt);
-            if (product.productId === 'master.key' && stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)) {
-              this.storage.set('boughtMasterKey', true);
-              this.bought = true;
-              const options: ISimpleAlertOptions = {
-                title: 'Information',
-                subTitle: 'Restored the purchase!',
-                buttons: ['OK']
-              };
-              this.showSimpleAlert(options);
-            }
-          });
-          loading.dismiss();
-        })
-        .catch(_ => {
-          this.showSimpleAlert({ buttons: ['OK'], title: 'Error!', subTitle: `No receipts available in the App Store!` });
-          loading.dismiss();
-        });
-    } else if (this.platform.is('ios')) {
-      this.iap
-        .restoreiOSPurchase()
-        .then(receipt => {
-          if (receipt) {
+      this.iap.restoreAndroidPurchase().then(products => {
+        products.forEach(product => {
+          const receipt = JSON.parse(product.receipt);
+          if (product.productId === 'master.key' && stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)) {
+            this.storage.set('boughtMasterKey', true);
+            this.bought = true;
             const options: ISimpleAlertOptions = {
               title: 'Information',
               subTitle: 'Restored the purchase!',
               buttons: ['OK']
             };
-            this.storage.set('boughtMasterKey', true);
-            this.bought = true;
-            this.showSimpleAlert(options);
-            loading.dismiss();
-          } else {
-            const options: ISimpleAlertOptions = {
-              title: 'Information',
-              subTitle: `No receipts available in the App Store!`,
-              buttons: ['OK']
-            };
             this.showSimpleAlert(options);
           }
-        })
-        .catch(error => {
+        });
+        loading.dismiss();
+      })
+        .catch(_ => {
+          this.showSimpleAlert({ buttons: ['OK'], title: 'Error!', subTitle: `No receipts available in the App Store!` });
+          loading.dismiss();
+        });
+    } else if (this.platform.is('ios')) {
+      this.iap.restoreiOSPurchase().then(receipt => {
+        if (receipt) {
+          const options: ISimpleAlertOptions = {
+            title: 'Information',
+            subTitle: 'Restored the purchase!',
+            buttons: ['OK']
+          };
+          this.storage.set('boughtMasterKey', true);
+          this.bought = true;
+          this.showSimpleAlert(options);
+        } else {
+          const options: ISimpleAlertOptions = {
+            title: 'Information',
+            subTitle: `No receipts available in the App Store!`,
+            buttons: ['OK']
+          };
+          this.showSimpleAlert(options);
+        }
+        loading.dismiss();
+      })
+        .catch(_ => {
           this.showSimpleAlert({ buttons: ['OK'], title: 'Error!', subTitle: 'No receipts available in the App Store!' });
           loading.dismiss();
         });
@@ -201,7 +195,7 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
+  public async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
       header: options.title,
       message: options.subTitle,

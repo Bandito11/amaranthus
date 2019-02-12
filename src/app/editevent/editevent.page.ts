@@ -1,7 +1,7 @@
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Component, OnInit } from '@angular/core';
 import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
-import { NavController, NavParams, Platform, ModalController, AlertController } from '@ionic/angular';
+import { NavController, NavParams, Platform, ModalController, AlertController, IonNav } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
@@ -129,6 +129,8 @@ export class EditEventPage implements OnInit {
           ...this.event,
           endDate: this.endDate
         };
+      } else if (!this.hasEndDate) {
+        this.resetEndDate();
       }
       const alert = await this.alertCtrl.create({
         header: 'Warning!',

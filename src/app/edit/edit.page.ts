@@ -74,7 +74,7 @@ export class EditPage implements OnInit {
     }
   }
 
-  async deleteStudent(opts: IStudent) {
+  async deleteStudent(opts) {
     const alert = await this.alertCtrl.create({
       header: 'Warning!',
       message: 'Are you sure you want to delete this record?',

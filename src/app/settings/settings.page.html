@@ -1,10 +1,10 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Settings</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding id="settings">
   <div *ngIf="this.platform.is('cordova')">
     <app-loader *ngIf="noProducts"></app-loader>
     <div *ngFor="let product of products">
@@ -25,27 +25,36 @@
           {{product.description}}
         </p>
       </div>
-      <button *ngIf="isAndroid" ion-button color="primary"
-        (click)="buyProduct({productId: product.productId, productTitle: product.title})">Buy
-        Now for only {{product.priceAsDecimal}} {{product.currency}}!</button>
-      <button *ngIf="isIos" ion-button color="primary"
-        (click)="buyProduct({productId: product.productId, productTitle: 'The Master Key!'})">Buy
-        Now for only {{product.priceAsDecimal}} {{product.currency}}!</button>
+      <ion-button *ngIf="isAndroid" color="primary"
+        (click)="buyProduct({productId: product.productId, productTitle: product.title})">
+        Buy now for only {{product.priceAsDecimal}} {{product.currency}}!
+      </ion-button>
+      <ion-button *ngIf="isIos" color="primary"
+        (click)="buyProduct({productId: product.productId, productTitle: 'The Master Key!'})">
+        Buy now for only {{product.priceAsDecimal}} {{product.currency}}!
+      </ion-button>
       <br>
-      <button ion-button color="secondary" (click)="restorePurchases()">Restore purchase!<ion-icon name="happy">
-        </ion-icon>
-      </button>
+      <ion-button color="secondary" (click)="restorePurchases()">
+        <div *ngIf="isAndroid">
+          Restore {{product.title.slice(0,15)}}
+        </div>
+        <div *ngIf="isIos">
+          Restore The Master Key!
+        </div>
+        &nbsp;
+        <ion-icon name="happy"> </ion-icon>
+      </ion-button>
       <hr>
     </div>
   </div>
   <div *ngIf="this.platform.is('cordova')">
     <h4>If you like the app please consider rating it 5 stars!</h4>
-    <button *ngIf="platform.is('ios')" ion-button (click)="openMarketPage()">
+    <ion-button *ngIf="platform.is('ios')" (click)="openMarketPage()">
       Open App Store &nbsp; <ion-icon name="logo-apple"></ion-icon>
-    </button>
-    <button *ngIf="platform.is('android')" ion-button color="secondary" (click)="openMarketPage()">
+    </ion-button>
+    <ion-button *ngIf="platform.is('android')" color="secondary" (click)="openMarketPage()">
       Open Play Store &nbsp; <ion-icon name="logo-google"></ion-icon>
-    </button>
+    </ion-button>
   </div>
   <div *ngIf="bought">
     <hr>
@@ -55,7 +64,7 @@
     </p>
     <textarea #message></textarea>
     <br>
-    <button ion-button color="primary" (click)="sendEmail(message.value)">Send email! </button>
+    <ion-button color="primary" (click)="sendEmail(message.value)">Send email! </ion-button>
     <hr>
   </div>
 </ion-content>

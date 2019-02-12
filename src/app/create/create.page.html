@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Create Record</ion-title>
     <ion-buttons slot="start">
         <app-cancel></app-cancel>
@@ -19,7 +19,10 @@
             motherName:motherName.value,
             emergencyContactName:emergencyContactName.value,
             emergencyRelationship:emergencyRelationship.value,
-            emergencyContactPhoneNumber:emergencyContactPhoneNumber.value
+            emergencyContactPhoneNumber:emergencyContactPhoneNumber.value,
+            picture:null,
+            gender: null,
+            isActive: null
           })">
             Create
           </ion-button>
@@ -46,7 +49,10 @@
           motherName:motherName.value,
           emergencyContactName:emergencyContactName.value,
           emergencyRelationship:emergencyRelationship.value,
-          emergencyContactPhoneNumber:emergencyContactPhoneNumber.value
+          emergencyContactPhoneNumber:emergencyContactPhoneNumber.value,
+          picture:null,
+          gender: null,
+          isActive: null
         })">
         <ion-item-group>
           <ion-button (click)="browsePicture()" color="primary">Change</ion-button>

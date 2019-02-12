@@ -42,8 +42,10 @@ export class FileProvider {
           })
           .catch(error => reject(error));
       }
-      const message =  'This feature is still not available for the web :\'(';
-      reject(message);
+      if (this.platform.is('desktop')) {
+        const message = 'This feature is still not available for the web :\'(';
+        reject(message);
+      }
     });
   }
 
@@ -166,7 +168,10 @@ export class FileProvider {
         this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`,
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .then(() => resolve(response))
-          .catch(error => reject('There was an error opening the file, please try again!'));
+          .catch(_ => reject(
+            `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+             but there was an error opening the file, please try again!`
+          ));
       }
       if (opts.type === 'txt') {
         response = {
@@ -176,7 +181,10 @@ export class FileProvider {
         };
         this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`, 'text/plain')
           .then(() => resolve(response))
-          .catch(_ => reject('There was an error opening the file, please try again!'));
+          .catch(_ => reject(
+            `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+             but there was an error opening the file, please try again!`
+          ));
       }
       if (opts.type === 'csv') {
         response = {
@@ -186,7 +194,10 @@ export class FileProvider {
         };
         this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`, 'text/csv')
           .then(() => resolve(response))
-          .catch(_ => reject('There was an error opening the file, please try again!'));
+          .catch(_ => reject(
+            `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+             but there was an error opening the file, please try again!`
+          ));
       }
     });
   }

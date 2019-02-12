@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Create Event</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
@@ -29,7 +29,7 @@
   <div *ngIf="!infiniteDates else noStartDate">
     <ion-item>
       <ion-label>Start Date</ion-label>
-      <ion-datetime displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
+      <ion-datetime displayFormat="MMMM DD YYYY" min="{{startDate}}" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
     </ion-item>
   </div>
   <ng-template #noStartDate>
@@ -43,14 +43,14 @@
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
   </ion-item>
   <div *ngIf="!infiniteDates else noEndDate">
-    <ion-item *ngIf="hasEndDate" (ionChange)="resetEndDate()">
+    <ion-item *ngIf="hasEndDate">
       <ion-label>End Date</ion-label>
-      <ion-datetime displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-datetime displayFormat="MMMM DD YYYY" min="{{startDate}}" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
       <ion-icon id="form-icon" name="warning" *ngIf="!this.endDate && hasEndDate"></ion-icon>
     </ion-item>
   </div>
   <ng-template #noEndDate>
-    <div *ngIf="hasEndDate">
+    <div>
       <ion-item>
         <ion-label fixed>End Date</ion-label>
         <ion-input disabled></ion-input>

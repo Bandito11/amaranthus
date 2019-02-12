@@ -118,17 +118,27 @@ export class EventProfilePage implements OnInit {
           }
         }
       }
-      this.eventControls = {
-        ...response.data,
-        startDate: formatDate(response.data.startDate),
-        members: [...members]
-      };
+      if (response.data.startDate) {
+        this.eventControls = {
+          ...response.data,
+          startDate: formatDate(response.data.startDate)
+        };
+      } else {
+        this.eventControls = {
+          ...response.data,
+          startDate: ''
+        };
+      }
       if (response.data.endDate) {
         this.eventControls = {
           ...this.eventControls,
           endDate: formatDate(response.data.endDate)
         };
       }
+      this.eventControls = {
+        ...response.data,
+        members: [...members]
+      };
     } else {
       handleError(response.error);
     }

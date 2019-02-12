@@ -95,7 +95,7 @@ export interface ICalendar {
 }
 
 export interface IProductGet {
-  productId: string;
+  id: string;
   title: string;
   description: string;
   currency: string;

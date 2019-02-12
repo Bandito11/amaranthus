@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Edit Event</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
@@ -47,7 +47,7 @@
   <div *ngIf="!infiniteDates; else: noEndDate">
     <ion-item *ngIf="hasEndDate" (ionChange)="resetEndDate()">
       <ion-label>End Date</ion-label>
-      <ion-datetime displayFormat="MMMM DD YYYY" min="2018-01-01" max="2999-12-31" pickerFormat="MMMM DD YYYY"
+      <ion-datetime displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY"
         [(ngModel)]="endDate"></ion-datetime>
       <ion-icon id="form-icon" name="warning" *ngIf="!this.endDate && hasEndDate"></ion-icon>
     </ion-item>
