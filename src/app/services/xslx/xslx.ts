@@ -1,20 +1,27 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { IRecord, IResponse } from 'src/app/common/models';
+import { recordType } from 'src/app/common/constants';
 
 @Injectable({ providedIn: 'root' })
 export class XLSXProvider {
 
   constructor() { }
 
-  async exportXLSXToFile(tableRecords: IRecord[]): Promise<IResponse<Blob>> {
+  async exportXLSXToFile(opts: { type: string, records: IRecord[] }): Promise<IResponse<Blob>> {
     let response: IResponse<Blob> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const data = await this.createXLSX(tableRecords);
+      let data = null;
+      switch (opts.type) {
+        case recordType.month:
+          data = await this.createXLSX(opts.records);
+          break;
+      }
+
       response = {
         ...response,
         success: true,
@@ -56,4 +63,5 @@ export class XLSXProvider {
       }
     });
   }
+
 }

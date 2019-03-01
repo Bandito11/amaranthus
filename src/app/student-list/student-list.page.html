@@ -20,7 +20,8 @@
   </ion-item>
   <ion-item>
     <ion-label>Filter by class: </ion-label>
-    <ion-select interface="popover" multiple="false" placeholder="None" #filter (ionChange)="filterByClass(filter.value)">
+    <ion-select interface="popover" multiple="false" placeholder="None" #filter
+      (ionChange)="filterByClass(filter.value)">
       <ion-select-option *ngFor="let class of filterOptions" value="{{class}}">{{class}}</ion-select-option>
     </ion-select>
   </ion-item>
@@ -46,17 +47,17 @@
                   <span class="label">Address: </span>{{student.address}}
                 </ion-label>
               </ion-item>
-            <ion-item>
+              <ion-item>
                 <ion-label>
                   <span class="label">Town: </span>{{student.town}}
                 </ion-label>
               </ion-item>
-            <ion-item>
+              <ion-item>
                 <ion-label>
                   <span class="label">State: </span>{{student.state}}
                 </ion-label>
               </ion-item>
-            <ion-item>
+              <ion-item>
                 <ion-label *ngIf="student.class">
                   <span class="label">Class: </span>{{student.class}}
                 </ion-label>
@@ -64,6 +65,17 @@
               <ion-item>
                 <ion-label *ngIf="student.phoneNumber">
                   <span class="label">Phone: </span>{{student.phoneNumber}}
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label *ngIf="student.emergencyContactName">
+                  <span class="label">Emergency Contact: </span>
+                  <h2>{{student.emergencyContactName}}</h2>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label *ngIf="student.emergencyContactPhoneNumber">
+                  <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
                 </ion-label>
               </ion-item>
             </ion-col>

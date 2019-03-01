@@ -4,6 +4,7 @@ import { CSVProvider } from '../services/csv/csv';
 import { TextTabDelimitedProvider } from '../services/text-tab-delimited/text-tab-delimited';
 import { FileProvider } from '../services/file/file';
 import { XLSXProvider } from '../services/xslx/xslx';
+import { recordType } from '../common/constants';
 
 @Component({
   selector: 'app-export',
@@ -114,7 +115,7 @@ export class ExportPage {
     });
     loading.present();
     try {
-      const xlsxResponse = await this.xlsx.exportXLSXToFile(this.students);
+      const xlsxResponse = await this.xlsx.exportXLSXToFile({type: recordType.month, records: this.students});
       const fileName = 'AttendanceLog.xlsx';
       if (xlsxResponse.success) {
         try {
