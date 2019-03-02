@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-button color="primary" (click)="exportTextTabToFile()" expand="block">
+  <!-- <ion-button color="primary" (click)="exportTextTabToFile()" expand="block">
     Export as Text Tab Delimited
     </ion-button>
     <ion-button color="secondary" (click)="exportCSVToFile()" expand="block">
@@ -16,6 +16,43 @@
     </ion-button>
     <ion-button color="tertiary" (click)="exportXLSXToFile()" expand="block">
       Export as XLSX
+    </ion-button> -->
+  <ion-list>
+    <ion-radio-group>
+      <ion-list-header>
+        Choose date
+      </ion-list-header>
+
+      <ion-item>
+        <ion-label>By Month</ion-label>
+        <ion-radio checked="true" (ionSelect)="month = true;  day = false;"></ion-radio>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>By Day</ion-label>
+        <ion-radio (ionSelect)="month = false; day = true;"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+
+    <ion-item *ngIf="month">
+      <ion-label>Date</ion-label>
+      <ion-datetime [(ngModel)]="date" display-format="MMMM, YYYY" picker-format="MMMM YYYY"></ion-datetime>
+    </ion-item>
+
+    <ion-item *ngIf="day">
+      <ion-label>Date</ion-label>
+      <ion-datetime [(ngModel)]="date" display-format="MMMM DD, YYYY" picker-format="MMMM DD YYYY"></ion-datetime>
+    </ion-item>
+
+    <!-- <ion-button fill="solid" color="primary" (click)="exportAsText()" expand="block">
+      Export as Text Tab Delimited
+    </ion-button> -->
+    <ion-button fill="solid" color="secondary" (click)="exportAsCSV()" expand="block">
+      Export as CSV
+    </ion-button>
+    <ion-button fill="solid" color="tertiary" (click)="exportAsXLSX()" expand="block">
+      Export as XLSX
     </ion-button>
 
-</ion-content>
+  </ion-list>
+</ion-content>`

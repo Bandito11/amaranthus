@@ -20,12 +20,12 @@
       <ion-icon name="people"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="login" *ngIf=" this.platform.is('desktop') || ( this.platform.is('mobile') && (this.platform.is('ipad') || this.platform.is('tablet') ) )">
-      <ion-icon name="log-in"></ion-icon>
-    </ion-tab-button>
-
     <ion-tab-button tab="settings">
       <ion-icon name="cog"></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="login" *ngIf=" this.platform.is('desktop') || ( this.platform.is('mobile') && (this.platform.is('ipad') || this.platform.is('tablet') ) )">
+      <ion-icon name="log-in"></ion-icon>
     </ion-tab-button>
 
   </ion-tab-bar>

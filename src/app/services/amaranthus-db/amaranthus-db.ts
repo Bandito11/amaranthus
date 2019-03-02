@@ -706,17 +706,9 @@ export class AmaranthusDBProvider {
   }
 
   getQueriedRecords(opts: { event?: string; query: string; date?: ICalendar }): IResponse<IRecord[]> {
-    let response: IResponse<any> = {
-      success: true,
-      error: null,
-      data: null,
-      dateStamp: new Date().toString()
-    };
-    // TODO: Add Event if condition!!!!
     switch (opts.query) {
       case 'Date':
-        this.getQueriedRecordsByDate(<any>opts);
-        break;
+        return this.getQueriedRecordsByDate(<any>opts);
       default:
         const date: ICalendar = {
           year: new Date().getFullYear(),
@@ -734,11 +726,7 @@ export class AmaranthusDBProvider {
           };
         }
         try {
-          response = {
-            ...response,
-            ...this.getAllStudentsRecords(options)
-          };
-          return response;
+          return this.getAllStudentsRecords(options);
         } catch (error) {
           return error;
         }
@@ -891,48 +879,103 @@ export class AmaranthusDBProvider {
         attendance = 0;
         absence = 0;
         let records;
-        if (opts['event']) {
-          records = recordsColl.find({
-            'id': {
-              '$eq': student.id
-            },
-            'year': {
-              '$eq': opts.date.year
-            },
-            'month': {
-              '$eq': opts.date.month
-            },
-            'event': {
-              '$eq': opts.event
-            }
-          });
-        } else if (opts.hasOwnProperty('event')) {
-          records = recordsColl.find({
-            'id': {
-              '$eq': student.id
-            },
-            'year': {
-              '$eq': opts.date.year
-            },
-            'month': {
-              '$eq': opts.date.month
-            },
-            'event': {
-              '$eq': ''
-            }
-          });
+        if (!opts.date.day) {
+          if (opts['event']) {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              },
+              'event': {
+                '$eq': opts.event
+              }
+            });
+          } else if (opts.hasOwnProperty('event')) {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              },
+              'event': {
+                '$eq': ''
+              }
+            });
+          } else {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              }
+            });
+          }
         } else {
-          records = recordsColl.find({
-            'id': {
-              '$eq': student.id
-            },
-            'year': {
-              '$eq': opts.date.year
-            },
-            'month': {
-              '$eq': opts.date.month
-            }
-          });
+          if (opts['event']) {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              },
+              'day': {
+                '$eq': opts.date.day
+              },
+              'event': {
+                '$eq': opts.event
+              }
+            });
+          } else if (opts.hasOwnProperty('event')) {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              },
+              'day': {
+                '$eq': opts.date.day
+              },
+              'event': {
+                '$eq': ''
+              }
+            });
+          } else {
+            records = recordsColl.find({
+              'id': {
+                '$eq': student.id
+              },
+              'year': {
+                '$eq': opts.date.year
+              },
+              'month': {
+                '$eq': opts.date.month
+              },
+              'day': {
+                '$eq': opts.date.day
+              },
+            });
+          }
         }
         if (records) {
           records.map((record: IRecord) => {
