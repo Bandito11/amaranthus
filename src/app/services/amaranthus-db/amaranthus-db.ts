@@ -867,8 +867,8 @@ export class AmaranthusDBProvider {
       error: null,
       data: []
     };
-    let attendance: number;
-    let absence: number;
+    let attendance;
+    let absence;
     try {
       const students = studentsColl.find({
         'isActive': {
@@ -979,15 +979,29 @@ export class AmaranthusDBProvider {
         }
         if (records) {
           records.map((record: IRecord) => {
-            if (record.attendance === true) {
-              attendance++;
-            }
-            if (record.absence === true) {
-              absence++;
+            if (opts.date.day) {
+              if (record.attendance === true) {
+                attendance = 'x';
+                absence = 'o';
+              }
+              if (record.absence === true) {
+                absence = 'x';
+                attendance = 'o';
+              }
+            } else {
+              if (record.attendance === true) {
+                attendance++;
+              }
+              if (record.absence === true) {
+                absence++;
+              }
             }
           });
-          let percent = '0';
-          if (attendance + absence !== 0) {
+          let percent = null;
+          if (!opts.date.day) {
+            percent = 0;
+          }
+          if ((attendance + absence !== 0)) {
             percent = ((100 * attendance) / (attendance + absence)).toFixed(2);
           }
           if (percent) {
@@ -1014,7 +1028,6 @@ export class AmaranthusDBProvider {
                   id: student.id,
                   fullName: `${student.firstName} ${student.lastName}`,
                   attendance: attendance,
-                  percent: 0,
                   absence: absence,
                   picture: student.picture
                 }

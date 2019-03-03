@@ -5,18 +5,18 @@
       <app-goback></app-goback>
     </ion-buttons>
     <ion-buttons slot="end">
-        <ion-button (click)="editEvent()">
-            Edit
-          </ion-button>
-      </ion-buttons>
+      <ion-button (click)="editEvent()">
+        Edit
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar *ngIf="eventControls.infiniteDates">
+  <ion-toolbar *ngIf="eventControls.infiniteDates" color="primary">
     <ion-buttons slot="end">
       <ion-button (click)="goToCalendar()">
         Calendar
       </ion-button>
       <ion-button (click)="goToStats()">
-        Table
+        Stats
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

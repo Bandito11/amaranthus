@@ -36,45 +36,44 @@
       <ion-card-content>
         <ion-grid>
           <ion-row>
-            <ion-col size="2">
+            <ion-col size="3">
               <ion-thumbnail>
                 <img src="{{student.picture}}" alt="An image of user">
               </ion-thumbnail>
             </ion-col>
-            <ion-col size="10">
+            <ion-col size="9">
               <ion-item>
-                <ion-label>
+                <ion-label text-wrap>
                   <span class="label">Address: </span>{{student.address}}
                 </ion-label>
               </ion-item>
               <ion-item>
-                <ion-label>
+                <ion-label text-wrap>
                   <span class="label">Town: </span>{{student.town}}
                 </ion-label>
               </ion-item>
               <ion-item>
-                <ion-label>
+                <ion-label text-wrap>
                   <span class="label">State: </span>{{student.state}}
                 </ion-label>
               </ion-item>
-              <ion-item>
-                <ion-label *ngIf="student.class">
+              <ion-item *ngIf="student.class">
+                <ion-label text-wrap>
                   <span class="label">Class: </span>{{student.class}}
                 </ion-label>
               </ion-item>
-              <ion-item>
-                <ion-label *ngIf="student.phoneNumber">
+              <ion-item *ngIf="student.phoneNumber">
+                <ion-label text-wrap>
                   <span class="label">Phone: </span>{{student.phoneNumber}}
                 </ion-label>
               </ion-item>
-              <ion-item>
-                <ion-label *ngIf="student.emergencyContactName">
-                  <span class="label">Emergency Contact: </span>
-                  <h2>{{student.emergencyContactName}}</h2>
+              <ion-item *ngIf="student.emergencyContactName">
+                <ion-label text-wrap>
+                  <span class="label">Emergency Contact: </span>{{student.emergencyContactName}}
                 </ion-label>
               </ion-item>
-              <ion-item>
-                <ion-label *ngIf="student.emergencyContactPhoneNumber">
+              <ion-item *ngIf="student.emergencyContactPhoneNumber">
+                <ion-label text-wrap>
                   <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
                 </ion-label>
               </ion-item>

@@ -36,7 +36,8 @@ for (let i = 1; i <= 5; i++) {
 export const YEARLABELS = [...YEARS];
 
 export enum recordType {
-  month = 'month'
+  month = 'month',
+  day = 'day'
 }
 
 export const WEEKDAYSLABELS = [

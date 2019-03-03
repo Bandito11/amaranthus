@@ -103,7 +103,7 @@ export class CreateEventPage implements OnInit {
           startDate: this.startDate
         };
       }
-      if (this.endDate && !newEvent.infiniteDates) {console.log(this.startDate)
+      if (this.endDate && !newEvent.infiniteDates) {
         if (!this.startDate) {
           this.showSimpleAlert({
             title: 'Error!',
