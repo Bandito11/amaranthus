@@ -2,10 +2,10 @@ import { OnInit, Component } from '@angular/core';
 import { IStudent, IResponse, ISimpleAlertOptions } from '../common/models';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { AlertController, NavController, NavParams, Platform, ModalController } from '@ionic/angular';
-import { DomSanitizer } from '@angular/platform-browser';
 import { handleError } from '../common/handleError';
 import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-edit',
@@ -46,9 +46,9 @@ export class EditPage implements OnInit {
     private alertCtrl: AlertController,
     private navCtrl: NavController,
     private navParams: NavParams,
-    private sanitizer: DomSanitizer,
     private camera: Camera,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private webview: WebView
   ) { }
 
   ngOnInit() {
@@ -199,7 +199,9 @@ export class EditPage implements OnInit {
     };
     this.camera.getPicture(options)
       .then((imageData: string) => {
-        this.picture = this.sanitizer.bypassSecurityTrustUrl(imageData);
+        // this.picture = 'data:image/png;base64,' + imageData;
+        // this.picture = imageData.replace('assets-library://', 'cdvfile://localhost/assets-library/');
+        this.picture = this.webview.convertFileSrc(imageData);
       },
         error => handleError(error)
       );

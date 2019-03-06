@@ -5,7 +5,7 @@ import { handleError } from '../common/handleError';
 import { IStudent, ISimpleAlertOptions } from '../common/models';
 import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { DomSanitizer } from '@angular/platform-browser';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-create',
@@ -26,7 +26,7 @@ export class CreatePage {
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     private camera: Camera,
-    private sanitizer: DomSanitizer
+    private webview: WebView
   ) { }
 
   ionViewWillEnter() {
@@ -62,7 +62,7 @@ export class CreatePage {
       encodingType: this.camera.EncodingType.PNG
     };
     this.camera.getPicture(options).then((imageData: string) => {
-      this.picture = this.sanitizer.bypassSecurityTrustUrl(imageData);
+      this.picture = this.webview.convertFileSrc(imageData);
     },
       error => handleError(error)
     );
