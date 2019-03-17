@@ -4,7 +4,9 @@ import { Platform } from '@ionic/angular';
 import { IResponse } from 'src/app/common/models';
 import { IWriteOptions, File } from '@ionic-native/file/ngx';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class FileProvider {
 
   constructor(

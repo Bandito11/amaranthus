@@ -22,13 +22,13 @@ export class LoginPage {
     let options: ISimpleAlertOptions;
     if (response.success) {
       options = {
-        title: 'Success!',
-        subTitle: `${response.data} is present today!`
+        header: 'Success!',
+        message: `${response.data} is present today!`
       };
     } else {
       options = {
-        title: 'Error!',
-        subTitle: response.error
+        header: 'Error!',
+        message: response.error
       };
     }
     this.showSimpleAlert(options);
@@ -37,8 +37,8 @@ export class LoginPage {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();

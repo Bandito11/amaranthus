@@ -19,7 +19,9 @@ let notesColl: Collection<INote>;
  */
 let amaranthusDB: Loki;
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AmaranthusDBProvider {
   constructor(private storage: Storage) {
     this.createDB();

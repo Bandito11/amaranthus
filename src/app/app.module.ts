@@ -1,5 +1,4 @@
-import { CalendarPageModule } from './calendar/calendar.module';
-import { CalendarPage } from './calendar/calendar.page';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { CreateEventPageModule } from './create-event/create-event.module';
 import { CreateEventPage } from './create-event/create-event.page';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -59,6 +58,7 @@ import { StatsPageModule } from './stats/stats.module';
     InAppPurchase,
     Market,
     EmailComposer,
+    WebView,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

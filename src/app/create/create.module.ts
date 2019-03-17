@@ -23,7 +23,6 @@ const routes: Routes = [
     ComponentsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [CreatePage],
-  exports: [CreatePage]
+  declarations: [CreatePage]
 })
 export class CreatePageModule { }

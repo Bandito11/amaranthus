@@ -86,8 +86,8 @@ export class EditPage implements OnInit {
           text: 'Yes',
           handler: () => {
             let options: ISimpleAlertOptions = {
-              title: 'Success!',
-              subTitle: 'Student was deleted.'
+              header: 'Success!',
+              message: 'Student was deleted.'
             };
             // user has clicked the alert button
             // begin the alert's dismiss transition
@@ -104,8 +104,8 @@ export class EditPage implements OnInit {
             } else {
               handleError(response.error);
               options = {
-                title: 'Error',
-                subTitle: 'There was an error trying to delete the record. Please try again.'
+                header: 'Error',
+                message: 'There was an error trying to delete the record. Please try again.'
               };
               navTransition.then(() => this.showAdvancedAlert(options));
             }
@@ -118,11 +118,11 @@ export class EditPage implements OnInit {
   }
 
   async editStudent(opts: IStudent) {
-    let options: ISimpleAlertOptions = { title: '', subTitle: '', buttons: [] };
+    let options: ISimpleAlertOptions = { header: '', message: '', buttons: [] };
     if (!opts.firstName || !opts.lastName || !opts.id) {
       options = {
-        ...options, title: 'Warning!',
-        subTitle: 'Some fields doesn\'t have the required info',
+        ...options, header: 'Warning!',
+        message: 'Some fields doesn\'t have the required info',
         buttons: [...['OK']]
       };
       this.showSimpleAlert(options);
@@ -154,15 +154,15 @@ export class EditPage implements OnInit {
               if (response.success === true) {
                 navTransition.then(() => {
                   options = {
-                    title: 'Success!',
-                    subTitle: `${opts.firstName} ${opts.lastName} was edited.`
+                    header: 'Success!',
+                    message: `${opts.firstName} ${opts.lastName} was edited.`
                   };
                   this.showAdvancedAlert(options);
                 });
               } else {
                 options = {
-                  title: 'Error',
-                  subTitle: 'There was an error trying to edit the record. Please try again.'
+                  header: 'Error',
+                  message: 'There was an error trying to edit the record. Please try again.'
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               }
@@ -209,8 +209,8 @@ export class EditPage implements OnInit {
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: options.buttons
     });
     alert.present();
@@ -218,8 +218,8 @@ export class EditPage implements OnInit {
 
   async showAdvancedAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: [{
         text: 'OK',
         handler: () => {

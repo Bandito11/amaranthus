@@ -208,15 +208,15 @@ export class EventProfilePage implements OnInit {
       const response = this.db.updateEvent(this.event);
       if (!response.success) {
         const opts = {
-          title: 'Error!',
-          subTitle: 'Attendance was not updated due to an unknown error. Please try again'
+          header: 'Error!',
+          message: 'Attendance was not updated due to an unknown error. Please try again'
         };
         this.showSimpleAlert(opts);
       }
     } catch (error) {
       const opts = {
-        title: 'Error!',
-        subTitle: error
+        header: 'Error!',
+        message: error
       };
       this.showSimpleAlert(opts);
     }
@@ -232,8 +232,8 @@ export class EventProfilePage implements OnInit {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();

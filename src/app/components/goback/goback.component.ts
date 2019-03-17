@@ -11,7 +11,7 @@ export class GobackComponent {
   constructor(private navCtrl: NavController) { }
 
   goBack() {
-    this.navCtrl.back();
+    this.navCtrl.pop();
   }
 
 }

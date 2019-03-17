@@ -3,7 +3,9 @@ import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 import * as XLSX from 'xlsx';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class TextTabDelimitedProvider {
 
   constructor() { }

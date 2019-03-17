@@ -52,14 +52,6 @@ export class HomePage implements OnInit {
     }, 50);
   }
 
-  goToProfile(id) {
-    this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
-  }
-
-  goToEvents() {
-    this.navCtrl.navigateForward(`${this.homeURL}/events`);
-  }
-
   showNotes(id) {
     if (this.toggle) {
       this.toggle = '';
@@ -188,8 +180,8 @@ export class HomePage implements OnInit {
         attendance: true
       });
       this.showSimpleAlert({
-        title: 'Success!',
-        subTitle: 'Student was marked present!',
+        header: 'Success!',
+        message: 'Student was marked present!',
         buttons: ['OK']
       });
     } else {
@@ -206,8 +198,8 @@ export class HomePage implements OnInit {
         attendance: false
       });
       this.showSimpleAlert({
-        title: 'Success!',
-        subTitle: 'Student was marked absent!',
+        header: 'Success!',
+        message: 'Student was marked absent!',
         buttons: ['OK']
       });
     } else {
@@ -234,8 +226,8 @@ export class HomePage implements OnInit {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();
@@ -246,10 +238,17 @@ export class HomePage implements OnInit {
       component: CreatePage
     });
     modal.present();
-    modal.onDidDismiss().then(() => {
+    modal.onDidDismiss().then(_ => {
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
     });
   }
 
+  goToProfile(id) {
+    this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
+  }
+
+  goToEvents() {
+    this.navCtrl.navigateForward(`${this.homeURL}/events`);
+  }
 }

@@ -256,8 +256,8 @@ export class StatsPage implements OnInit {
         if (response.data) {
           this.showSimpleAlert({
             buttons: ['OK'],
-            title: 'Information!',
-            subTitle: response.data
+            header: 'Information!',
+            message: response.data
           });
         }
       } catch (error) {
@@ -276,8 +276,8 @@ export class StatsPage implements OnInit {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();

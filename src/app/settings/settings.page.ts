@@ -69,20 +69,21 @@ export class SettingsPage implements OnInit {
 
   sendEmail(message: string) {
     const body = `
-    Hi,
-    For issues:
-    [Phone Model]
-    Issue: [Write a summary of my issue!]
-
-    For Feedback:
-    [Phone Model]
-    Idea: [Summary of my awesome idea!]
-    Description: ${message}
+    <p>Hi,</p>
+    <p>For issues:</p>
+    <p>[Phone Model]</p>
+    <p>Issue: [Write a summary of my issue!]</p>
+    <br>
+    <p>For Feedback:</p>
+    <p>[Phone Model]</p>
+    <p>Idea: [Summary of my awesome idea!]</p>
+    <p>Description: ${message}</p>
     `;
     let email = {
       to: 'attendancelogtracker@gmail.com',
       subject: 'Attendance Log: Browser',
-      body: body
+      body: body,
+      isHtml: true
     };
     if (this.platform.is('cordova')) {
       if (this.platform.is('android')) {
@@ -110,8 +111,8 @@ export class SettingsPage implements OnInit {
       .catch(err => {
         this.showSimpleAlert({
           buttons: ['OK'],
-          title: 'Error!',
-          subTitle: err
+          header: 'Error!',
+          message: err
         }).then(_ => this.noProducts = false);
       });
   }
@@ -129,8 +130,8 @@ export class SettingsPage implements OnInit {
             this.storage.set('boughtMasterKey', true);
             this.bought = true;
             const options: ISimpleAlertOptions = {
-              title: 'Information',
-              subTitle: 'Restored the purchase!',
+              header: 'Information',
+              message: 'Restored the purchase!',
               buttons: ['OK']
             };
             this.showSimpleAlert(options);
@@ -139,15 +140,15 @@ export class SettingsPage implements OnInit {
         loading.dismiss();
       })
         .catch(_ => {
-          this.showSimpleAlert({ buttons: ['OK'], title: 'Error!', subTitle: `No receipts available in the App Store!` });
+          this.showSimpleAlert({ buttons: ['OK'], header: 'Error!', message: `No receipts available in the App Store!` });
           loading.dismiss();
         });
     } else if (this.platform.is('ios')) {
       this.iap.restoreiOSPurchase().then(receipt => {
         if (receipt) {
           const options: ISimpleAlertOptions = {
-            title: 'Information',
-            subTitle: 'Restored the purchase!',
+            header: 'Information',
+            message: 'Restored the purchase!',
             buttons: ['OK']
           };
           this.storage.set('boughtMasterKey', true);
@@ -155,8 +156,8 @@ export class SettingsPage implements OnInit {
           this.showSimpleAlert(options);
         } else {
           const options: ISimpleAlertOptions = {
-            title: 'Information',
-            subTitle: `No receipts available in the App Store!`,
+            header: 'Information',
+            message: `No receipts available in the App Store!`,
             buttons: ['OK']
           };
           this.showSimpleAlert(options);
@@ -164,7 +165,7 @@ export class SettingsPage implements OnInit {
         loading.dismiss();
       })
         .catch(_ => {
-          this.showSimpleAlert({ buttons: ['OK'], title: 'Error!', subTitle: 'No receipts available in the App Store!' });
+          this.showSimpleAlert({ buttons: ['OK'], header: 'Error!', message: 'No receipts available in the App Store!' });
           loading.dismiss();
         });
     }
@@ -178,8 +179,8 @@ export class SettingsPage implements OnInit {
     this.iap.buy(opts.productId).then(product => {
       this.showSimpleAlert({
         buttons: ['OK'],
-        title: 'Success!',
-        subTitle: `${product.transactionId} was successfully bought.`
+        header: 'Success!',
+        message: `${product.transactionId} was successfully bought.`
       });
       this.storage.set('boughtMasterKey', true);
       this.bought = true;
@@ -188,8 +189,8 @@ export class SettingsPage implements OnInit {
       .catch(err => {
         this.showSimpleAlert({
           buttons: ['OK'],
-          title: 'Error!',
-          subTitle: err
+          header: 'Error!',
+          message: err
         });
         loading.dismiss();
       });
@@ -197,8 +198,8 @@ export class SettingsPage implements OnInit {
 
   public async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: options.buttons
     });
     alert.present();

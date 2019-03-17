@@ -53,7 +53,6 @@ export class StudentListPage implements OnInit {
   }
 
   getFilterOptions() {
-    // TODO: add for Active and No Active
     let options = [];
     const checkIfHaveClass = this.students.filter(student => {
       if (student.class) { return true; }
@@ -161,8 +160,8 @@ export class StudentListPage implements OnInit {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();

@@ -146,8 +146,8 @@ export class CalendarPage {
         attendance: true
       });
       this.showSimpleAlert({
-        title: 'Success!',
-        subTitle: 'Student was marked present!',
+        header: 'Success!',
+        message: 'Student was marked present!',
         buttons: ['OK']
       });
     } else {
@@ -168,8 +168,8 @@ export class CalendarPage {
         attendance: false
       });
       this.showSimpleAlert({
-        title: 'Success!',
-        subTitle: 'Student was marked absent!',
+        header: 'Success!',
+        message: 'Student was marked absent!',
         buttons: ['OK']
       });
     } else {
@@ -196,8 +196,8 @@ export class CalendarPage {
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: options.buttons
     });
     await alert.present();

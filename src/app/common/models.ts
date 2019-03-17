@@ -65,8 +65,8 @@ export interface IResponse<T> {
 }
 
 export interface ISimpleAlertOptions {
-  title: string;
-  subTitle: string;
+  header: string;
+  message: string;
   buttons?: string[];
   event?: string;
 }

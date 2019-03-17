@@ -3,7 +3,9 @@ import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 import * as XLSX from 'xlsx';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class CSVProvider {
 
   constructor() { }
@@ -38,7 +40,7 @@ export class CSVProvider {
         headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
       }
       if (opts.type === recordType.day) {
-        headers =           ['Id', 'Name', 'Attendance', 'Absence'];
+        headers = ['Id', 'Name', 'Attendance', 'Absence'];
       }
       try {
         const studentRecords = opts.records.map((record) => {
@@ -52,10 +54,10 @@ export class CSVProvider {
           return temp;
         });
         studentRecords.unshift(headers);
-          const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(studentRecords);
-          const csv = XLSX.utils.sheet_to_csv(ws);
-          const blob = new Blob([csv], { type: 'application/octet-stream' });
-          resolve(blob);
+        const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(studentRecords);
+        const csv = XLSX.utils.sheet_to_csv(ws);
+        const blob = new Blob([csv], { type: 'application/octet-stream' });
+        resolve(blob);
       } catch (error) {
         reject('There are no students created in database!');
       }

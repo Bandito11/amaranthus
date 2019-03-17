@@ -9,6 +9,7 @@ import { recordType } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { ActivatedRoute } from '@angular/router';
 import { ICalendar } from '../common/models';
+import { addZeroInFront } from '../common/validation';
 
 @Component({
   selector: 'app-export',
@@ -26,7 +27,6 @@ export class ExportPage {
   constructor(
     private loading: LoadingController,
     private modal: ModalController,
-    // private navParams: NavParams, // To be deleted after next update
     private csv: CSVProvider,
     private textTab: TextTabDelimitedProvider,
     private file: FileProvider,
@@ -36,16 +36,12 @@ export class ExportPage {
   ) { }
 
   ionViewWillEnter() {
-    // TODO: To be deleted after next update
-    // this.students = this.navParams.get('students');
-    // if (!this.students.length) {
-    //   this.students = [];
-    // }
+    const date = new Date();
+    this.date = `${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}`;
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
     }
-    // this.getStudentsRecords(); // To be deleted after next update
   }
 
   /**
@@ -55,7 +51,10 @@ export class ExportPage {
  */
   async exportAsXLSX() {
     let xlsxResponse;
-    const fileName = 'AttendanceLog.xlsx';
+    if (this.month) {
+      this.date = this.date.slice(0, 7);
+    }
+    const fileName = `AttendanceLog ${this.date}.xlsx`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'
@@ -98,7 +97,10 @@ export class ExportPage {
  */
   async exportAsText() {
     let textTabResponse;
-    const fileName = 'AttendanceLog.txt';
+    if (this.month) {
+      this.date = this.date.slice(0, 7);
+    }
+    const fileName = `AttendanceLog ${this.date}.txt`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'
@@ -141,7 +143,10 @@ export class ExportPage {
    */
   async exportAsCSV() {
     let csvResponse;
-    const fileName = 'AttendanceLog.csv';
+    if (this.month) {
+      this.date = this.date.slice(0, 7);
+    }
+    const fileName = `AttendanceLog ${this.date}.csv`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'

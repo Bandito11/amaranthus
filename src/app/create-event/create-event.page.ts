@@ -59,24 +59,24 @@ export class CreateEventPage implements OnInit {
     try {
       if (this.studentIds.length < 1) {
         const opts: ISimpleAlertOptions = {
-          title: 'Error',
-          subTitle: 'Have to choose at least one user from the list!'
+          header: 'Error',
+          message: 'Have to choose at least one user from the list!'
         };
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.startDate && !this.infiniteDates) {
         const opts: ISimpleAlertOptions = {
-          title: 'Error',
-          subTitle: 'Have to choose a start date!'
+          header: 'Error',
+          message: 'Have to choose a start date!'
         };
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.eventName) {
         const opts: ISimpleAlertOptions = {
-          title: 'Error',
-          subTitle: 'Have to write a name for the event!'
+          header: 'Error',
+          message: 'Have to write a name for the event!'
         };
         this.showSimpleAlert(opts);
         return;
@@ -106,8 +106,8 @@ export class CreateEventPage implements OnInit {
       if (this.endDate && !newEvent.infiniteDates) {
         if (!this.startDate) {
           this.showSimpleAlert({
-            title: 'Error!',
-            subTitle: 'If the event had an end date it has to have a start date~'
+            header: 'Error!',
+            message: 'If the event had an end date it has to have a start date~'
           });
         } else {
           newEvent = {
@@ -133,15 +133,15 @@ export class CreateEventPage implements OnInit {
               if (response.success === true) {
                 navTransition.then(() => {
                   const options = {
-                    title: 'Success!',
-                    subTitle: `${this.eventName} was created.`
+                    header: 'Success!',
+                    message: `${this.eventName} was created.`
                   };
                   this.showAdvancedAlert(options);
                 });
               } else {
                 const options = {
-                  title: 'Error',
-                  subTitle: response.error
+                  header: 'Error',
+                  message: response.error
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               }
@@ -153,8 +153,8 @@ export class CreateEventPage implements OnInit {
       alert.present();
     } catch (error) {
       const opts: ISimpleAlertOptions = {
-        title: 'Error',
-        subTitle: error
+        header: 'Error',
+        message: error
       };
       this.showSimpleAlert(opts);
     }
@@ -242,8 +242,8 @@ export class CreateEventPage implements OnInit {
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl
       .create({
-        header: options.title,
-        message: options.subTitle,
+        header: options.header,
+        message: options.message,
         buttons: options.buttons
       });
     alert.present();
@@ -251,8 +251,8 @@ export class CreateEventPage implements OnInit {
 
   private async showAdvancedAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: [
         {
           text: 'OK',

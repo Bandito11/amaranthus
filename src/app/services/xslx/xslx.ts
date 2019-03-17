@@ -3,7 +3,9 @@ import * as XLSX from 'xlsx';
 import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class XLSXProvider {
 
   constructor() { }
@@ -38,7 +40,7 @@ export class XLSXProvider {
         headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
       }
       if (opts.type === recordType.day) {
-        headers =           ['Id', 'Name', 'Attendance', 'Absence'];
+        headers = ['Id', 'Name', 'Attendance', 'Absence'];
       }
       try {
         const studentRecords = opts.records.map((record) => {

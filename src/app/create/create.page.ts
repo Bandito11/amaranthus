@@ -59,7 +59,7 @@ export class CreatePage {
       sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
       destinationType: this.camera.DestinationType.FILE_URI,
       mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG
+      encodingType: this.camera.EncodingType.JPEG
     };
     this.camera.getPicture(options).then((imageData: string) => {
       this.picture = this.webview.convertFileSrc(imageData);
@@ -74,15 +74,15 @@ export class CreatePage {
    */
   async createStudent(opts: IStudent) {
     let options: ISimpleAlertOptions = {
-      title: '',
-      subTitle: '',
+      header: '',
+      message: '',
       buttons: []
     };
     if (!opts.firstName || !opts.lastName || !opts.id) {
       options = {
         ...options,
-        title: 'Warning!',
-        subTitle: 'Some fields doesn\'t have the required info',
+        header: 'Warning!',
+        message: 'Some fields doesn\'t have the required info',
         buttons: [...['OK']]
       };
       this.showSimpleAlert(options);
@@ -110,20 +110,20 @@ export class CreatePage {
                   if (response.success === true) {
                     navTransition.then(() => {
                       const userCreatedMsg = {
-                        title: 'Success!',
-                        subTitle: `${opts.firstName} ${opts.lastName} was created.`
+                        header: 'Success!',
+                        message: `${opts.firstName} ${opts.lastName} was created.`
                       };
                       this.showAdvancedAlert(userCreatedMsg);
                     });
                   } else {
                     const errorMsg = {
-                      title: 'Error',
-                      subTitle: response.error
+                      header: 'Error',
+                      message: response.error
                     };
                     navTransition.then(() => this.showAdvancedAlert(errorMsg));
                   }
                 })
-                .catch(error => this.showSimpleAlert({ title: 'Error', subTitle: error.error }));
+                .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
               return false;
             }
           }
@@ -141,8 +141,8 @@ export class CreatePage {
    */
   async showAdvancedAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: [
         {
           text: 'OK',
@@ -184,8 +184,8 @@ export class CreatePage {
    */
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
-      header: options.title,
-      message: options.subTitle,
+      header: options.header,
+      message: options.message,
       buttons: options.buttons
     });
     alert.present();

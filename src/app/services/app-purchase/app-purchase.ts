@@ -2,7 +2,9 @@ import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
 import { Injectable } from '@angular/core';
 import { IProductRestore, IProductBought, IProductGet } from 'src/app/common/models';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AppPurchaseProvider {
 
   constructor(private iap: InAppPurchase) {
