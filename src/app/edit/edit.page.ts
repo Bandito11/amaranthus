@@ -6,6 +6,7 @@ import { handleError } from '../common/handleError';
 import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-edit',
@@ -48,7 +49,9 @@ export class EditPage implements OnInit {
     private navParams: NavParams,
     private camera: Camera,
     private modalCtrl: ModalController,
-    private webview: WebView
+    private webview: WebView,
+    private file: File,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -187,21 +190,63 @@ export class EditPage implements OnInit {
     return opts.picture;
   }
 
+  /**
+   * Browse phone gallery
+   *
+   * @memberof EditPage
+   */
   browsePicture() {
     const options: CameraOptions = {
       quality: 100,
       sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-      targetWidth: 250,
-      targetHeight: 250,
       destinationType: this.camera.DestinationType.FILE_URI,
       mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG
+      encodingType: this.camera.EncodingType.PNG,
+      targetWidth: 250,
+      targetHeight: 250
     };
     this.camera.getPicture(options)
       .then((imageData: string) => {
-        // this.picture = 'data:image/png;base64,' + imageData;
-        // this.picture = imageData.replace('assets-library://', 'cdvfile://localhost/assets-library/');
-        this.picture = this.webview.convertFileSrc(imageData);
+        if (this.platform.is('android')) {
+          this.picture = this.webview.convertFileSrc(imageData);
+          return 0;
+        }
+        const array = imageData.split('/');
+        const fileName = array.pop();
+        const directory = array.slice(0, array.length).join('/');
+        const path = this.file.dataDirectory;
+        const outDirectory = 'images';
+        this.file.checkDir(path, outDirectory).then(() => {
+          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+            .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
+            .catch(e => {
+              if (e.code === 12) {
+                this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                return 0;
+              }
+              const opts: ISimpleAlertOptions = {
+                header: 'Error!',
+                message: JSON.stringify(e)
+              };
+              this.showSimpleAlert(opts);
+            });
+        }).catch(() => {
+          this.file.createDir(path, outDirectory, true).then(() => {
+            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
+              .catch(e => {
+                if (e.code === 12) {
+                  this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  return 0;
+                }
+                const opts: ISimpleAlertOptions = {
+                  header: 'Error',
+                  message: JSON.stringify(e)
+                };
+                this.showSimpleAlert(opts);
+              });
+          });
+        });
       },
         error => handleError(error)
       );

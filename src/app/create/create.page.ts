@@ -1,4 +1,4 @@
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { Component } from '@angular/core';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
@@ -6,6 +6,7 @@ import { IStudent, ISimpleAlertOptions } from '../common/models';
 import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-create',
@@ -26,7 +27,9 @@ export class CreatePage {
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     private camera: Camera,
-    private webview: WebView
+    private webview: WebView,
+    private file: File,
+    private platform: Platform
   ) { }
 
   ionViewWillEnter() {
@@ -51,7 +54,9 @@ export class CreatePage {
   }
 
   /**
-   * Browse phone gallery for a picture
+   * Browse phone gallery
+   *
+   * @memberof EditPage
    */
   browsePicture() {
     const options: CameraOptions = {
@@ -59,14 +64,57 @@ export class CreatePage {
       sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
       destinationType: this.camera.DestinationType.FILE_URI,
       mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.JPEG
+      encodingType: this.camera.EncodingType.PNG,
+      targetWidth: 250,
+      targetHeight: 250
     };
-    this.camera.getPicture(options).then((imageData: string) => {
-      this.picture = this.webview.convertFileSrc(imageData);
-    },
-      error => handleError(error)
-    );
+    this.camera.getPicture(options)
+      .then((imageData: string) => {
+        if (this.platform.is('android')) {
+          this.picture = this.webview.convertFileSrc(imageData);
+          return 0;
+        }
+        const array = imageData.split('/');
+        const fileName = array.pop();
+        const directory = array.slice(0, array.length).join('/');
+        const path = this.file.dataDirectory;
+        const outDirectory = 'images';
+        this.file.checkDir(path, outDirectory).then(() => {
+          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+            .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
+            .catch(e => {
+              if (e.code === 12) {
+                this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                return 0;
+              }
+              const opts: ISimpleAlertOptions = {
+                header: 'Error!',
+                message: JSON.stringify(e)
+              };
+              this.showSimpleAlert(opts);
+            });
+        }).catch(() => {
+          this.file.createDir(path, outDirectory, true).then(() => {
+            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
+              .catch(e => {
+                if (e.code === 12) {
+                  this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  return 0;
+                }
+                const opts: ISimpleAlertOptions = {
+                  header: 'Error',
+                  message: JSON.stringify(e)
+                };
+                this.showSimpleAlert(opts);
+              });
+          });
+        });
+      },
+        error => handleError(error)
+      );
   }
+
   /**
    *
    * @param opts Student data
