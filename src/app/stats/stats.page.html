@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Stats</ion-title>
     <ion-buttons *ngIf="event" slot="start">
-      <app-goback></app-goback>
+        <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button *ngIf="students.length > 0" (click)="toExportPage()">

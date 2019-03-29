@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ModalController, AlertController, NavController } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';

@@ -1,33 +1,75 @@
-<ion-tabs>
+<ion-split-pane contentId="menu-content">
+  <!--  Side menu  -->
+  <div contentId="menu-content">
 
-  <ion-tab-bar slot="bottom" color="primary">
+    <ion-header color="primary">
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
 
-    <ion-tab-button tab="home">
-      <!--was MainPage in v3-->
-      <ion-icon name="home"></ion-icon>
-    </ion-tab-button>
+      <ion-content>
+        <ion-list lines="none">
+          <ion-item *ngFor="let page of pages" routerLink="{{page.route}}" (click)="setSelectedTab(page.text)">
+            <ion-label>{{page.text}}</ion-label>
+          </ion-item>
+        </ion-list>
 
-    <ion-tab-button tab="calendar">
-      <ion-icon name="calendar"></ion-icon>
-    </ion-tab-button>
+      </ion-content>
+    </ion-header>
 
-    <ion-tab-button tab="stats">
-      <!--Was TablePage in v3-->
-      <ion-icon name="stats"></ion-icon>
-    </ion-tab-button>
+  </div>
 
-    <ion-tab-button tab="roster">
-      <ion-icon name="people"></ion-icon>
-    </ion-tab-button>
+  <ion-tabs id="menu-content">
 
-    <ion-tab-button tab="settings">
-      <ion-icon name="cog"></ion-icon>
-    </ion-tab-button>
+    <ion-tab-bar *ngIf="!viewIsLarge" slot="bottom" color="primary">
 
-    <ion-tab-button tab="login" *ngIf=" this.platform.is('desktop') || ( this.platform.is('mobile') && (this.platform.is('ipad') || this.platform.is('tablet') ) )">
-      <ion-icon name="log-in"></ion-icon>
-    </ion-tab-button>
+      <ion-tab-button tab="home">
+        <!--was MainPage in v3-->
+        <ion-icon name="home"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Home
+        </ion-label>
+      </ion-tab-button>
 
-  </ion-tab-bar>
+      <ion-tab-button tab="calendar">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Calendar
+        </ion-label>
+      </ion-tab-button>
 
-</ion-tabs>
+      <ion-tab-button tab="stats">
+        <!--Was TablePage in v3-->
+        <ion-icon name="stats"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Stats
+        </ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="roster">
+        <!--Was StudentListPage in v3-->
+        <ion-icon name="people"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Roster
+        </ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="settings">
+        <ion-icon name="cog"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Settings
+        </ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="login"
+        *ngIf=" this.platform.is('desktop') || this.platform.is('ipad') || this.platform.is('tablet')">
+        <ion-icon name="log-in"></ion-icon>
+        <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
+          Login
+        </ion-label>
+      </ion-tab-button>
+
+    </ion-tab-bar>
+
+  </ion-tabs>
+</ion-split-pane>
