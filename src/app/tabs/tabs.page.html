@@ -1,11 +1,12 @@
 <ion-split-pane contentId="menu-content">
   <!--  Side menu  -->
-  <div contentId="menu-content">
+  <ion-menu contentId="menu-content" >
 
-    <ion-header color="primary">
-      <ion-toolbar>
+    <ion-header>
+      <ion-toolbar color="primary">
         <ion-title>Menu</ion-title>
       </ion-toolbar>
+    </ion-header>
 
       <ion-content>
         <ion-list lines="none">
@@ -13,11 +14,9 @@
             <ion-label>{{page.text}}</ion-label>
           </ion-item>
         </ion-list>
-
       </ion-content>
-    </ion-header>
 
-  </div>
+  </ion-menu>
 
   <ion-tabs id="menu-content">
 

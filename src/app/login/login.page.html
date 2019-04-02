@@ -1,6 +1,16 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Login</ion-title>
+    <ion-buttons slot="start">
+      <ion-button *ngIf="modalVal" (click)="cancel()">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!modalVal" (click)="goToLogin()">
+        Set Password
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

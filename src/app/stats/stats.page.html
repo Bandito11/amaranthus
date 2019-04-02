@@ -28,7 +28,7 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label>Months: </ion-label>
+      <ion-label>Month: </ion-label>
       <ion-select interface="popover" multiple="false" #month (ionChange)="queryDataByMonth(month.value)">
         <ion-select-option *ngFor="let month of months" value="{{month}}">{{month}}</ion-select-option>
       </ion-select>
