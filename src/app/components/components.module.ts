@@ -1,3 +1,4 @@
+import { MenuButtonComponent } from './menu-button/menu-button.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { LoaderComponent } from './loader/loader.component';
 import { NgModule } from '@angular/core';
@@ -12,7 +13,8 @@ import { CancelComponent } from './cancel/cancel.component';
         LoaderComponent,
         GobackComponent,
         CalendarComponent,
-        CancelComponent
+        CancelComponent,
+        MenuButtonComponent
     ],
     imports: [
         IonicModule,
@@ -22,7 +24,8 @@ import { CancelComponent } from './cancel/cancel.component';
         LoaderComponent,
         GobackComponent,
         CalendarComponent,
-        CancelComponent
+        CancelComponent,
+        MenuButtonComponent
     ]
 })
 export class ComponentsModule { }
