@@ -41,21 +41,17 @@ export class SettingsPage implements OnInit {
         this.bought = false;
       }
     });
-  }
-
-  ionViewWillEnter() {
-    if (this.products.length < 1) {
       if (this.platform.is('cordova')) {
-        this.storage.get('products').then(products => {
-          if (products) {
-            this.products = products;
-            this.noProducts = false;
-          } else {
-            this.getProducts();
-          }
-        });
+        // this.storage.get('products').then(products => {
+        //   if (products) {
+        //     this.products = products;
+        //     this.noProducts = false;
+        //   } else {
+        //     this.getProducts();
+        //   }
+        // });
+        this.getProducts();
       }
-    }
   }
 
   openMarketPage() {

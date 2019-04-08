@@ -3,5 +3,8 @@
   "integrations": {
     "cordova": {}
   },
-  "type": "angular"
+  "type": "angular",
+  "hooks": {
+    "build:after":"src/util.js"
+  }
 }
