@@ -1106,7 +1106,10 @@ export class AmaranthusDBProvider {
     }
   }
 
-  // query by isActive
+  /**
+   *
+   * @param date
+   */
   getAllActiveStudents(date: ICalendar): IResponse<any[]> {
     try {
       const students = studentsColl.find({
