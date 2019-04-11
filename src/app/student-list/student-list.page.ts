@@ -15,14 +15,14 @@ export class StudentListPage implements OnInit {
   students: IStudent[] = [];
   private unfilteredStudents: IStudent[] = [];
   query: string;
-  selectOptions: string[] = [
+  selectOptions = [
     'Id',
     'Name',
     'None'
   ];
-
   filterOptions: string[];
   @ViewChild('sort') sortElement;
+  appStart: boolean;
 
   constructor(
     public alertCtrl: AlertController,
@@ -32,20 +32,19 @@ export class StudentListPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.sortElement.placeholder = 'None';
-    const studentInterval = setInterval(() => {
-      this.getStudents();
-      this.filterOptions = this.getFilterOptions();
-      if (this.students.length > 0) {
-        clearInterval(studentInterval);
-      }
-    }, 50);
+    this.students = [];
+    this.unfilteredStudents = [];
+    this.getStudents();
+    this.filterOptions = this.getFilterOptions();
   }
 
   ionViewWillEnter() {
+    this.sortElement.placeholder = 'None';
     this.query = 'None';
-    this.getStudents();
-    this.filterOptions = this.getFilterOptions();
+    if (this.appStart) {
+      this.getStudents();
+      this.filterOptions = this.getFilterOptions();
+    }
   }
 
   private initializeStudentsList() {

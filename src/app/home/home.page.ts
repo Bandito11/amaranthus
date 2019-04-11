@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController, AlertController, NavController, Platform, IonSplitPane } from '@ionic/angular';
+import { AlertController, ModalController, NavController, LoadingController, IonVirtualScroll } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
@@ -14,12 +14,13 @@ import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/
 export class HomePage implements OnInit {
   students: IStudent[];
   private unfilteredStudents: IStudent[];
-  selectOptions: string[];
+  selectOptions = ['Id', 'Name', 'None'];
   filterOptions: string[];
   date: ICalendar;
   toggle;
   timer;
   homeURL = '/tabs/tabs/home';
+  appStart: boolean;
   @ViewChild('notes') notesElement;
   @ViewChild('sort') sortElement;
 
@@ -27,7 +28,8 @@ export class HomePage implements OnInit {
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     private modalCtrl: ModalController,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private loadingController: LoadingController
   ) { }
 
   ngOnInit() {
@@ -37,19 +39,51 @@ export class HomePage implements OnInit {
       day: currentDate.getDate(),
       year: currentDate.getFullYear()
     };
-    this.selectOptions = ['Id', 'Name', 'None'];
+    this.students = [];
+    this.unfilteredStudents = [];
+    this.getStudents();
+    this.filterOptions = this.getFilterOptions();
   }
 
   ionViewWillEnter() {
     this.timer = 0;
     this.sortElement.placeholder = 'None';
-    const studentInterval = setInterval(() => {
+    if (this.appStart) {
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
-      if (this.students.length > 0) {
-        clearInterval(studentInterval);
+      //////////// Use for testing only!///////////
+      // for (let i = 0; i < this.students.length; i++) {
+      //   this.db.insertTest();
+      // }
+      /////////////////////////////////////////////
+    }
+  }
+
+  private async getStudents() {
+    const date = {
+      ...this.date,
+      month: this.date.month + 1
+    };
+    try {
+      const studentResponse = this.db.getAllActiveStudents(date);
+      if (studentResponse.success === true && studentResponse.data) {
+        this.students = studentResponse.data;
+        this.unfilteredStudents = studentResponse.data;
+      } else {
+        const loading = await this.loadingController.create();
+        await loading.present();
+        const studentTimeout = setTimeout(async () => {
+          this.getStudents();
+          if (this.students.length > 0) {
+            await loading.dismiss();
+            this.appStart = true;
+            clearTimeout(studentTimeout);
+          }
+        }, 3000);
       }
-    }, 50);
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   showNotes(id) {
@@ -126,26 +160,6 @@ export class HomePage implements OnInit {
     query ? this.filterStudentsList(query) : this.initializeStudentsList();
   }
 
-  private getStudents() {
-    this.students = [];
-    this.unfilteredStudents = [];
-    const date = {
-      ...this.date,
-      month: this.date.month + 1
-    };
-    try {
-      const studentResponse = this.db.getAllActiveStudents(date);
-      if (studentResponse.success === true) {
-        this.students = [...studentResponse.data];
-        this.unfilteredStudents = [...studentResponse.data];
-      } else {
-        handleError(studentResponse.error);
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
   sortData(option: string) {
     switch (option) {
       case 'Id':
@@ -219,8 +233,8 @@ export class HomePage implements OnInit {
         return student;
       }
     });
-    this.students = [...results];
     this.unfilteredStudents = [...results];
+    this.students = [...results];
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {

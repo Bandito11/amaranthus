@@ -3,7 +3,7 @@ import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { filterStudentsList } from 'src/app/common/search';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonVirtualScroll } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { ActivatedRoute } from '@angular/router';
 
@@ -19,7 +19,7 @@ export class CalendarPage {
   private date: ICalendar;
   timer;
   @ViewChild('notes') notesElement: ElementRef;
-  @ViewChild('slidingUser') slidingUser;
+  // @ViewChild('slidingUser') slidingUser;
 
   toggle: string;
   search: string;
@@ -178,7 +178,7 @@ export class CalendarPage {
   }
 
   private updateStudentAttendance(opts: { id: string; absence: boolean; attendance: boolean }) {
-    this.slidingUser.close();
+    // this.slidingUser.close();
     const results = this.students.map(student => {
       if (student.id === opts.id) {
         return {

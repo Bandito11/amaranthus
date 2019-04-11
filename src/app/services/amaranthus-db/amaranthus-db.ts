@@ -24,7 +24,18 @@ let amaranthusDB: Loki;
 })
 export class AmaranthusDBProvider {
   constructor(private storage: Storage) {
-    this.createDB();
+    this.initialize();
+  }
+
+  private initialize() {
+    const ionicStorageAdapter = new IonicStorageAdapter();
+    const lokiOptions: Partial<LokiConfigOptions> = {
+      autosave: true,
+      autoload: true,
+      adapter: ionicStorageAdapter,
+      autoloadCallback: this.loadDatabase
+    };
+    amaranthusDB = new Loki('amaranthus.db', lokiOptions);
   }
 
   /**
@@ -45,17 +56,6 @@ export class AmaranthusDBProvider {
     if (noEventPropRecords) {
       recordsColl.update(noEventPropRecords);
     }
-  }
-
-  private createDB() {
-    const ionicStorageAdapter = new IonicStorageAdapter();
-    const lokiOptions: Partial<LokiConfigOptions> = {
-      autosave: true,
-      autoload: true,
-      adapter: ionicStorageAdapter,
-      autoloadCallback: this.loadDatabase
-    };
-    amaranthusDB = new Loki('amaranthus.db', lokiOptions);
   }
 
   private loadDatabase() {
@@ -395,6 +395,33 @@ export class AmaranthusDBProvider {
       if (!studentsColl) {
         return error;
       }
+    }
+  }
+
+  insertTest() {
+
+    const student: IStudent = {
+      id: (Math.random() * 100).toString(),
+      firstName: 'Esteban',
+      lastName: 'Morales',
+      address: 'string',
+      phoneNumber: 'string',
+      town: 'string',
+      state: 'string',
+      picture: './assets/profilePics/default.png',
+      gender: 'male',
+      fatherName: 'string',
+      motherName: 'string',
+      emergencyContactName: 'tring',
+      emergencyRelationship: 'string',
+      emergencyContactPhoneNumber: 'string',
+      isActive: true,
+      class: 'string'
+    };
+    try {
+      studentsColl.insert(student);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -1080,7 +1107,7 @@ export class AmaranthusDBProvider {
   }
 
   // query by isActive
-  getAllActiveStudents(date: ICalendar): IResponse<IStudent[]> {
+  getAllActiveStudents(date: ICalendar): IResponse<any[]> {
     try {
       const students = studentsColl.find({
         'isActive': {
@@ -1105,7 +1132,13 @@ export class AmaranthusDBProvider {
           }
         });
         let newStudent = {
-          ...student,
+          id: student.id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          initial: student.initial,
+          class: student.class,
+          phoneNumber: student.phoneNumber,
+          picture: student.picture,
           attendance: false,
           absence: false,
           notes: null
@@ -1125,7 +1158,11 @@ export class AmaranthusDBProvider {
         }
         return newStudent;
       }); // got results
-      return { success: true, error: null, data: results };
+      return {
+        success: true,
+        error: null,
+        data: results
+      };
     } catch (error) {
       if (!studentsColl) {
         return error;

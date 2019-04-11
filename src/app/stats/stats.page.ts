@@ -14,7 +14,7 @@ import { handleError } from 'src/app/common/handleError';
   styleUrls: ['./stats.page.scss'],
 })
 export class StatsPage implements OnInit {
-  students: IRecord[] = [];
+  students: IRecord[];
   private unfilteredStudents: IRecord[] = [];
   query: string;
   monthQuery: string;
@@ -53,6 +53,8 @@ export class StatsPage implements OnInit {
   ngOnInit() {
     this.monthQuery = this.months[this.currentDate.getMonth()];
     this.yearQuery = this.currentDate.getFullYear().toString();
+    this.students = [];
+    this.unfilteredStudents = [];
   }
 
   initializeStudents() {

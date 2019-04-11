@@ -2,7 +2,7 @@ export interface IStudent {
   firstName: string;
   initial?: string;
   lastName: string;
-  id: string;
+  id: any;
   address: string;
   phoneNumber: string;
   town: string;
@@ -25,13 +25,15 @@ export interface IEventControls {
   endDate;
   startDate;
 }
+
 export interface INote {
-  id: string;
+  id: any;
   notes: string;
   month: number;
   day: number;
   year: number;
 }
+
 export interface IEvent {
   logo: string;
   name: string;
@@ -39,14 +41,14 @@ export interface IEvent {
   endDate: string;
   infiniteDates: boolean;
   members: {
-    id: string;
+    id: any;
     attendance: boolean;
     absence: boolean;
   }[];
 }
 
 export interface IStudentEvent {
-  id: string;
+  id: any;
   attendance: boolean;
   absence: boolean;
 }
@@ -72,7 +74,7 @@ export interface ISimpleAlertOptions {
 }
 
 export interface IRecord {
-  id: string;
+  id: any;
   attendance: boolean;
   absence: boolean;
   year: number;
@@ -95,23 +97,25 @@ export interface ICalendar {
 }
 
 export interface IProductGet {
-  id: string;
+  id: any;
   title: string;
   description: string;
   currency: string;
   price: any;
   priceAsDecimal: any;
 }
+
 export interface IProductBought {
-  transactionId: string;
+  transactionId: any;
   receipt: string;
   signature: string;
   productType: string;
 }
+
 export interface IProductRestore {
-  productId: string;
+  productId: any;
   state: string | number;
-  transactionId: string;
+  transactionId: any;
   type: string;
   date: string;
   productType: string;

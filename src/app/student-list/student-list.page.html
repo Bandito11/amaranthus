@@ -29,65 +29,67 @@
     </ion-select>
   </ion-item>
   <ion-list lines="none">
-    <ion-card *ngFor="let student of students" (click)="goToProfile(student.id)">
-      <ion-card-header>
-        <ion-card-title>{{student.firstName}}
-          <span *ngIf="student.initial">{{student.initial[0]}}.</span> {{student.lastName}}
-        </ion-card-title>
-        <ion-card-subtitle><span class="label">ID: </span>{{student.id}}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="3">
-              <ion-thumbnail>
-                <img src="{{student.picture}}" alt="An image of user">
-              </ion-thumbnail>
-            </ion-col>
-            <ion-col size="9">
-              <ion-item>
-                <ion-label text-wrap>
-                  <span class="label">Address: </span>{{student.address}}
-                </ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-label text-wrap>
-                  <span class="label">Town: </span>{{student.town}}
-                </ion-label>
-              </ion-item>
-              <ion-item>
-                <ion-label text-wrap>
-                  <span class="label">State: </span>{{student.state}}
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="student.class">
-                <ion-label text-wrap>
-                  <span class="label">Class: </span>{{student.class}}
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="student.phoneNumber">
-                <ion-label text-wrap>
-                  <span class="label">Phone: </span>{{student.phoneNumber}}
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="student.emergencyContactName">
-                <ion-label text-wrap>
-                  <span class="label">Emergency Contact: </span>{{student.emergencyContactName}}
-                </ion-label>
-              </ion-item>
-              <ion-item *ngIf="student.emergencyContactPhoneNumber">
-                <ion-label text-wrap>
-                  <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
-                </ion-label>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <p class="attended">
-          Tap to see {{student.firstName}}'s profile!
-        </p>
-      </ion-card-content>
-    </ion-card>
+    <ion-virtual-scroll [items]="students" approxHeaderHeight="44px" approxItemHeight="270px">
+      <ion-card *virtualItem="let student" (click)="goToProfile(student.id)">
+        <ion-card-header>
+          <ion-card-title>{{student.firstName}}
+            <span *ngIf="student.initial">{{student.initial[0]}}.</span> {{student.lastName}}
+          </ion-card-title>
+          <ion-card-subtitle><span class="label">ID: </span>{{student.id}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="3">
+                <ion-thumbnail>
+                  <ion-img src="{{student.picture}}" alt="An image of user"></ion-img>
+                </ion-thumbnail>
+              </ion-col>
+              <ion-col size="9">
+                <ion-item>
+                  <ion-label text-wrap>
+                    <span class="label">Address: </span>{{student.address}}
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label text-wrap>
+                    <span class="label">Town: </span>{{student.town}}
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label text-wrap>
+                    <span class="label">State: </span>{{student.state}}
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="student.class">
+                  <ion-label text-wrap>
+                    <span class="label">Class: </span>{{student.class}}
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="student.phoneNumber">
+                  <ion-label text-wrap>
+                    <span class="label">Phone: </span>{{student.phoneNumber}}
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="student.emergencyContactName">
+                  <ion-label text-wrap>
+                    <span class="label">Emergency Contact: </span>{{student.emergencyContactName}}
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="student.emergencyContactPhoneNumber">
+                  <ion-label text-wrap>
+                    <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <p class="attended">
+            Tap to see {{student.firstName}}'s profile!
+          </p>
+        </ion-card-content>
+      </ion-card>
+    </ion-virtual-scroll>
   </ion-list>
 
 </ion-content>
