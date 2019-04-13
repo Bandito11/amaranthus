@@ -27,7 +27,7 @@ export class AmaranthusDBProvider {
     this.initialize();
   }
 
-  private initialize() {
+  initialize() {
     const ionicStorageAdapter = new IonicStorageAdapter();
     const lokiOptions: Partial<LokiConfigOptions> = {
       autosave: true,
@@ -1142,6 +1142,7 @@ export class AmaranthusDBProvider {
           class: student.class,
           phoneNumber: student.phoneNumber,
           picture: student.picture,
+          gender: student.gender,
           attendance: false,
           absence: false,
           notes: null

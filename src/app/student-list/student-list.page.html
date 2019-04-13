@@ -22,7 +22,7 @@
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label>Filter by class: </ion-label>
+    <ion-label>Filter by: </ion-label>
     <ion-select interface="popover" multiple="false" placeholder="None" #filter
       (ionChange)="filterByClass(filter.value)">
       <ion-select-option *ngFor="let class of filterOptions" value="{{class}}">{{class}}</ion-select-option>
@@ -79,6 +79,13 @@
                 <ion-item *ngIf="student.emergencyContactPhoneNumber">
                   <ion-label text-wrap>
                     <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngIf="!student.isActive">
+                  <ion-label text-wrap>
+                    <p>
+                      Student is not active on the roster!
+                    </p>
                   </ion-label>
                 </ion-item>
               </ion-col>

@@ -21,7 +21,7 @@
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label>Filter by class: </ion-label>
+    <ion-label>Filter by: </ion-label>
     <ion-select interface="popover" multiple="false" placeholder="None" #filter
       (ionChange)="filterByClass(filter.value)">
       <ion-select-option *ngFor="let class of filterOptions" value="{{class}}">{{class}}</ion-select-option>
@@ -29,7 +29,7 @@
   </ion-item>
   <ion-list lines="none" padding>
     <ion-virtual-scroll [items]="students" approxHeaderHeight="44px" approxItemHeight="270px">
-      <ion-card *virtualItem="let student">
+      <ion-card *virtualItem="let student" class="bottom">
         <ion-card-header>
           <ion-card-title>{{student.firstName}}
             <span *ngIf="student.initial">{{student.initial[0]}}.</span> {{student.lastName}}
@@ -77,7 +77,7 @@
           <ion-item *ngIf="toggle == student.id" class="top">
             <textarea #notes (keyup)="addNotes({id: student.id, notes:notes.value})">{{student.notes}}</textarea>
           </ion-item>
-          <ion-item class="pad">
+          <ion-item>
             <ion-label class="attended" *ngIf="student.attendance" text-wrap>
               {{student.firstName}}'s present today!
             </ion-label>

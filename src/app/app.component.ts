@@ -1,3 +1,4 @@
+import { AmaranthusDBProvider } from './services/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
 
 import { Platform } from '@ionic/angular';

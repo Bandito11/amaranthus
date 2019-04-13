@@ -17,7 +17,7 @@
     <ion-virtual-scroll [items]="students" approxHeaderWidth="380px" approxHeaderHeight="44px" approxItemWidth="380px"
       approxItemHeight="240px">
       <!-- <ion-item-sliding *ngFor="let student of students" #slidingUser> -->
-      <div *virtualItem="let student" padding>
+      <div *virtualItem="let student" class="bottom">
         <ion-item>
           <ion-avatar slot="start">
             <ion-img src="{{student.picture}}" alt="no image"></ion-img>
@@ -41,11 +41,11 @@
                 <ion-icon name="paper"></ion-icon>
               </ion-button>
             </ion-buttons>
-            <ion-item *ngIf="toggle == student.id" padding>
+            <ion-item *ngIf="toggle == student.id" class="top">
             <textarea #notes (keyup)="addNotes({id: student.id, notes:notes.value})"
               padding>{{student.notes}}</textarea>
             </ion-item>
-            <div>
+            <div class="pad">
               <p class="left attended" *ngIf="student.attendance">
                 {{student.firstName}}'s is present this day!
               </p>

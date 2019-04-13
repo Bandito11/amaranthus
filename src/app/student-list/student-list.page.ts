@@ -36,6 +36,7 @@ export class StudentListPage implements OnInit {
     this.unfilteredStudents = [];
     this.getStudents();
     this.filterOptions = this.getFilterOptions();
+    this.appStart = true;
   }
 
   ionViewWillEnter() {
@@ -54,14 +55,16 @@ export class StudentListPage implements OnInit {
   getFilterOptions() {
     let options = [];
     const checkIfHaveClass = this.students.filter(student => {
-      if (student.class) { return true; }
+      if (student.class) {
+        return true;
+      }
     });
     for (const student of checkIfHaveClass) {
       if (options.indexOf(student.class) === -1) {
         options = [...options, student.class];
       }
     }
-    options = [...options, 'Active', 'Not Active', 'None'];
+    options = [...options, 'Active', 'Not Active', 'Male', 'Female', 'Undisclosed', 'None'];
     return options;
   }
 
@@ -70,16 +73,40 @@ export class StudentListPage implements OnInit {
   }
 
   filterByClass(option: string) {
+    let newQuery = [];
     switch (option) {
+      case 'Male':
+      case 'Female':
+      case 'Undisclosed':
+      const gender = option.toLowerCase();
+        newQuery = this.unfilteredStudents.filter(student => {
+          if (student.gender === gender) {
+            return student;
+          }
+        });
+        this.students = [...newQuery];
+        break;
       case 'Active':
+      newQuery = this.unfilteredStudents.filter(student => {
+        if (student.isActive) {
+          return student;
+        }
+      });
+      this.students = [...newQuery];
+      break;
       case 'Not Active':
-        this.filterByIsActive(option);
+      newQuery = this.unfilteredStudents.filter(student => {
+        if (!student.isActive) {
+          return student;
+        }
+      });
+      this.students = [...newQuery];
         break;
       case 'None':
         this.initializeStudentsList();
         break;
       default:
-        const newQuery = this.unfilteredStudents.filter(student => {
+        newQuery = this.unfilteredStudents.filter(student => {
           if (student.class === option) {
             return student;
           }
@@ -120,19 +147,6 @@ export class StudentListPage implements OnInit {
     }
   }
 
-  filterByIsActive(option: string) {
-    let filteredStudents;
-    if (option === 'Active') {
-      filteredStudents = this.unfilteredStudents.filter(student => {
-        if (student.isActive) { return student; }
-      });
-    } else {
-      filteredStudents = this.unfilteredStudents.filter(student => {
-        if (!student.isActive) { return student; }
-      });
-    }
-    this.students = filteredStudents;
-  }
   sortStudentsbyId() {
     this.students = sortStudentsbyId(this.students);
   }

@@ -74,8 +74,9 @@ export class HomePage implements OnInit {
         await loading.present();
         const studentTimeout = setTimeout(async () => {
           this.getStudents();
+          this.filterOptions = this.getFilterOptions();
+          await loading.dismiss();
           if (this.students.length > 0) {
-            await loading.dismiss();
             this.appStart = true;
             clearTimeout(studentTimeout);
           }
@@ -134,21 +135,35 @@ export class HomePage implements OnInit {
         options = [...options, student.class];
       }
     }
-    options = [...options, 'None'];
-    return options.sort();
+    options = [...options, 'Male', 'Female', 'Undisclosed', 'None'];
+    return options;
   }
 
   filterByClass(option: string) {
-    if (option === 'None') {
-      this.initializeStudentsList();
-      return;
+    let newQuery = [];
+    switch (option) {
+      case 'Male':
+      case 'Female':
+      case 'Undisclosed':
+      const gender = option.toLowerCase();
+        newQuery = this.unfilteredStudents.filter(student => {
+          if (student.gender === gender) {
+            return student;
+          }
+        });
+        this.students = [...newQuery];
+        break;
+      case 'None':
+        this.initializeStudentsList();
+        break;
+      default:
+        newQuery = this.unfilteredStudents.filter(student => {
+          if (student.class === option) {
+            return student;
+          }
+        });
+        this.students = [...newQuery];
     }
-    const newQuery = this.unfilteredStudents.filter(student => {
-      if (student.class === option) {
-        return student;
-      }
-    });
-    this.students = [...newQuery];
   }
 
   private initializeStudentsList() {

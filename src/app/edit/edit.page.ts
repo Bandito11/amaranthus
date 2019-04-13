@@ -273,7 +273,7 @@ export class EditPage implements OnInit {
           alert.dismiss()
             .then(() => {
               if (options['event'] === 'delete') {
-                this.navCtrl.navigateRoot('/tabs/tabs/home').then(() => this.modalCtrl.dismiss());
+                this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
               } else {
                 this.modalCtrl.dismiss();
               }
