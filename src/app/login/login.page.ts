@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AlertController, NavController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { ISimpleAlertOptions } from '../common/models';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-login',
@@ -11,13 +12,61 @@ import { ISimpleAlertOptions } from '../common/models';
 export class LoginPage {
   homeURL = '/tabs/tabs/login';
   @Input() modalVal: string;
-
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        cancel: '',
+        password: ''
+      }
+    },
+    id: '',
+    phone: '',
+    submit: ''
+  };
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Login',
+        buttons: {
+          cancel: 'Cancel',
+          password: 'Set Password'
+        }
+      },
+      id: 'ID or Full Name with a space in between',
+      phone: 'Phone Number',
+      submit: 'Submit'
+    },
+    spanish: {
+      toolbar: {
+        title: 'Sesión',
+        buttons: {
+          cancel: 'Cancelar',
+          password: 'Contraseña'
+        }
+      },
+      id: 'Id o nombre completo con espacio entre medio',
+      phone: 'Teléfono',
+      submit: 'Someter'
+    }
+  };
   constructor(
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     public navCtrl: NavController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private storage: Storage
   ) { }
+
+  ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
+  }
 
   async cancel() {
     const alert = await this.alertCtrl.create({
@@ -76,7 +125,7 @@ export class LoginPage {
     alert.present();
   }
 
-  private async goToLogin() {
+  async goToLogin() {
     const alert = await this.alertCtrl.create({
       header: 'Information',
       subHeader: `This component will create a new Login Screen that cannot be canceled

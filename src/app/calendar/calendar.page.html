@@ -9,7 +9,7 @@
 </ion-header>
 
 <ion-content padding class="calendar">
-  <calendar-component (getDate)="getDate($event)"></calendar-component>
+  <calendar-component [language]="language" (getDate)="getDate($event)"></calendar-component>
   <h4>{{currentDate}}</h4>
   <ion-searchbar [(ngModel)]="search" (ionInput)="searchStudent()" animated="true" type="search">
   </ion-searchbar>
@@ -24,7 +24,7 @@
           </ion-avatar>
           <ion-label>
             <p>
-              <span class="label name">Name: </span>
+              <span class="label name">{{htmlControls.name}}</span>
               <span class="name">{{student.fullName}}</span>
             </p>
             <p>
@@ -32,10 +32,10 @@
             </p>
             <ion-buttons>
               <ion-button fill="solid" color="primary" (click)="addAttendance({id: student.id})">
-                Attended
+                {{htmlControls.attended}}
               </ion-button>
               <ion-button fill="solid" color="secondary" (click)="addAbsence({id: student.id})">
-                Absent
+                {{htmlControls.absence}}
               </ion-button>
               <ion-button fill="solid" color="dark" (click)="showNotes(student.id)">
                 <ion-icon name="paper"></ion-icon>
@@ -47,27 +47,15 @@
             </ion-item>
             <div class="pad">
               <p class="left attended" *ngIf="student.attendance">
-                {{student.firstName}}'s is present this day!
+                {{student.firstName}}{{htmlControls.present}}
               </p>
               <p class="left attended" *ngIf="student.absence">
-                {{student.firstName}}'s is absent this day!
+                {{student.firstName}}{{htmlControls.absent}}
               </p>
-              <!-- <p class="right">
-                Swipe for more options
-              </p> -->
             </div>
           </ion-label>
         </ion-item>
-        <!-- <ion-item-options>
-          <ion-item-option color="primary" (click)="addAttendance({id: student.id})">
-            Attended
-          </ion-item-option>
-          <ion-item-option color="secondary" (click)="addAbsence({id: student.id})">
-            Absent
-          </ion-item-option>
-        </ion-item-options> -->
       </div>
     </ion-virtual-scroll>
-    <!-- </ion-item-sliding> -->
   </ion-list>
 </ion-content>

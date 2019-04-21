@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, ModalController, NavController, LoadingController, IonVirtualScroll } from '@ionic/angular';
+import { AlertController, ModalController, NavController, LoadingController } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { handleError } from 'src/app/common/handleError';
 import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/common/search';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-home',
@@ -14,22 +15,85 @@ import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/
 export class HomePage implements OnInit {
   students: IStudent[];
   private unfilteredStudents: IStudent[];
-  selectOptions = ['Id', 'Name', 'None'];
+  selectOptions;
   filterOptions: string[];
   date: ICalendar;
   toggle;
   timer;
   homeURL = '/tabs/tabs/home';
   appStart: boolean;
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        event: '',
+        add: ''
+      }
+    },
+    sort: '',
+    filter: '',
+    class: '',
+    phone: '',
+    attended: '',
+    absence: '',
+    profile: '',
+    present: ``,
+    absent: ``,
+    search: ''
+  };
+
+  language = '';
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Daily Attendance',
+        buttons: {
+          event: 'Events',
+          add: 'Add'
+        }
+      },
+      sort: 'Sort by: ',
+      filter: 'Filter by: ',
+      class: 'Class: ',
+      phone: 'Phone: ',
+      attended: 'Attended',
+      absence: 'Absent',
+      profile: 'Profile',
+      present: `'s present today!`,
+      absent: `'s absent today!`,
+      search: 'Search by ID or Name'
+    },
+    spanish: {
+      toolbar: {
+        title: 'Asistencia Diaria',
+        buttons: {
+          event: 'Evento',
+          add: 'Crear'
+        }
+      },
+      sort: 'Ordenar por: ',
+      filter: 'Filtrar por: ',
+      class: 'Clase: ',
+      phone: 'Teléfono: ',
+      attended: 'Asistió',
+      absence: 'Ausente',
+      profile: 'Perfil',
+      present: ` está presente hoy.`,
+      absent: ` está ausente hoy.`,
+      search: 'Buscar por ID o Nombre'
+    }
+  };
   @ViewChild('notes') notesElement;
   @ViewChild('sort') sortElement;
-
+  @ViewChild('filter') filterElement;
   constructor(
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private storage: Storage
   ) { }
 
   ngOnInit() {
@@ -43,20 +107,38 @@ export class HomePage implements OnInit {
     this.unfilteredStudents = [];
     this.getStudents();
     this.filterOptions = this.getFilterOptions();
+    this.appStart = true;
   }
 
   ionViewWillEnter() {
     this.timer = 0;
-    this.sortElement.placeholder = 'None';
-    if (this.appStart) {
-      this.getStudents();
-      this.filterOptions = this.getFilterOptions();
-      //////////// Use for testing only!///////////
-      // for (let i = 0; i < this.students.length; i++) {
-      //   this.db.insertTest();
-      // }
-      /////////////////////////////////////////////
-    }
+    const appStart = this.appStart;
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+      } else {
+        this.language = 'english';
+      }
+      this.htmlControls = this.LANGUAGE[this.language];
+      if (this.language === 'spanish') {
+        this.selectOptions = ['ID', 'Nombre', 'Sin filtro'];
+        this.sortElement.placeholder = 'Sin filtro';
+        this.filterElement.placeholder = 'Sin filtro';
+      } else {
+        this.selectOptions = ['ID', 'Name', 'None'];
+        this.sortElement.placeholder = 'None';
+        this.filterElement.placeholder = 'None';
+      }
+      if (appStart) {
+        this.getStudents();
+        this.filterOptions = this.getFilterOptions();
+        //////////// Use for testing only!///////////
+        // for (let i = 0; i < this.students.length; i++) {
+        //   this.db.insertTest();
+        // }
+        /////////////////////////////////////////////
+      }
+    });
   }
 
   private async getStudents() {
@@ -135,7 +217,11 @@ export class HomePage implements OnInit {
         options = [...options, student.class];
       }
     }
-    options = [...options, 'Male', 'Female', 'Undisclosed', 'None'];
+    if (this.language === 'spanish') {
+      options = [...options, 'Masculino', 'Femenino', 'No revelado', 'Sin filtro'];
+    } else {
+      options = [...options, 'Male', 'Female', 'Undisclosed', 'None'];
+    }
     return options;
   }
 
@@ -145,13 +231,25 @@ export class HomePage implements OnInit {
       case 'Male':
       case 'Female':
       case 'Undisclosed':
-      const gender = option.toLowerCase();
+        const gender = option.toLowerCase();
         newQuery = this.unfilteredStudents.filter(student => {
           if (student.gender === gender) {
             return student;
           }
         });
         this.students = [...newQuery];
+        break;
+      case 'Masculino':
+        this.filterByClass('Male');
+        break;
+      case 'Femenino':
+        this.filterByClass('Female');
+        break;
+      case 'No revelado':
+        this.filterByClass('Undisclosed');
+        break;
+      case 'Sin filtro':
+        this.filterByClass('None');
         break;
       case 'None':
         this.initializeStudentsList();
@@ -177,10 +275,11 @@ export class HomePage implements OnInit {
 
   sortData(option: string) {
     switch (option) {
-      case 'Id':
+      case 'ID':
         this.sortStudentsbyId();
         break;
       case 'Name':
+      case 'Nombre':
         this.sortStudentsName();
         break;
       default:
@@ -208,11 +307,21 @@ export class HomePage implements OnInit {
         absence: false,
         attendance: true
       });
-      this.showSimpleAlert({
-        header: 'Success!',
-        message: 'Student was marked present!',
-        buttons: ['OK']
-      });
+      let options;
+      if (this.language === 'spanish') {
+        options = {
+          header: 'Éxito',
+          message: '¡El estudiante se marcó presente!',
+          buttons: ['Aprobar']
+        };
+      } else {
+        options = {
+          header: 'Success!',
+          message: 'Student was marked present!',
+          buttons: ['OK']
+        };
+      }
+      this.showSimpleAlert(options);
     } else {
       handleError(response.error);
     }
@@ -226,11 +335,21 @@ export class HomePage implements OnInit {
         absence: true,
         attendance: false
       });
-      this.showSimpleAlert({
-        header: 'Success!',
-        message: 'Student was marked absent!',
-        buttons: ['OK']
-      });
+      let options;
+      if (this.language === 'spanish') {
+        options = {
+          header: 'Éxito',
+          message: '¡El estudiante se marcó ausente!',
+          buttons: ['Aprobar']
+        };
+      } else {
+        options = {
+          header: 'Success!',
+          message: 'Student was marked absent!',
+          buttons: ['OK']
+        };
+      }
+      this.showSimpleAlert(options);
     } else {
       handleError(response.error);
     }

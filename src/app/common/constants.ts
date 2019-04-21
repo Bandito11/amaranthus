@@ -13,20 +13,52 @@ export const MONTHSLABELS = [
   'December'
 ];
 
-  export enum MONTHS {
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  }
+export enum MONTHS {
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+}
+
+export const MESESLABELS = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+];
+
+export enum MESES {
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+}
+
+
 const RELEASEDATE = 2017;
 let YEARS = [RELEASEDATE];
 for (let i = 1; i <= 5; i++) {
@@ -60,6 +92,25 @@ export const WEEKDAYSHEADER = [
   'Saturday'
 ];
 
+export const DIASLABELS = [
+  'Dom',
+  'Lun',
+  'Mar',
+  'Mie',
+  'Jue',
+  'Vie',
+  'Sab'
+];
+
+export const DIASHEADER = [
+  'Domingo',
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado'
+];
 export enum stateAndroid {
   ACTIVE,
   CANCELLED,

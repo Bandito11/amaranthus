@@ -17,6 +17,88 @@ export class SettingsPage implements OnInit {
   isIos: boolean;
   isAndroid: boolean;
   bought: boolean;
+  languages;
+  language;
+  LANGUAGE = {
+    spanish: {
+      toolbar: {
+        title: 'Configuración'
+      },
+      buy: '¡Comprar por solo ',
+      restoreAndroid: 'Restaurar',
+      restoreiOS: 'Restaurar la llave Maestra',
+      rate: {
+        title: '¡Si te gusta la aplicación por favor considera calificarla con 5 estrellas!',
+        rateiOS: 'Lanzar App Store',
+        rateAndroid: 'Lanzar Play Store'
+      },
+      feedback: {
+        title: 'Comentarios',
+        // tslint:disable-next-line: max-line-length
+        message: '¿Tienes algún problema o simplemente quieres darme algún comentario sobre cómo mejorar la aplicación? Envíame un correo electrónico y le responderé en unos días.',
+        button: '¡Mandar correo electronico!'
+      },
+      masterKey: {
+        title: '',
+        description: ''
+      },
+      language: {
+        title: 'Lenguaje'
+      }
+    },
+    english: {
+      toolbar: {
+        title: 'Settings'
+      },
+      buy: 'Buy now for only ',
+      restoreAndroid: 'Restore ',
+      restoreiOS: 'Restore The Master Key!',
+      rate: {
+        title: 'If you like the app please consider rating it 5 stars!',
+        iOS: 'Open App Store ',
+        android: 'Open Play Store '
+      },
+      feedback: {
+        title: 'Feedback',
+        // tslint:disable-next-line: max-line-length
+        message: 'Have any issues or just want to give me some feedback on how to make the app better? Just sent me an email and I will answer accordingly!',
+        button: 'Send email!'
+      },
+      masterKey: {
+        title: '',
+        description: ''
+      },
+      language: {
+        title: 'Language'
+      }
+    }
+  };
+
+  htmlControls = {
+    toolbar: {
+      title: ''
+    },
+    buy: '',
+    restoreAndroid: '',
+    restoreiOS: '',
+    rate: {
+      title: '',
+      iOS: '',
+      android: ''
+    },
+    feedback: {
+      title: '',
+      message: '',
+      button: ''
+    },
+    masterKey: {
+      title: '',
+      description: ''
+    },
+    language: {
+      title: ''
+    }
+  };
 
   constructor(
     public emailComposer: EmailComposer,
@@ -29,6 +111,46 @@ export class SettingsPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.storage.get('language').then(value => {
+      this.languages = [
+        {
+          language: 'english',
+          controls: 'English',
+          checked: true
+        },
+        {
+          language: 'spanish',
+          controls: 'Spanish',
+          checked: false
+        }
+      ];
+      if (value === 'spanish') {
+        this.language = 'spanish';
+      } else {
+        this.language = 'english';
+      }
+      this.htmlControls = this.LANGUAGE[this.language];
+      if (value === 'spanish') {
+        this.languages[0].checked = false;
+        this.languages[1].checked = true;
+        this.htmlControls = {
+          ...this.htmlControls,
+          masterKey: {
+            title: 'La Llave Maestra!',
+            description: 'Elimina el límite de 10 usuarios a la base de datos.'
+          }
+        };
+      } else {
+        this.languages[0].checked = true;
+        this.htmlControls = {
+          ...this.htmlControls,
+          masterKey: {
+            title: 'The Master Key!',
+            description: 'Unlock limit of 10 users to database.'
+          }
+        };
+      }
+    });
     if (this.platform.is('ios')) {
       this.isIos = true;
     } else if (this.platform.is('android')) {
@@ -41,17 +163,13 @@ export class SettingsPage implements OnInit {
         this.bought = false;
       }
     });
-      if (this.platform.is('cordova')) {
-        // this.storage.get('products').then(products => {
-        //   if (products) {
-        //     this.products = products;
-        //     this.noProducts = false;
-        //   } else {
-        //     this.getProducts();
-        //   }
-        // });
-        this.getProducts();
-      }
+    if (this.platform.is('cordova')) {
+      this.getProducts();
+    }
+  }
+
+  setLanguage(language: { checked, language, controls }) {
+    this.storage.set('language', language.language);
   }
 
   openMarketPage() {

@@ -6,6 +6,7 @@ import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { EditPage } from '../edit/edit.page';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-profile',
@@ -20,15 +21,93 @@ export class ProfilePage implements OnInit {
   student: IStudent = <IStudent>{};
   headerName: string;
   notes: { note: string; date: string }[] = [];
+  htmlControls = {
+    title: '',
+    buttons: {
+      edit: ''
+    },
+    name: '',
+    address: '',
+    phone: '',
+    city: '',
+    state: '',
+    class: '',
+    gender: '',
+    father: '',
+    mother: '',
+    emergency: {
+      title: '',
+      relationship: ''
+    },
+    active: '',
+    inactive: '',
+    notes: {
+      title: '',
+      date: '',
+      notes: ''
+    }
+  };
+  LANGUAGE = {
+    english: {
+      title: `'s Profile`,
+      buttons: {
+        edit: 'Edit'
+      },
+      name: 'Name: ',
+      address: 'Address: ',
+      phone: 'Phone Number: ',
+      city: 'City: ',
+      state: 'State: ',
+      class: 'Class: ',
+      gender: 'Gender: ',
+      father: `Father's Name: `,
+      mother: `Mother's Name: `,
+      emergency: {
+        title: 'Emergency Contact',
+        relationship: 'Relationship: '
+      },
+      active: '*Student is currently active on the roster.*',
+      inactive: '*Student is currently inactive on the roster.*',
+      notes: {
+        title: 'Notes: ',
+        date: 'Date: ',
+        notes: 'Notes: '
+      }
+    },
+    spanish: {
+      title: `Perfil de `,
+      buttons: {
+        edit: 'Editar'
+      },
+      name: 'Nombre: ',
+      address: 'Dirección: ',
+      phone: 'Teléfono: ',
+      city: 'Ciudad: ',
+      state: 'Estado: ',
+      class: 'Clase: ',
+      gender: 'Género: ',
+      father: `Nombre del padre: `,
+      mother: `Nombre de la madre: `,
+      emergency: {
+        title: 'Contacto de Emergencia',
+        relationship: 'Relación: '
+      },
+      active: '*Estudiante esta activo en el registro*',
+      inactive: '*Estudiante esta inactivo en el registro*',
+      notes: {
+        title: 'Notas: ',
+        date: 'Fecha: ',
+        notes: 'Notas: '
+      }
+    }
+  };
+  language: any;
 
   constructor(
     private route: ActivatedRoute,
-    public platform: Platform,
     private modalCtrl: ModalController,
     private db: AmaranthusDBProvider,
-    public alertCtrl: AlertController,
-    public navCtrl: NavController,
-
+    private storage: Storage
   ) { }
 
   ngOnInit() {
@@ -37,15 +116,27 @@ export class ProfilePage implements OnInit {
     this.getNotesFromDB(this.student.id);
   }
 
-    /**
-   *
-   * @param id
-   */
+  ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+        this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
+  }
+
+  /**
+ *
+ * @param id
+ */
   async goToEdit(id: string) {
     const modal = await this.modalCtrl.create({
       component: EditPage,
       componentProps: { id: id }
-  });
+    });
     modal.onWillDismiss().then(() => this.getStudentFromDB(this.student));
     modal.present();
   }
@@ -80,7 +171,7 @@ export class ProfilePage implements OnInit {
         this.student = {
           ...response.data,
           gender: response.data.gender[0].toUpperCase() +
-           response.data.gender.slice(1, response.data.gender.length)
+            response.data.gender.slice(1, response.data.gender.length)
         };
       }
     } catch (error) {

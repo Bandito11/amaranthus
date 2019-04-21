@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Export</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
     </ion-buttons>
@@ -11,48 +11,48 @@
   <ion-list>
     <ion-radio-group>
       <ion-list-header>
-        Choose date
+        {{htmlControls.header}}
       </ion-list-header>
 
       <ion-item>
-        <ion-label>By Month</ion-label>
+        <ion-label>{{htmlControls.month}}</ion-label>
         <ion-radio checked="true" (ionSelect)="month = true;  day = false;"></ion-radio>
       </ion-item>
 
       <ion-item>
-        <ion-label>By Day</ion-label>
+        <ion-label>{{htmlControls.day}}</ion-label>
         <ion-radio (ionSelect)="month = false; day = true;"></ion-radio>
       </ion-item>
     </ion-radio-group>
 
     <ion-item *ngIf="month">
-      <ion-label>Date</ion-label>
-      <ion-datetime [(ngModel)]="date" value="{{date}}" display-format="MMMM, YYYY" picker-format="MMMM YYYY"></ion-datetime>
+      <ion-label>{{htmlControls.date}}</ion-label>
+      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"  [(ngModel)]="date" value="date" displayFormat="MMMM, YYYY"
+        pickerFormat="MMMM YYYY">
+      </ion-datetime>
+      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December"  [(ngModel)]="date" value="date" displayFormat="MMMM, YYYY"
+      pickerFormat="MMMM YYYY">
+    </ion-datetime>
     </ion-item>
 
     <ion-item *ngIf="day">
-      <ion-label>Date</ion-label>
-      <ion-datetime [(ngModel)]="date" value="date" display-format="MMMM DD, YYYY" picker-format="MMMM DD YYYY"></ion-datetime>
+      <ion-label>{{htmlControls.date}}</ion-label>
+      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre" [(ngModel)]="date" value="date" displayFormat="MMMM DD, YYYY"
+      pickerFormat="MMMM DD YYYY">
+    </ion-datetime>
+      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December" [(ngModel)]="date" value="date" displayFormat="MMMM DD, YYYY"
+        pickerFormat="MMMM DD YYYY">
+      </ion-datetime>
     </ion-item>
 
     <ion-button fill="solid" color="primary" (click)="exportAsText()" expand="block">
-      Export as Text Tab Delimited
+      {{htmlControls.texttab}}
     </ion-button>
     <ion-button fill="solid" color="secondary" (click)="exportAsCSV()" expand="block">
-      Export as CSV
+      {{htmlControls.csv}}
     </ion-button>
     <ion-button fill="solid" color="tertiary" (click)="exportAsXLSX()" expand="block">
-      Export as XLSX
+      {{htmlControls.xlsx}}
     </ion-button>
-
-  <!-- <ion-button color="primary" (click)="exportTextTabToFile()" expand="block">
-    Export as Text Tab Delimited
-    </ion-button>
-    <ion-button color="secondary" (click)="exportCSVToFile()" expand="block">
-      Export as CSV
-    </ion-button>
-    <ion-button color="tertiary" (click)="exportXLSXToFile()" expand="block">
-      Export as XLSX
-    </ion-button> -->
   </ion-list>
 </ion-content>

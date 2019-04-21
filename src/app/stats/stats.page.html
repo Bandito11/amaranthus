@@ -1,13 +1,13 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Stats</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
-        <ion-back-button *ngIf="event"></ion-back-button>
-        <app-menu-button *ngIf="!event"></app-menu-button>
+      <ion-back-button *ngIf="event"></ion-back-button>
+      <app-menu-button *ngIf="!event"></app-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button *ngIf="students.length > 0" (click)="toExportPage()">
-        Export
+        {{htmlControls.toolbar.buttons.export}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -15,7 +15,7 @@
 
 <ion-content padding id="stats">
   <ion-item>
-    <ion-label>Filter by: </ion-label>
+    <ion-label>{{htmlControls.filter}}</ion-label>
     <ion-select interface="popover" (ionCancel)="initializeStudents()" multiple="false" #filter
       (ionChange)="queryData(filter.value)">
       <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
@@ -23,13 +23,13 @@
   </ion-item>
   <div *ngIf="query == 'Date'">
     <ion-item>
-      <ion-label>Year</ion-label>
+      <ion-label>{{htmlControls.year}}</ion-label>
       <ion-select interface="popover" multiple="false" #year (ionChange)="queryDataByYear(year.value)">
         <ion-select-option *ngFor="let year of years" value="{{year}}">{{year}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label>Month: </ion-label>
+      <ion-label>{{htmlControls.month}}</ion-label>
       <ion-select interface="popover" multiple="false" #month (ionChange)="queryDataByMonth(month.value)">
         <ion-select-option *ngFor="let month of months" value="{{month}}">{{month}}</ion-select-option>
       </ion-select>
@@ -38,25 +38,25 @@
   <div id="table">
     <table>
       <caption [ngSwitch]="query">
-        <ng-template ngSwitchWhen="Date">Students attendance in {{months[currentDate.getMonth()]}},
-          {{currentDate.getFullYear()}}</ng-template>
-        <ng-template ngSwitchDefault>Students attendance in {{monthQuery}}, {{yearQuery}}</ng-template>
+        <ng-template ngSwitchWhen="Date">{{htmlControls.tableTitle}}{{monthQuery}},
+          {{yearQuery}}</ng-template>
+        <ng-template ngSwitchDefault>{{htmlControls.tableTitle}}{{monthQuery}}, {{yearQuery}}</ng-template>
       </caption>
       <tr>
         <th>
           Id
         </th>
         <th>
-          Name
+          {{htmlControls.tableHeaders.name}}
         </th>
         <th>
-          Attendance
+          {{htmlControls.tableHeaders.attendance}}
         </th>
         <th>
-          Absence
+          {{htmlControls.tableHeaders.absence}}
         </th>
         <th>
-          Attendance %
+          {{htmlControls.tableHeaders.percent}}
         </th>
       </tr>
       <tr *ngFor="let student of students">

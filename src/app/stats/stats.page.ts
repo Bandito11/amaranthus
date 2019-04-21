@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { MONTHS } from './../common/constants';
+import { MONTHS, MESESLABELS } from './../common/constants';
 import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
@@ -7,6 +7,7 @@ import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { AlertController, ModalController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-stats',
@@ -18,25 +19,103 @@ export class StatsPage implements OnInit {
   private unfilteredStudents: IRecord[] = [];
   query: string;
   monthQuery: string;
-  months: string[] = [...MONTHSLABELS];
+  months: string[] = [];
   currentDate: Date = new Date();
   yearQuery: string;
   years: number[] = [...YEARLABELS];
-  selectOptions: string[] = ['Id', 'Attendance', 'Absence', 'Date', 'Name', 'None'];
+  selectOptions: string[];
   bought: boolean;
   @ViewChild('filter') filterElement;
   event;
   studentIds: string[];
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        export: ''
+      }
+    },
+    filter: '',
+    year: '',
+    month: '',
+    tableTitle: '',
+    tableHeaders: {
+      name: '',
+      attendance: '',
+      absence: '',
+      percent: ''
+    }
+  };
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'STATS',
+        buttons: {
+          export: 'EXPORT'
+        }
+      },
+      filter: 'Filter by: ',
+      year: 'Year: ',
+      month: 'Month: ',
+      tableTitle: 'Total Attendance in ',
+      tableHeaders: {
+        name: 'Name',
+        attendance: 'Attendance',
+        absence: 'Absence',
+        percent: 'Attendance %'
+      }
+    },
+    spanish: {
+      toolbar: {
+        title: 'Estadísticas',
+        buttons: {
+          export: 'Exportar'
+        }
+      },
+      filter: 'Filtrar por: ',
+      year: 'Año',
+      month: 'Mes',
+      tableTitle: 'Asistencia Total en ',
+      tableHeaders: {
+        name: 'Nombre',
+        attendance: 'Asistencia',
+        absence: 'Ausencia',
+        percent: 'Asistence %'
+      }
+    }
+  };
+  language;
 
   constructor(
     private db: AmaranthusDBProvider,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private storage: Storage
   ) { }
 
   ionViewWillEnter() {
-    this.filterElement.value = 'None';
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+      } else {
+        this.language = 'english';
+      }
+      this.htmlControls = this.LANGUAGE[this.language];
+      if (this.language === 'spanish') {
+        this.filterElement.value = 'Sin filtro';
+        this.selectOptions = ['Id', 'Asistencia', 'Ausencia', 'Fecha', 'Nombre', 'Sin filtro'];
+        this.months = MESESLABELS;
+      } else {
+        this.selectOptions = ['Id', 'Attendance', 'Absence', 'Date', 'Name', 'None'];
+        this.filterElement.value = 'None';
+        this.months = MESESLABELS;
+        this.months = MONTHSLABELS;
+      }
+      this.monthQuery = this.months[this.currentDate.getMonth()];
+      this.yearQuery = this.currentDate.getFullYear().toString();
+    });
     this.query = '';
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
@@ -51,8 +130,6 @@ export class StatsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.monthQuery = this.months[this.currentDate.getMonth()];
-    this.yearQuery = this.currentDate.getFullYear().toString();
     this.students = [];
     this.unfilteredStudents = [];
   }
@@ -75,15 +152,19 @@ export class StatsPage implements OnInit {
         this.queryStudentsbyId();
         break;
       case 'Attendance':
+      case 'Asistencia':
         this.queryStudentsbyAttendance();
         break;
       case 'Absence':
+      case 'Ausencia':
         this.queryStudentsbyAbsence();
         break;
       case 'Name':
+      case 'Nombre':
         this.queryStudentsName();
         break;
       case 'Date':
+      case 'Fecha':
         this.query = 'Date';
         this.queryDataByYear(new Date().getFullYear());
         break;

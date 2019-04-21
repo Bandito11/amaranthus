@@ -1,15 +1,15 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Login</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
       <ion-button *ngIf="modalVal" (click)="cancel()">
-        Cancel
+        {{htmlControl.toolbar.buttons.cancel}}
       </ion-button>
       <app-menu-button *ngIf="!modalVal"></app-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button *ngIf="!modalVal" (click)="goToLogin()">
-        Set Password
+        {{htmlControls.toolbar.buttons.password}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -20,16 +20,16 @@
     <img src="assets/cartoon-desk.jpg" alt="A cluttered desk">
     <form #clientLoginForm (ngSubmit)="checkUser({username: username.value, password: password.value} )">
       <ion-item>
-        <ion-label position="stacked">ID or Full Name with a space between First Name and Last Name</ion-label>
+        <ion-label position="stacked">{{htmlControls.id}}</ion-label>
         <ion-input #username type="text" value=""></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="stacked">Phone Number</ion-label>
+        <ion-label position="stacked">{{htmlControls.phone}}</ion-label>
         <ion-input #password type="password"></ion-input>
       </ion-item>
 
-      <ion-button type="submit" full large>Submit</ion-button>
+      <ion-button type="submit" full large>{{htmlControls.submit}}</ion-button>
     </form>
   </div>
 </ion-content>

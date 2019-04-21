@@ -1,28 +1,28 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Roster</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
       <app-menu-button></app-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="goToCreate()">
-        Add
+          {{htmlControls.toolbar.buttons.add}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content id="student-list">
-  <ion-searchbar placeholder="Search by ID or Name" (ionInput)="searchStudent($event)" animated="true" type="search">
+  <ion-searchbar placeholder="{{htmlControls.search}}" (ionInput)="searchStudent($event)" animated="true" type="search">
   </ion-searchbar>
   <ion-item>
-    <ion-label>Sort by:</ion-label>
+    <ion-label>{{htmlControls.sort}}</ion-label>
     <ion-select interface="popover" multiple="false" #sort (ionChange)="sortData(sort.value)">
       <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label>Filter by: </ion-label>
+    <ion-label>{{htmlControls.filter}}</ion-label>
     <ion-select interface="popover" multiple="false" placeholder="None" #filter
       (ionChange)="filterByClass(filter.value)">
       <ion-select-option *ngFor="let class of filterOptions" value="{{class}}">{{class}}</ion-select-option>
@@ -48,43 +48,43 @@
               <ion-col size="9">
                 <ion-item>
                   <ion-label text-wrap>
-                    <span class="label">Address: </span>{{student.address}}
+                    <span class="label">{{htmlControls.address}}</span>{{student.address}}
                   </ion-label>
                 </ion-item>
                 <ion-item>
                   <ion-label text-wrap>
-                    <span class="label">Town: </span>{{student.town}}
+                    <span class="label">{{htmlControls.town}}</span>{{student.town}}
                   </ion-label>
                 </ion-item>
                 <ion-item>
                   <ion-label text-wrap>
-                    <span class="label">State: </span>{{student.state}}
+                    <span class="label">{{htmlControls.state}}</span>{{student.state}}
                   </ion-label>
                 </ion-item>
                 <ion-item *ngIf="student.class">
                   <ion-label text-wrap>
-                    <span class="label">Class: </span>{{student.class}}
+                    <span class="label">{{htmlControls.class}}</span>{{student.class}}
                   </ion-label>
                 </ion-item>
                 <ion-item *ngIf="student.phoneNumber">
                   <ion-label text-wrap>
-                    <span class="label">Phone: </span>{{student.phoneNumber}}
+                    <span class="label">{{htmlControls.phone}}</span>{{student.phoneNumber}}
                   </ion-label>
                 </ion-item>
                 <ion-item *ngIf="student.emergencyContactName">
                   <ion-label text-wrap>
-                    <span class="label">Emergency Contact: </span>{{student.emergencyContactName}}
+                    <span class="label">{{htmlControls.contact}}</span>{{student.emergencyContactName}}
                   </ion-label>
                 </ion-item>
                 <ion-item *ngIf="student.emergencyContactPhoneNumber">
                   <ion-label text-wrap>
-                    <span class="label">Phone: </span>{{student.emergencyContactPhoneNumber}}
+                    <span class="label">{{htmlControls.phone}}</span>{{student.emergencyContactPhoneNumber}}
                   </ion-label>
                 </ion-item>
                 <ion-item *ngIf="!student.isActive">
                   <ion-label text-wrap>
                     <p>
-                      Student is not active on the roster!
+                      {{htmlControls.active}}
                     </p>
                   </ion-label>
                 </ion-item>
@@ -92,7 +92,7 @@
             </ion-row>
           </ion-grid>
           <p class="attended">
-            Tap to see {{student.firstName}}'s profile!
+            {{htmlControls.profile}}{{student.firstName}}{{htmlControls.profile2}}
           </p>
         </ion-card-content>
       </ion-card>

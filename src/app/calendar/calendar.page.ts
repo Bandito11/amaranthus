@@ -1,11 +1,13 @@
+import { MESESLABELS, DIASHEADER } from './../common/constants';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { filterStudentsList } from 'src/app/common/search';
-import { AlertController, IonVirtualScroll } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { ActivatedRoute } from '@angular/router';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-calendar',
@@ -19,20 +21,63 @@ export class CalendarPage {
   private date: ICalendar;
   timer;
   @ViewChild('notes') notesElement: ElementRef;
-  // @ViewChild('slidingUser') slidingUser;
 
   toggle: string;
   search: string;
   event;
   studentIds: string[];
+  language;
+  htmlControls = {
+    attended: '',
+    absence: '',
+    present: ``,
+    absent: '',
+    toolbar: {
+      title: ''
+    },
+    name: ''
+  };
+
+  LANGUAGE = {
+    spanish: {
+      attended: 'Asistió',
+      absence: 'Ausente',
+      present: ` está presente hoy.`,
+      absent: ' está ausente hoy.',
+      toolbar: {
+        title: 'Calendario'
+      },
+      name: 'Nombre: '
+    },
+    english: {
+      attended: 'Attended',
+      absence: 'Absent',
+      present: `'s is present today!`,
+      absent: `'s is absent today`,
+      toolbar: {
+        title: 'Calendar'
+      },
+      name: 'Name: '
+    }
+  };
+
   constructor(
     private route: ActivatedRoute,
-    public alertCtrl: AlertController,
-    public db: AmaranthusDBProvider
+    private alertCtrl: AlertController,
+    private db: AmaranthusDBProvider,
+    private storage: Storage
   ) { }
 
   ionViewWillEnter() {
     this.timer = 0;
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+      } else {
+        this.language = 'english';
+      }
+      this.htmlControls = this.LANGUAGE[this.language];
+    });
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
@@ -126,10 +171,16 @@ export class CalendarPage {
     this.search = '';
     this.date = date;
     const currentDay = date.day;
-    const currentMonth = MONTHSLABELS[date.month];
     const currentYear = date.year;
-    const currentWeekDay = WEEKDAYSHEADER[date.weekDay];
-    this.currentDate = `${currentWeekDay}, ${currentDay} ${currentMonth}, ${currentYear}`;
+    if (this.language === 'spanish') {
+      const currentMonth = MESESLABELS[date.month];
+      const currentWeekDay = DIASHEADER[date.weekDay];
+      this.currentDate = `${currentWeekDay} ${currentDay} de ${currentMonth} de ${currentYear}`;
+    } else {
+      const currentMonth = MONTHSLABELS[date.month];
+      const currentWeekDay = WEEKDAYSHEADER[date.weekDay];
+      this.currentDate = `${currentWeekDay}, ${currentDay} ${currentMonth}, ${currentYear}`;
+    }
     this.getStudentsRecords(date);
   }
 
@@ -145,11 +196,21 @@ export class CalendarPage {
         absence: false,
         attendance: true
       });
-      this.showSimpleAlert({
-        header: 'Success!',
-        message: 'Student was marked present!',
-        buttons: ['OK']
-      });
+      let options;
+      if (this.language === 'spanish') {
+        options = {
+          header: 'Éxito',
+          message: '¡El estudiante se marcó presente!',
+          buttons: ['Aprobar']
+        };
+      } else {
+        options = {
+          header: 'Success!',
+          message: 'Student was marked present!',
+          buttons: ['OK']
+        };
+      }
+      this.showSimpleAlert(options);
     } else {
       handleError(response.error);
     }
@@ -167,11 +228,21 @@ export class CalendarPage {
         absence: true,
         attendance: false
       });
-      this.showSimpleAlert({
-        header: 'Success!',
-        message: 'Student was marked absent!',
-        buttons: ['OK']
-      });
+      let options;
+      if (this.language === 'spanish') {
+        options = {
+          header: 'Éxito',
+          message: '¡El estudiante se marcó ausente!',
+          buttons: ['Aprobar']
+        }
+      } else {
+        options = {
+          header: 'Success!',
+          message: 'Student was marked absent!',
+          buttons: ['OK']
+        };
+      }
+      this.showSimpleAlert(options);
     } else {
       handleError(response.error);
     }

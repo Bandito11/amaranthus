@@ -1,6 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { DIASLABELS, MESESLABELS, DIASHEADER } from './../../common/constants';
+import { Component, OnInit, Output, EventEmitter, OnChanges, Input, SimpleChanges } from '@angular/core';
 import { ICalendar } from '../../common/models';
 import { WEEKDAYSHEADER, WEEKDAYSLABELS, MONTHSLABELS } from '../../common/constants';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'calendar-component',
@@ -8,26 +10,26 @@ import { WEEKDAYSHEADER, WEEKDAYSLABELS, MONTHSLABELS } from '../../common/const
   styleUrls: ['./calendar.component.scss']
 })
 
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnChanges {
   /**
    * Date chosen by the user to be shown in the card Header
    * Will return @param Calendar
    * */
   @Output() getDate = new EventEmitter();
   //  html properties
-  weekDaysHeader: Array<string>;
+  weekDaysHeader = [];
 
   //  html properties
-  weekDaysLabels: Array<string>;
+  weekDaysLabels = [];
 
   //  html properties
-  monthsLabels: Array<string>;
+  monthsLabels = [];
 
   // Used to get the month and year to start the calendar
-  month: number;
+  month = -1;
 
   // Used to get the year to start the calendar
-  year: number;
+  year = -1;
 
   // Used to generate calendar
   calendarDays: Array<ICalendar> = [];
@@ -40,10 +42,20 @@ export class CalendarComponent implements OnInit {
 
   currentStyles;
 
+  @Input() language;
+
+  constructor() { }
+
   ngOnInit() {
     this.currentDate = new Date();
     this.createCalendar(null, null);
-    this.initialize();
+    this.initialize(this.language);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['language']) {
+      this.initialize(this.language);
+    }
   }
 
   setCurrentStyles() {
@@ -54,12 +66,20 @@ export class CalendarComponent implements OnInit {
   }
 
   /**Initialize the labels and headers in order to generate the calendar and the output for the header*/
-  private initialize() {
-    this.weekDaysLabels = WEEKDAYSLABELS;
-    this.monthsLabels = MONTHSLABELS;
-    this.weekDaysHeader = WEEKDAYSHEADER;
-    const calendar: ICalendar = { day: this.currentDate.getDate(), month: this.currentDate.getMonth(),
-      year: this.currentDate.getFullYear() };
+  private initialize(language) {
+    if (language === 'spanish') {
+      this.weekDaysLabels = DIASLABELS;
+      this.monthsLabels = MESESLABELS;
+      this.weekDaysHeader = DIASHEADER;
+    } else {
+      this.weekDaysLabels = WEEKDAYSLABELS;
+      this.monthsLabels = MONTHSLABELS;
+      this.weekDaysHeader = WEEKDAYSHEADER;
+    }
+    const calendar: ICalendar = {
+      day: this.currentDate.getDate(), month: this.currentDate.getMonth(),
+      year: this.currentDate.getFullYear()
+    };
     calendar.weekDay = this.currentDate.getDay();
     this.choseDay(calendar);
   }

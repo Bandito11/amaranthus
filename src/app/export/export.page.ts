@@ -1,3 +1,5 @@
+import { MONTHSLABELS } from 'src/app/common/constants';
+import { MESESLABELS } from './../common/constants';
 import { AmaranthusDBProvider } from './../services/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
@@ -10,6 +12,7 @@ import { handleError } from '../common/handleError';
 import { ActivatedRoute } from '@angular/router';
 import { ICalendar } from '../common/models';
 import { addZeroInFront } from '../common/validation';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-export',
@@ -18,6 +21,45 @@ import { addZeroInFront } from '../common/validation';
 })
 export class ExportPage {
 
+  language;
+  htmlControls = {
+    toolbar: {
+      title: ''
+    },
+    header: '',
+    month: '',
+    day: '',
+    date: '',
+    texttab: '',
+    csv: '',
+    xlsx: ''
+  };
+  LANGUAGE = {
+    spanish: {
+      toolbar: {
+        title: 'Exportar'
+      },
+      header: 'Escoje la fecha',
+      month: 'Por mes: ',
+      day: 'Por día: ',
+      date: 'Fecha: ',
+      texttab: 'Exportar como texto delimitado',
+      csv: 'Exportar como CSV',
+      xlsx: 'Exportar como XLSX'
+    },
+    english: {
+      toolbar: {
+        title: 'Export'
+      },
+      header: 'Choose date',
+      month: 'By month: ',
+      day: 'By day: ',
+      date: 'Date',
+      texttab: 'Export as Text Tab Delimited',
+      csv: 'Export as CSV',
+      xlsx: 'Export as XLSX'
+    }
+  };
   students = [];
   event;
   month = true;
@@ -32,10 +74,20 @@ export class ExportPage {
     private file: FileProvider,
     private xlsx: XLSXProvider,
     private db: AmaranthusDBProvider,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private storage: Storage
   ) { }
 
   ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+        this.language = value;
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
     const date = new Date();
     this.date = `${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}`;
     this.event = this.route.snapshot.paramMap.get('event');
@@ -218,136 +270,5 @@ export class ExportPage {
       handleError(error);
     }
   }
-
-
-  //   /** TODO: To be deleted after update
-  //  *
-  //  *
-  //  * @memberof StatsPage
-  //  * Query can have values of Date
-  //  */
-  //   getStudentsRecords() {
-  //     try {
-  //       const response = this.db.getQueriedRecords({ event: this.event, query: '' });
-  //       if (response.success === true) {
-  //         this.students = [...response.data];
-  //         this.unfilteredStudents = [...response.data];
-  //       } else {
-  //         // TODO:  implement an alert message if it fails message should say no students
-  //         // can be retrieved.
-  //         handleError(response.error);
-  //       }
-  //     } catch (error) {
-  //       handleError(error);
-  //     }
-  //   }
-
-  // /** TODO: To be deleted after update
-  //  *
-  //  *
-  //  * @memberof ExportPage
-  //  */
-  // async exportTextTabToFile() {
-  //   const loading = await this.loading.create({
-  //     message: 'Creating the File...'
-  //   });
-  //   loading.present();
-  //   try {
-  //     const textTabResponse = this.textTab.exportTextTabDelimited(this.students);
-  //     const fileName = 'AttendanceLog.txt';
-  //     if (textTabResponse.success) {
-  //       try {
-  //         const fileResponse = await this.file.exportFile({
-  //           fileName: fileName,
-  //           text: textTabResponse.data,
-  //           type: 'txt'
-  //         });
-  //         if (fileResponse.success) {
-  //           loading.dismiss();
-  //           this.modal.dismiss(fileResponse.data);
-  //         }
-  //       } catch (error) { // If FileProvider err
-  //         loading.dismiss();
-  //         this.modal.dismiss(error);
-  //       }
-
-  //     }
-  //   } catch (error) { // If TextTabDelimited Provider err
-  //     loading.dismiss();
-  //     this.modal.dismiss('There was an error while creating the file. Please try again later!');
-  //   }
-  // }
-
-  // /** TODO: To be deleted after update
-  //  *
-  //  *
-  //  * @memberof ExportPage
-  //  */
-  // async exportCSVToFile() {
-  //   const loading = await this.loading.create({
-  //     message: 'Creating the File...'
-  //   });
-  //   loading.present();
-  //   try {
-  //     const csvResponse = this.csv.exportCSV(this.students);
-  //     const fileName = 'AttendanceLog.csv';
-  //     if (csvResponse.success) {
-  //       try {
-  //         const fileResponse = await this.file.exportFile({
-  //           fileName: fileName,
-  //           text: csvResponse.data,
-  //           type: 'csv'
-  //         });
-  //         if (fileResponse.success) {
-  //           loading.dismiss();
-  //           this.modal.dismiss(fileResponse.data);
-  //         }
-  //       } catch (error) { // If FileProvider err
-  //         loading.dismiss();
-  //         this.modal.dismiss(error);
-  //       }
-
-  //     }
-  //   } catch (error) { // If CSV Provider err
-  //     loading.dismiss();
-  //     this.modal.dismiss('There was an error while creating the file. Please try again later!');
-  //   }
-  // }
-
-  // /** TODO: To be deleted after update
-  //  *
-  //  *
-  //  * @memberof ExportPage
-  //  */
-  // async exportXLSXToFile() {
-  //   const loading = await this.loading.create({
-  //     message: 'Creating the File...'
-  //   });
-  //   loading.present();
-  //   try {
-  //     const xlsxResponse = await this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students });
-  //     const fileName = 'AttendanceLog.xlsx';
-  //     if (xlsxResponse.success) {
-  //       try {
-  //         const fileResponse = await this.file.exportFile({
-  //           fileName: fileName,
-  //           text: xlsxResponse.data,
-  //           type: 'xlsx'
-  //         });
-  //         if (fileResponse.success) {
-  //           loading.dismiss();
-  //           this.modal.dismiss(fileResponse.data);
-  //         }
-  //       } catch (error) { // If FileProvider err
-  //         loading.dismiss();
-  //         this.modal.dismiss(error);
-  //       }
-
-  //     }
-  //   } catch (error) { // If XLSX Provider err
-  //     loading.dismiss();
-  //     this.modal.dismiss('There was an error while creating the file. Please try again later!');
-  //   }
-  // }
 
 }

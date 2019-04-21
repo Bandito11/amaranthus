@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Settings</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
       <app-menu-button></app-menu-button>
     </ion-buttons>
@@ -14,10 +14,10 @@
       <ion-icon name="pricetag"></ion-icon>
       <div *ngIf="isIos">
         <span>
-          The Master Key!
+          {{htmlControls.masterKey.title}}
         </span>
         <p>
-          Unlocks limit to database max rows!
+          {{htmlControls.masterKey.description}}
         </p>
       </div>
       <div *ngIf="isAndroid">
@@ -30,19 +30,19 @@
       </div>
       <ion-button *ngIf="isAndroid" color="primary"
         (click)="buyProduct({productId: product.productId, productTitle: product.title})">
-        Buy now for only {{product.priceAsDecimal}} {{product.currency}}!
+        {{htmlControls.buy}}{{product.priceAsDecimal}} {{product.currency}}!
       </ion-button>
       <ion-button *ngIf="isIos" color="primary"
         (click)="buyProduct({productId: product.productId, productTitle: 'The Master Key!'})">
-        Buy now for only {{product.priceAsDecimal}} {{product.currency}}!
+        {{htmlControls.buy}}{{product.priceAsDecimal}} {{product.currency}}!
       </ion-button>
       <br>
       <ion-button color="secondary" (click)="restorePurchases()">
         <div *ngIf="isAndroid">
-          Restore {{product.title.slice(0,15)}}
+          {{htmlControls.restoreAndroid}}{{product.title.slice(0,15)}}
         </div>
         <div *ngIf="isIos">
-          Restore The Master Key!
+          {{htmlControls.restoreiOS}}
         </div>
         &nbsp;
         <ion-icon name="happy"> </ion-icon>
@@ -51,23 +51,39 @@
     </div>
   </div>
   <div *ngIf="this.platform.is('cordova')">
-    <h4>If you like the app please consider rating it 5 stars!</h4>
+    <h4>{{htmlControls.rate.title}}</h4>
     <ion-button *ngIf="platform.is('ios')" (click)="openMarketPage()">
-      Open App Store &nbsp; <ion-icon name="logo-apple"></ion-icon>
+      {{htmlControls.rate.iOS}}&nbsp; <ion-icon name="logo-apple"></ion-icon>
     </ion-button>
     <ion-button *ngIf="platform.is('android')" color="secondary" (click)="openMarketPage()">
-      Open Play Store &nbsp; <ion-icon name="logo-google"></ion-icon>
+      {{htmlControls.rate.android}}&nbsp; <ion-icon name="logo-google"></ion-icon>
     </ion-button>
   </div>
   <div *ngIf="bought">
     <hr>
-    <h2>Feedback</h2>
-    <p>Have any issues or just want to give me some feedback on how to make the app better? Just sent me an email
-      and I will answer accordingly!
+    <h2>{{htmlControls.feedback.title}}</h2>
+    <p>
+      {{htmlControls.feedback.message}}
     </p>
     <textarea #message></textarea>
     <br>
-    <ion-button color="primary" (click)="sendEmail(message.value)">Send email! </ion-button>
+    <ion-button color="primary" (click)="sendEmail(message.value)">{{htmlControls.feedback.button}}</ion-button>
     <hr>
   </div>
+  <ion-list>
+    <ion-radio-group>
+      <ion-list-header>
+        <ion-label>
+          {{htmlControls.language.title}}
+        </ion-label>
+      </ion-list-header>
+      <ion-item *ngFor="let language of languages">
+        <ion-label>
+          {{language.controls}}
+        </ion-label>
+        <ion-radio value="{{language.controls}}" (ionSelect)="setLanguage(language)"
+          checked="{{language.checked}}"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
 </ion-content>
