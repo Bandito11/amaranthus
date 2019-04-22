@@ -6,6 +6,7 @@ import { AppPurchaseProvider } from '../services/app-purchase/app-purchase';
 import { Market } from '@ionic-native/market/ngx';
 import { stateAndroid } from '../common/constants';
 import { Storage } from '@ionic/storage';
+import { TabsPage } from '../tabs/tabs.page';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',

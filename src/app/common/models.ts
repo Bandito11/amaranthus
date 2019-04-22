@@ -32,6 +32,7 @@ export interface INote {
   month: number;
   day: number;
   year: number;
+  event: string;
 }
 
 export interface IEvent {
@@ -69,7 +70,7 @@ export interface IResponse<T> {
 export interface ISimpleAlertOptions {
   header: string;
   message: string;
-  buttons?: string[];
+  buttons?: any[];
   event?: string;
 }
 

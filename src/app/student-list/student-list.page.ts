@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IStudent, ISimpleAlertOptions } from '../common/models';
+import { IStudent, ISimpleAlertOptions, IRecord } from '../common/models';
 import { AlertController, NavController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
@@ -13,14 +13,13 @@ import { Storage } from '@ionic/storage';
   styleUrls: ['./student-list.page.scss'],
 })
 export class StudentListPage implements OnInit {
-  students: IStudent[] = [];
-  private unfilteredStudents: IStudent[] = [];
+  students: (IStudent & IRecord)[];
+  private unfilteredStudents: (IStudent & IRecord)[];
   query: string;
   selectOptions;
   filterOptions: string[];
   @ViewChild('sort') sortElement;
   @ViewChild('filter') filterElement;
-  appStart: boolean;
 
   htmlControls = {
     toolbar: {
@@ -104,15 +103,11 @@ export class StudentListPage implements OnInit {
   ngOnInit() {
     this.students = [];
     this.unfilteredStudents = [];
-    this.getStudents();
-    this.filterOptions = this.getFilterOptions();
-    this.appStart = true;
   }
 
   ionViewWillEnter() {
     this.sortElement.placeholder = 'None';
     this.query = 'None';
-    const appStart = this.appStart;
     this.storage.get('language').then(value => {
       if (value) {
         this.language = value;
@@ -129,15 +124,9 @@ export class StudentListPage implements OnInit {
         this.sortElement.placeholder = 'None';
         this.filterElement.placeholder = 'None';
       }
-      if (appStart) {
-        this.getStudents();
-        this.filterOptions = this.getFilterOptions();
-      }
-    });
-    if (this.appStart) {
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
-    }
+    });
   }
 
   private initializeStudentsList() {
@@ -241,8 +230,8 @@ export class StudentListPage implements OnInit {
     try {
       const response = this.db.getAllStudents();
       if (response.success === true) {
-        this.students = [...response.data];
-        this.unfilteredStudents = [...response.data];
+        this.students = <any>response.data;
+        this.unfilteredStudents = <any>response.data;
       } else {
         handleError(response.error);
       }
@@ -265,15 +254,15 @@ export class StudentListPage implements OnInit {
   }
 
   sortStudentsbyId() {
-    this.students = sortStudentsbyId(this.students);
+    this.students = <any>sortStudentsbyId(this.students);
   }
 
   sortStudentsName() {
-    this.students = sortStudentsName(this.students);
+    this.students = <any>sortStudentsName(this.students);
   }
 
   private queryStudentsList(query: string) {
-    this.students = filterStudentsList({ query: query, students: this.unfilteredStudents });
+    this.students = <any>filterStudentsList({ query: query, students: this.unfilteredStudents });
   }
 
   async goToCreate() {

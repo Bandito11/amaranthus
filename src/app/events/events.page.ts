@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { formatDate } from '../common/format';
+import { Storage } from '@ionic/storage';
 @Component({
   selector: 'app-events',
   templateUrl: './events.page.html',
@@ -14,11 +15,56 @@ export class EventsPage {
   events: any[] = [];
   unfilteredEvents: any[] = [];
   homeURL = '/tabs/tabs/home/events';
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        add: ''
+      }
+    },
+    sort: '',
+    start: '',
+    end: '',
+    attended: '',
+    absence: '',
+    members: ''
+  };
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Events',
+        buttons: {
+          add: 'Create event'
+        }
+      },
+      sort: 'Sort By: ',
+      start: 'Start Date: ',
+      end: 'End Date: ',
+      attended: 'Total Attended: ',
+      absence: 'Total Absence: ',
+      members: 'Total Members: '
+    },
+    spanish: {
+      toolbar: {
+        title: 'Eventos',
+        buttons: {
+          add: 'Crear evento'
+        }
+      },
+      sort: 'Ordenar por: ',
+      start: 'Inicia en:',
+      end: 'Termina en: ',
+      attended: 'Asistencia Total: ',
+      absence: 'Ausencia Total: ',
+      members: 'Membresía Total: '
+    }
+  };
 
   constructor(
-    public navCtrl: NavController,
-    public db: AmaranthusDBProvider,
-    public modal: ModalController
+    private navCtrl: NavController,
+    private db: AmaranthusDBProvider,
+    private modal: ModalController,
+    private storage: Storage
   ) { }
 
   goBack() {
@@ -27,6 +73,13 @@ export class EventsPage {
 
 
   ionViewDidEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
     this.getEvents();
   }
 
@@ -107,6 +160,7 @@ export class EventsPage {
     if (response.success) {
       this.events = response.data.map(data => {
         let attendance = 0, absence = 0;
+        let totalMembers = 0;
         for (const member of data.members) {
           if (member.attendance) {
             attendance += 1;
@@ -114,11 +168,17 @@ export class EventsPage {
           if (member.absence) {
             absence += 1;
           }
+          const studentExists = this.db.studentExists(member.id);
+          if (studentExists) {
+            totalMembers++;
+          } else {
+            this.db.updateEventMembers({ name: data.name, member: member });
+          }
         }
         let event: any = {
           ...data,
           startDate: formatDate(data.startDate),
-          totalMembers: data.members.length,
+          totalMembers: totalMembers,
           totalAttendance: attendance,
           totalAbsence: absence
         };

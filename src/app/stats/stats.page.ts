@@ -135,7 +135,7 @@ export class StatsPage implements OnInit {
   }
 
   initializeStudents() {
-    this.students = [...this.unfilteredStudents];
+    this.students = this.unfilteredStudents;
   }
 
   /**
@@ -229,17 +229,20 @@ export class StatsPage implements OnInit {
       const response = this.db.getQueriedRecords({ event: this.event, query: this.query });
       if (response.success === true) {
         if (this.studentIds.length > 0) {
+          let list = [];
           for (const id of this.studentIds) {
-            this.students = [...this.students, response.data.find(student => id === student.id)];
+            const found = response.data.find(student => id === student.id);
+            if (found) {
+              list = [...list, found];
+            }
           }
-          this.unfilteredStudents = [...this.students];
+          this.students = list;
+          this.unfilteredStudents = list;
         } else {
-          this.students = [...response.data];
-          this.unfilteredStudents = [...response.data];
+          this.students = response.data;
+          this.unfilteredStudents = response.data;
         }
       } else {
-        // TODO:  implement an alert message if it fails message should say no students
-        // can be retrieved.
         handleError(response.error);
       }
     } catch (error) {

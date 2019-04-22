@@ -1,12 +1,11 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Create Event</ion-title>
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="addAll()">Add All</ion-button>
-      <ion-button (click)="createNewEvent()">Create</ion-button>
+      <ion-button (click)="createNewEvent()">{{htmlControls.toolbar.buttons.create}}</ion-button>
     </ion-buttons>
 
   </ion-toolbar>
@@ -17,52 +16,54 @@
     <img src="{{logo}}" alt="A picture for the logo for the event">
   </div>
   <div id="logo">
-    <ion-button (click)="addLogo()" type="button" color="primary">Add a Picture</ion-button>
-    <ion-button (click)="logo = '' " type="button" color="secondary">Reset</ion-button>
-    <p>(Optional)</p>
+    <ion-button (click)="addLogo()" type="button" color="primary">{{htmlControls.picture}}</ion-button>
+    <ion-button (click)="logo = '' " type="button" color="secondary">{{htmlControls.reset}}</ion-button>
+    <p>({{htmlControls.optional}})</p>
   </div>
   <ion-item>
-    <ion-label stacked>Name</ion-label>
-    <ion-input type="text" #name placeholder="Write your Event Name" [(ngModel)]="eventName"></ion-input>
+    <ion-label stacked>{{htmlControls.eventName}}</ion-label>
+    <ion-input type="text" #name placeholder="{{htmlControls.placeholder}}" [(ngModel)]="eventName"></ion-input>
     <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
   </ion-item>
   <div *ngIf="!infiniteDates else noStartDate">
     <ion-item>
-      <ion-label>Start Date</ion-label>
-      <ion-datetime displayFormat="MMMM DD YYYY" min="{{startDate}}" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
+      <ion-label>{{htmlControls.start}}</ion-label>
+      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
+      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>   
     </ion-item>
   </div>
   <ng-template #noStartDate>
     <ion-item>
-      <ion-label fixed>Start Date</ion-label>
+      <ion-label fixed>{{htmlControls.start}}</ion-label>
       <ion-input disabled></ion-input>
     </ion-item>
   </ng-template>
   <ion-item>
-    <ion-label>Has End Date?</ion-label>
+    <ion-label>{{htmlControls.hasEnd}}</ion-label>
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
   </ion-item>
   <div *ngIf="!infiniteDates else noEndDate">
     <ion-item *ngIf="hasEndDate">
-      <ion-label>End Date</ion-label>
-      <ion-datetime displayFormat="MMMM DD YYYY" min="{{startDate}}" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-label>{{htmlControls.end}}</ion-label>
+      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
       <ion-icon id="form-icon" name="warning" *ngIf="!this.endDate && hasEndDate"></ion-icon>
     </ion-item>
   </div>
   <ng-template #noEndDate>
     <div>
       <ion-item>
-        <ion-label fixed>End Date</ion-label>
+        <ion-label fixed>{{htmlControls.end}}</ion-label>
         <ion-input disabled></ion-input>
       </ion-item>
     </div>
   </ng-template>
   <ion-item>
-    <ion-label>Run Indefinitely</ion-label>
+    <ion-label>{{htmlControls.run}}</ion-label>
     <ion-checkbox [(ngModel)]="infiniteDates" color="primary" checked="false"></ion-checkbox>
   </ion-item>
   <ion-list lines="none">
-    <ion-searchbar (ionInput)="search($event)"></ion-searchbar>
+    <ion-searchbar placeholder="{{htmlControls.search}}" (ionInput)="search($event)"></ion-searchbar>
     <ion-grid>
       <ion-row *ngFor="let student of students">
         <ion-col size="2">
@@ -73,7 +74,7 @@
         <ion-col size="10">
           <ion-item>
               <ion-label text-wrap>
-                <span class="label name">Name: </span>
+                <span class="label name">{{htmlControls.studentName}}</span>
                 <span class="name">{{student.firstName}} <span *ngIf="student.initial">{{student.initial}}</span>
                   {{student.lastName}}</span>
               </ion-label>
@@ -83,36 +84,32 @@
                 <span class="label">ID: </span>{{student.id}}
               </ion-label>
           </ion-item>
-          <ion-item *ngIf="student.phoneNumber">
-              <ion-label text-wrap>
-                <span class="label">Phone Number: </span><span class="wrap">{{student.phoneNumber}}</span>
-              </ion-label>
-          </ion-item>
         </ion-col>
         <ion-buttons>
           <ion-button fill="solid" color="primary" (click)="addToEvent(student.id)">
-            Add
+            {{htmlControls.add}}
           </ion-button>
           <ion-button fill="solid" color="secondary" (click)="removeFromEvent(student.id)">
-            Remove
+            {{htmlControls.remove}}
           </ion-button>
         </ion-buttons>
         <ion-item>
           <ion-label class="left attended" *ngIf="ifOnEventList(student.id)">
-            {{student.firstName}} was added to events list!
+            {{student.firstName}}{{htmlControls.added}}
           </ion-label>
           <ion-label class="left attended" *ngIf="!ifOnEventList(student.id)">
-            {{student.firstName}} wasn't added to events list!
+            {{student.firstName}}{{htmlControls.notAdded}}
           </ion-label>
         </ion-item>
       </ion-row>
     </ion-grid>
   </ion-list>
-  <ion-button expand="block" (click)="createNewEvent()">Create</ion-button>
-  <!-- <ion-fab vertical="bottom" horizontal="end" edge="true" slot="fixed">
-    <ion-fab-button transluscent="true" type="button" color="secondary" (click)="addStudent()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
-
 </ion-content>
+<ion-footer>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+        <ion-button (click)="addAll()">{{htmlControls.toolbar.buttons.add}}</ion-button>
+      <ion-button (click)="createNewEvent()">{{htmlControls.toolbar.buttons.create}}</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -108,7 +108,8 @@ export class CalendarPage {
         ...opts,
         month: this.date.month,
         day: this.date.day,
-        year: this.date.year
+        year: this.date.year,
+        event: this.event
       };
       this.db.insertNotes(newNote);
       this.updateNotes(opts);
@@ -147,13 +148,18 @@ export class CalendarPage {
       });
       if (response.success === true) {
         if (this.studentIds.length > 0) {
+          let list = [];
           for (const id of this.studentIds) {
-            this.students = [...this.students, response.data.find(student => id === student.id)];
+            const found = response.data.find(student => id === student.id);
+            if (found) {
+              list = [...list, found];
+            }
           }
-          this.unfilteredStudents = [...this.students];
+          this.students = list;
+          this.unfilteredStudents = list;
         } else {
-          this.students = [...response.data];
-          this.unfilteredStudents = [...response.data];
+          this.students = response.data;
+          this.unfilteredStudents = response.data;
         }
       } else {
         handleError(response.error);
@@ -234,7 +240,7 @@ export class CalendarPage {
           header: 'Éxito',
           message: '¡El estudiante se marcó ausente!',
           buttons: ['Aprobar']
-        }
+        };
       } else {
         options = {
           header: 'Success!',
@@ -249,20 +255,15 @@ export class CalendarPage {
   }
 
   private updateStudentAttendance(opts: { id: string; absence: boolean; attendance: boolean }) {
-    // this.slidingUser.close();
-    const results = this.students.map(student => {
-      if (student.id === opts.id) {
-        return {
-          ...student,
-          attendance: opts.attendance,
-          absence: opts.absence
-        };
-      } else {
-        return student;
+    for (let i = 0; i < this.students.length; i++) {
+      if (this.students[i].id === opts.id) {
+        this.students[i].attendance = opts.attendance;
+        this.students[i].absence = opts.absence;
+        this.unfilteredStudents[i].attendance = opts.attendance;
+        this.unfilteredStudents[i].absence = opts.absence;
+
       }
-    });
-    this.students = [...results];
-    this.unfilteredStudents = [...results];
+    }
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {

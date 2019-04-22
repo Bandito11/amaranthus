@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AlertController, ModalController, NavController, LoadingController } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
-import { IStudent, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
+import { IStudent, ICalendar, ISimpleAlertOptions, IRecord } from 'src/app/common/models';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { handleError } from 'src/app/common/handleError';
 import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/common/search';
@@ -13,8 +13,8 @@ import { Storage } from '@ionic/storage';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  students: IStudent[];
-  private unfilteredStudents: IStudent[];
+  students: (IStudent & { attendance, absence })[];
+  private unfilteredStudents: (IStudent & IRecord)[];
   selectOptions;
   filterOptions: string[];
   date: ICalendar;
@@ -87,6 +87,7 @@ export class HomePage implements OnInit {
   @ViewChild('notes') notesElement;
   @ViewChild('sort') sortElement;
   @ViewChild('filter') filterElement;
+
   constructor(
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
@@ -106,13 +107,10 @@ export class HomePage implements OnInit {
     this.students = [];
     this.unfilteredStudents = [];
     this.getStudents();
-    this.filterOptions = this.getFilterOptions();
-    this.appStart = true;
   }
 
   ionViewWillEnter() {
     this.timer = 0;
-    const appStart = this.appStart;
     this.storage.get('language').then(value => {
       if (value) {
         this.language = value;
@@ -129,15 +127,13 @@ export class HomePage implements OnInit {
         this.sortElement.placeholder = 'None';
         this.filterElement.placeholder = 'None';
       }
-      if (appStart) {
-        this.getStudents();
-        this.filterOptions = this.getFilterOptions();
-        //////////// Use for testing only!///////////
-        // for (let i = 0; i < this.students.length; i++) {
-        //   this.db.insertTest();
-        // }
-        /////////////////////////////////////////////
-      }
+      this.getStudents();
+      this.filterOptions = this.getFilterOptions();
+      //////////// Use for testing only!///////////
+      // for (let i = 0; i < this.students.length; i++) {
+      //   this.db.insertTest();
+      // }
+      /////////////////////////////////////////////
     });
   }
 
@@ -160,6 +156,7 @@ export class HomePage implements OnInit {
           await loading.dismiss();
           if (this.students.length > 0) {
             this.appStart = true;
+            this.db.convertLegacyData();
             clearTimeout(studentTimeout);
           }
         }, 3000);
@@ -186,6 +183,7 @@ export class HomePage implements OnInit {
       const currentDate = new Date();
       const newNote = {
         ...opts,
+        event: '',
         month: currentDate.getMonth(),
         day: currentDate.getDate(),
         year: currentDate.getFullYear()
@@ -288,15 +286,15 @@ export class HomePage implements OnInit {
   }
 
   private sortStudentsbyId() {
-    this.students = sortStudentsbyId(this.students);
+    this.students = <any> sortStudentsbyId(this.students);
   }
 
   private sortStudentsName() {
-    this.students = sortStudentsName(this.students);
+    this.students = <any> sortStudentsName(this.students);
   }
 
   private filterStudentsList(query: string) {
-    this.students = filterStudentsList({ query: query, students: this.unfilteredStudents });
+    this.students = <any> filterStudentsList({ query: query, students: this.unfilteredStudents });
   }
 
   addAttendance(opts: { id: string }) {
@@ -330,11 +328,6 @@ export class HomePage implements OnInit {
   addAbsence(opts: { id: string }) {
     const response = this.db.addAbsence({ date: this.date, id: opts.id });
     if (response.success === true) {
-      this.updateStudentAttendance({
-        id: opts.id,
-        absence: true,
-        attendance: false
-      });
       let options;
       if (this.language === 'spanish') {
         options = {
@@ -350,25 +343,39 @@ export class HomePage implements OnInit {
         };
       }
       this.showSimpleAlert(options);
+      this.updateStudentAttendance({
+        id: opts.id,
+        absence: true,
+        attendance: false
+      });
     } else {
       handleError(response.error);
     }
   }
 
   private updateStudentAttendance(opts: { id: string; absence: boolean; attendance: boolean }) {
-    const results = this.students.map(student => {
-      if (student.id === opts.id) {
-        return {
-          ...student,
-          attendance: opts.attendance,
-          absence: opts.absence
-        };
-      } else {
-        return student;
+    // const results = this.students.map(student => {
+    //   if (student.id === opts.id) {
+    //     return {
+    //       ...student,
+    //       attendance: opts.attendance,
+    //       absence: opts.absence
+    //     };
+    //   } else {
+    //     return student;
+    //   }
+    // });
+    // this.unfilteredStudents = [...results];
+    // this.students = [...results];
+    for (let i = 0; i < this.students.length; i++) {
+      if (this.students[i].id === opts.id) {
+        this.students[i].attendance = opts.attendance;
+        this.students[i].absence = opts.absence;
+        this.unfilteredStudents[i].attendance = opts.attendance;
+        this.unfilteredStudents[i].absence = opts.absence;
+
       }
-    });
-    this.unfilteredStudents = [...results];
-    this.students = [...results];
+    }
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {

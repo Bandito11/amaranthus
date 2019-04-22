@@ -1,5 +1,6 @@
 import { Platform } from '@ionic/angular';
-import { Component, DoCheck } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
+import { Storage } from '@ionic/storage';
 
 declare const window: Window;
 
@@ -8,27 +9,85 @@ declare const window: Window;
   templateUrl: './tabs.page.html',
   styleUrls: ['./tabs.page.scss'],
 })
-export class TabsPage implements DoCheck {
+export class TabsPage implements DoCheck, OnInit {
+
+
   counter = 0;
   viewIsLarge: boolean;
-  pages = [
-    { text: 'Home', route: '/tabs/tabs/home' },
-    { text: 'Calendar', route: '/tabs/tabs/calendar' },
-    { text: 'Stats', route: '/tabs/tabs/stats' },
-    { text: 'Roster', route: '/tabs/tabs/roster' },
-    { text: 'Settings', route: '/tabs/tabs/settings' },
-    { text: 'Login', route: '/tabs/tabs/login' }
-  ];
+  pages;
 
   selectedTab: string;
 
-  constructor(public platform: Platform) { }
+  htmlControls = {
+    menu: '',
+    home: '',
+    calendar: '',
+    stats: '',
+    roster: '',
+    settings: '',
+    login: ''
+  };
+
+  LANGUAGE = {
+    english: {
+      menu: 'Menu',
+      home: 'Home',
+      calendar: 'Calendar',
+      stats: 'Stats',
+      roster: 'Roster',
+      settings: 'Settings',
+      login: 'Login'
+    },
+    spanish: {
+      menu: 'Menú',
+      home: 'Inicio',
+      calendar: 'Calendario',
+      stats: 'Estadísticas',
+      roster: 'Registro',
+      settings: 'Configuración',
+      login: 'Sesión'
+
+    }
+  };
+
+  constructor(
+    private platform: Platform,
+    private storage: Storage
+  ) { }
+
+  ngOnInit() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+        this.pages = [
+          { text: 'Inicio', route: '/tabs/tabs/home' },
+          { text: 'Calendario', route: '/tabs/tabs/calendar' },
+          { text: 'Estadísticas', route: '/tabs/tabs/stats' },
+          { text: 'Registro', route: '/tabs/tabs/roster' },
+          { text: 'Configuración', route: '/tabs/tabs/settings' },
+          { text: 'Sesión', route: '/tabs/tabs/login' }
+        ];
+      } else {
+        this.htmlControls = this.LANGUAGE['english'];
+        this.pages = [
+          { text: 'Home', route: '/tabs/tabs/home' },
+          { text: 'Calendar', route: '/tabs/tabs/calendar' },
+          { text: 'Stats', route: '/tabs/tabs/stats' },
+          { text: 'Roster', route: '/tabs/tabs/roster' },
+          { text: 'Settings', route: '/tabs/tabs/settings' },
+          { text: 'Login', route: '/tabs/tabs/login' }
+        ];
+      }
+    });
+
+  }
 
   ngDoCheck() {
     if (this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')) {
       this.viewIsLarge = window.matchMedia('(min-width: 992px)').matches;
     }
   }
+
 
   setSelectedTab(route: string) {
     this.selectedTab = route.toLowerCase();

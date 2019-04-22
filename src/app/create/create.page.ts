@@ -7,6 +7,7 @@ import { trimText } from '../common/format';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-create',
@@ -22,6 +23,101 @@ export class CreatePage {
 
   counter = 0;
 
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        create: ''
+      }
+    },
+    change: '',
+    reset: '',
+    firstName: '',
+    initial: '',
+    lastName: '',
+    gender: '',
+    male: '',
+    female: '',
+    undisclosed: '',
+    optional: '',
+    address: '',
+    phone: '',
+    city: '',
+    state: '',
+    class: '',
+    father: '',
+    mother: '',
+    name: '',
+    emergency: {
+      title: '',
+      relationship: ''
+    }
+  };
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Create Record',
+        buttons: {
+          create: 'Create'
+        }
+      },
+      change: 'Change',
+      reset: 'Reset',
+      firstName: 'First Name',
+      initial: 'Middle Name',
+      lastName: 'Last Name',
+      gender: 'Gender',
+      male: 'Male',
+      female: 'Female',
+      undisclosed: 'Undisclosed',
+      optional: 'Optional',
+      address: 'Address',
+      phone: 'Phone Number',
+      city: 'City',
+      state: 'State',
+      class: 'Class',
+      father: 'Father',
+      mother: 'Mother',
+      name: 'Name',
+      emergency: {
+        title: 'Emergency Contact',
+        relationship: 'Relationship'
+      }
+    },
+    spanish: {
+      toolbar: {
+        title: 'Crear Record',
+        buttons: {
+          create: 'Crear'
+        }
+      },
+      change: 'Cambiar',
+      reset: 'Reiniciar',
+      firstName: 'Nombre',
+      initial: 'Segundo Nombre',
+      lastName: 'Apellidos',
+      gender: 'Género',
+      male: 'Masculino',
+      female: 'Femenino',
+      undisclosed: 'No revelado',
+      optional: 'Opcional',
+      address: 'Dirección',
+      phone: 'Teléfono',
+      city: 'Ciudad',
+      state: 'Estado',
+      class: 'Clase',
+      father: 'Padre',
+      mother: 'Madre',
+      name: 'Nombre',
+      emergency: {
+        title: 'Contacto de Emergencia',
+        relationship: 'Relación'
+      }
+    }
+  };
+
+  language;
   constructor(
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
@@ -29,10 +125,20 @@ export class CreatePage {
     private camera: Camera,
     private webview: WebView,
     private file: File,
-    private platform: Platform
+    private platform: Platform,
+    private storage: Storage
   ) { }
 
   ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+        this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
     this.generateId();
     this.gender = 'male';
     this.picture = './assets/profilePics/default.png';
@@ -127,12 +233,23 @@ export class CreatePage {
       buttons: []
     };
     if (!opts.firstName || !opts.lastName || !opts.id) {
-      options = {
-        ...options,
-        header: 'Warning!',
-        message: 'Some fields doesn\'t have the required info',
-        buttons: [...['OK']]
-      };
+      if (this.language === 'spanish') {
+        options = {
+          ...options,
+          header: '¡Advertencia!',
+          message: 'Algunos campos no están llenos.',
+          buttons: ['Si']
+        };
+
+      } else {
+        options = {
+          ...options,
+          header: 'Warning!',
+          message: 'Some fields doesn\'t have the required info',
+          buttons: ['Ok']
+        };
+
+      }
       this.showSimpleAlert(options);
     } else {
       const picture = this.validatePicture({ gender: this.gender, picture: this.picture });
@@ -142,42 +259,82 @@ export class CreatePage {
         gender: this.gender,
         isActive: true
       };
-      const alert = await this.alertCtrl.create({
-        header: 'Warning!',
-        message: `Are you sure you want to create a new record for ${opts.firstName} ${opts.lastName}?`,
-        buttons: [
-          { text: 'No' },
-          {
-            text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
-              this.db.insertStudent(student)
-                .then((response) => {
-                  if (response.success === true) {
-                    navTransition.then(() => {
-                      const userCreatedMsg = {
-                        header: 'Success!',
-                        message: `${opts.firstName} ${opts.lastName} was created.`
+      if (this.language === 'spanish') {
+        const alert = await this.alertCtrl.create({
+          header: '¡Advertencia!',
+          message: `¿Estas seguro que quieres crear un récord para ${opts.firstName} ${opts.lastName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Si',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                this.db.insertStudent(student)
+                  .then((response) => {
+                    if (response.success === true) {
+                      navTransition.then(() => {
+                        const userCreatedMsg = {
+                          header: '¡Éxito!',
+                          message: `${opts.firstName} ${opts.lastName} ha sido creado.`
+                        };
+                        this.showAdvancedAlert(userCreatedMsg);
+                      });
+                    } else {
+                      const errorMsg = {
+                        header: 'Error',
+                        message: response.error
                       };
-                      this.showAdvancedAlert(userCreatedMsg);
-                    });
-                  } else {
-                    const errorMsg = {
-                      header: 'Error',
-                      message: response.error
-                    };
-                    navTransition.then(() => this.showAdvancedAlert(errorMsg));
-                  }
-                })
-                .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
-              return false;
+                      navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                    }
+                  })
+                  .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
+                return false;
+              }
             }
-          }
-        ]
-      });
-      alert.present();
+          ]
+        });
+        alert.present();
+      } else {
+        const alert = await this.alertCtrl.create({
+          header: 'Warning!',
+          message: `Are you sure you want to create a new record for ${opts.firstName} ${opts.lastName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                this.db.insertStudent(student)
+                  .then((response) => {
+                    if (response.success === true) {
+                      navTransition.then(() => {
+                        const userCreatedMsg = {
+                          header: 'Success!',
+                          message: `${opts.firstName} ${opts.lastName} was created.`
+                        };
+                        this.showAdvancedAlert(userCreatedMsg);
+                      });
+                    } else {
+                      const errorMsg = {
+                        header: 'Error',
+                        message: response.error
+                      };
+                      navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                    }
+                  })
+                  .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
+                return false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }
+
     }
 
   }

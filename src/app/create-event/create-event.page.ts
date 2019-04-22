@@ -7,6 +7,7 @@ import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-create-event',
@@ -14,6 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./create-event.page.scss'],
 })
 export class CreateEventPage implements OnInit {
+
   logo;
   students: IStudent[];
   STUDENTS: IStudent[];
@@ -25,6 +27,83 @@ export class CreateEventPage implements OnInit {
   infiniteDates: boolean;
   currentDate = new Date();
 
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        add: '',
+        create: ''
+      }
+    },
+    picture: '',
+    reset: '',
+    optional: '',
+    eventName: '',
+    placeholder: '',
+    start: '',
+    hasEnd: '',
+    end: '',
+    run: '',
+    search: '',
+    studentName: '',
+    add: '',
+    remove: '',
+    added: '',
+    notAdded: ''
+  };
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Create Event',
+        buttons: {
+          add: 'Add All',
+          create: 'Create'
+        }
+      },
+      picture: 'Add a Picture',
+      reset: 'Reset',
+      optional: 'Optional',
+      eventName: 'Name',
+      placeholder: 'Write your Event Name',
+      start: 'Start Date:',
+      hasEnd: 'Has End Date?',
+      end: 'End Date:',
+      run: 'Run Indefinitely',
+      search: 'Search by ID or Name',
+      studentName: 'Name: ',
+      add: 'Add',
+      remove: 'Remove',
+      added: ' was added to events list!',
+      notAdded: ` wasn't added to events list!`
+    },
+    spanish: {
+      toolbar: {
+        title: 'Crear Evento',
+        buttons: {
+          add: 'Añadir todos',
+          create: 'Crear'
+        }
+      },
+      picture: 'Añadir imagen',
+      reset: 'Reiniciar',
+      optional: 'Opcional',
+      eventName: 'Nombre',
+      placeholder: 'Escribe un nombre para el evento',
+      start: 'Inicia en:',
+      hasEnd: '¿Tiene fecha final?',
+      end: 'Termina en:',
+      run: 'Corre indefinidamente',
+      search: 'Busca por ID or nombre',
+      studentName: 'Nombre: ',
+      add: 'Añadir',
+      remove: 'Remover',
+      added: ' fue añadido al evento.',
+      notAdded: ` no fue añadido al evento.`
+    }
+  };
+  language;
+
   constructor(
     public navCtrl: NavController,
     public camera: Camera,
@@ -32,7 +111,8 @@ export class CreateEventPage implements OnInit {
     public modalCtrl: ModalController,
     public db: AmaranthusDBProvider,
     public alertCtrl: AlertController,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private storage: Storage
 
   ) { }
 
@@ -43,6 +123,18 @@ export class CreateEventPage implements OnInit {
     const currentDate = new Date();
     this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(currentDate.getMonth() + 1)}-${addZeroInFront(currentDate.getDate())}`;
     this.endDate = ``;
+  }
+
+  ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+        this.language = value;
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
   }
 
   resetEndDate() {
@@ -58,26 +150,50 @@ export class CreateEventPage implements OnInit {
   async createNewEvent() {
     try {
       if (this.studentIds.length < 1) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to choose at least one user from the list!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: '¡Tienes que escoger por lo menos un usario de la lista!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to choose at least one user from the list!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.startDate && !this.infiniteDates) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to choose a start date!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: 'Tienes que escoger una fecha de inicio!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to choose a start date!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.eventName) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to write a name for the event!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: '¡Tienes que escribir un nombre para el evento!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to write a name for the event!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
@@ -105,10 +221,19 @@ export class CreateEventPage implements OnInit {
       }
       if (this.endDate && !newEvent.infiniteDates) {
         if (!this.startDate) {
-          this.showSimpleAlert({
-            header: 'Error!',
-            message: 'If the event had an end date it has to have a start date~'
-          });
+          let opts: ISimpleAlertOptions;
+          if (this.language === 'spanish') {
+            opts = {
+              header: '¡Error!',
+              message: 'Si el evento tiene una fecha final entonces tambien debe de tener una fecha de inicio.'
+            };
+          } else {
+            opts = {
+              header: 'Error!',
+              message: 'If the event had an end date it has to have a start date.'
+            };
+          }
+          this.showSimpleAlert(opts);
         } else {
           newEvent = {
             ...newEvent,
@@ -118,39 +243,76 @@ export class CreateEventPage implements OnInit {
       } else if (!this.hasEndDate) {
         this.resetEndDate();
       }
-      const alert = await this.alertCtrl.create({
-        header: 'Warning!',
-        message: `Are you sure you want to create a new ${this.eventName}?`,
-        buttons: [
-          { text: 'No' },
-          {
-            text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
-              const response = this.db.insertEvent(newEvent);
-              if (response.success === true) {
-                navTransition.then(() => {
+      if (this.language === 'spanish') {
+        const alert = await this.alertCtrl.create({
+          header: '¡Advertencia!',
+          message: `¿Estás seguro que quieres crear un nuevo evento ${this.eventName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Si',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.insertEvent(newEvent);
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    const options = {
+                      header: '¡Éxito!',
+                      message: `${this.eventName} fue creado.`
+                    };
+                    this.showAdvancedAlert(options, false);
+                  });
+                } else {
                   const options = {
-                    header: 'Success!',
-                    message: `${this.eventName} was created.`
+                    header: 'Error',
+                    message: 'Evento ya existe.'
                   };
-                  this.showAdvancedAlert(options);
-                });
-              } else {
-                const options = {
-                  header: 'Error',
-                  message: response.error
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                  this.showAdvancedAlert(options, true);
+                }
+                return false;
               }
-              return false;
             }
-          }
-        ]
-      });
-      alert.present();
+          ]
+        });
+        alert.present();
+      } else {
+        const alert = await this.alertCtrl.create({
+          header: 'Warning!',
+          message: `Are you sure you want to create a new ${this.eventName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.insertEvent(newEvent);
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    const options = {
+                      header: 'Success!',
+                      message: `${this.eventName} was created.`
+                    };
+                    this.showAdvancedAlert(options, false);
+                  });
+                } else {
+                  const options = {
+                    header: 'Error',
+                    message: 'Event already exits! '
+                  };
+                  this.showAdvancedAlert(options, true);
+                }
+                return false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }
+
     } catch (error) {
       const opts: ISimpleAlertOptions = {
         header: 'Error',
@@ -163,7 +325,7 @@ export class CreateEventPage implements OnInit {
   getStudents() {
     this.students = [];
     this.STUDENTS = [];
-    const response = this.db.getAllStudents();
+    const response = this.db.getAllStudents(true);
     if (response.success) {
       this.students = [...response.data];
       this.STUDENTS = [...response.data];
@@ -249,7 +411,7 @@ export class CreateEventPage implements OnInit {
     alert.present();
   }
 
-  private async showAdvancedAlert(options: ISimpleAlertOptions) {
+  private async showAdvancedAlert(options: ISimpleAlertOptions, fail: boolean) {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
@@ -259,10 +421,12 @@ export class CreateEventPage implements OnInit {
           handler: () => {
             // user has clicked the alert button
             // begin the alert's dismiss transition
-            alert.dismiss().then(() => {
-              this.modalCtrl.dismiss();
-            });
-            return false;
+            if (!fail) {
+              alert.dismiss().then(() => {
+                this.modalCtrl.dismiss();
+              });
+              return false;
+            }
           }
         }
       ]

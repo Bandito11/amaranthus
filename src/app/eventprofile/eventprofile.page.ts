@@ -7,6 +7,7 @@ import { MONTHSLABELS } from '../common/constants';
 import { formatDate } from '../common/format';
 import { handleError } from '../common/handleError';
 import { EditEventPage } from '../editevent/editevent.page';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-eventprofile',
@@ -16,11 +17,12 @@ import { EditEventPage } from '../editevent/editevent.page';
 export class EventProfilePage implements OnInit {
 
   constructor(
-    public navCtrl: NavController,
-    public route: ActivatedRoute,
-    public db: AmaranthusDBProvider,
-    public alertCtrl: AlertController,
-    public modal: ModalController
+    private navCtrl: NavController,
+    private route: ActivatedRoute,
+    private db: AmaranthusDBProvider,
+    private alertCtrl: AlertController,
+    private modal: ModalController,
+    private storage: Storage
   ) { }
 
   /**
@@ -42,12 +44,86 @@ export class EventProfilePage implements OnInit {
 
   homeURL = '/tabs/tabs/home/events/profile';
 
+  htmlControls = {
+    toolbar: {
+      buttons: {
+        edit: '',
+        calendar: '',
+        stats: ''
+      }
+    },
+    from: '',
+    to: '',
+    today: '',
+    name: '',
+    phone: '',
+    class: '',
+    attended: '',
+    absence: '',
+    present: '',
+    absent: ''
+  };
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        buttons: {
+          edit: 'Edit',
+          calendar: 'Calendar',
+          stats: 'Stats'
+        }
+      },
+      from: 'From to: ',
+      to: 'to: ',
+      today: 'Today is: ',
+      name: 'Name: ',
+      phone: 'Phone Number: ',
+      class: 'Class: ',
+      attended: 'Attended',
+      absence: 'Absent',
+      present: `'s present today!`,
+      absent: `'s absent today!`
+    },
+    spanish: {
+      toolbar: {
+        buttons: {
+          edit: 'Editar',
+          calendar: 'Calendario',
+          stats: 'Estadísticas'
+        }
+      },
+      from: 'Desde: ',
+      to: 'hasta: ',
+      today: 'Hoy es: ',
+      name: 'Nombre: ',
+      phone: 'Teléfono: ',
+      class: 'Clase: ',
+      attended: 'Asistió',
+      absence: 'Ausente',
+      present: ` está presente hoy.`,
+      absent: ` está ausente hoy.`
+    }
+  };
+
+  language;
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
-    this.getEventProfile(this.id);
     const date = new Date();
     this.currentDate = `${MONTHSLABELS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+  }
+
+  ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.language = value;
+        this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+      this.getEventProfile(this.id);
+    });
   }
 
   /**
@@ -63,6 +139,7 @@ export class EventProfilePage implements OnInit {
     if (response.success) {
       this.event = { ...response.data };
       let members = [];
+      this.studentIds = [];
       for (const member of response.data.members) {
         this.studentIds = [...this.studentIds, member.id];
         const studentResponse = this.db.getStudentById(<any>member);

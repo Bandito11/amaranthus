@@ -4,7 +4,7 @@
 
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title>Menu</ion-title>
+        <ion-title>{{htmlControls.menu}}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -15,7 +15,7 @@
           </ion-item>
         </ion-list>
       </ion-content>
-
+ 
   </ion-menu>
 
   <ion-tabs id="menu-content">
@@ -26,14 +26,14 @@
         <!--was MainPage in v3-->
         <ion-icon name="home"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Home
+          {{htmlControls.home}}
         </ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="calendar">
         <ion-icon name="calendar"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Calendar
+          {{htmlControls.calendar}}
         </ion-label>
       </ion-tab-button>
 
@@ -41,7 +41,7 @@
         <!--Was TablePage in v3-->
         <ion-icon name="stats"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Stats
+          {{htmlControls.stats}}
         </ion-label>
       </ion-tab-button>
 
@@ -49,14 +49,14 @@
         <!--Was StudentListPage in v3-->
         <ion-icon name="people"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Roster
+          {{htmlControls.roster}}
         </ion-label>
       </ion-tab-button>
 
       <ion-tab-button tab="settings">
         <ion-icon name="cog"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Settings
+          {{htmlControls.settings}}
         </ion-label>
       </ion-tab-button>
 
@@ -64,7 +64,7 @@
         *ngIf=" this.platform.is('desktop') || this.platform.is('ipad') || this.platform.is('tablet')">
         <ion-icon name="log-in"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
-          Login
+          {{htmlControls.login}}
         </ion-label>
       </ion-tab-button>
 

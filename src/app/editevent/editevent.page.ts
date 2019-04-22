@@ -6,6 +6,7 @@ import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-editevent',
@@ -13,6 +14,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./editevent.page.scss'],
 })
 export class EditEventPage implements OnInit {
+
   id;
   logo;
   students: IStudent[];
@@ -25,6 +27,86 @@ export class EditEventPage implements OnInit {
   event: IEvent;
   infiniteDates: boolean;
 
+  htmlControls = {
+    toolbar: {
+      title: '',
+      buttons: {
+        add: '',
+        edit: ''
+      }
+    },
+    picture: '',
+    reset: '',
+    optional: '',
+    eventName: '',
+    placeholder: '',
+    start: '',
+    hasEnd: '',
+    end: '',
+    run: '',
+    search: '',
+    studentName: '',
+    add: '',
+    remove: '',
+    added: '',
+    notAdded: '',
+    delete: ''
+  };
+
+  LANGUAGE = {
+    english: {
+      toolbar: {
+        title: 'Edit Event',
+        buttons: {
+          add: 'Add All',
+          edit: 'Save'
+        }
+      },
+      picture: 'Add a Picture',
+      reset: 'Reset',
+      optional: 'Optional',
+      eventName: 'Name',
+      placeholder: 'Write your Event Name',
+      start: 'Start Date:',
+      hasEnd: 'Has End Date?',
+      end: 'End Date:',
+      run: 'Run Indefinitely',
+      search: 'Search by ID or Name',
+      studentName: 'Name: ',
+      add: 'Add',
+      remove: 'Remove',
+      added: ' was added to events list!',
+      notAdded: ` wasn't added to events list!`,
+      delete: 'Delete'
+    },
+    spanish: {
+      toolbar: {
+        title: 'Editar Evento',
+        buttons: {
+          add: 'Añadir todos',
+          edit: 'Editar'
+        }
+      },
+      picture: 'Añadir imagen',
+      reset: 'Reiniciar',
+      optional: 'Opcional',
+      eventName: 'Nombre',
+      placeholder: 'Escribe un nombre para el evento',
+      start: 'Inicia en:',
+      hasEnd: '¿Tiene fecha final?',
+      end: 'Termina en:',
+      run: 'Corre indefinidamente',
+      search: 'Busca por ID or nombre',
+      studentName: 'Nombre: ',
+      add: 'Añadir',
+      remove: 'Remover',
+      added: ' fue añadido al evento.',
+      notAdded: ` no fue añadido al evento.`,
+      delete: 'Borrar'
+    }
+  };
+  language;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -33,7 +115,8 @@ export class EditEventPage implements OnInit {
     public modalCtrl: ModalController,
     public db: AmaranthusDBProvider,
     public alertCtrl: AlertController,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private storage: Storage
   ) { }
 
   ngOnInit() {
@@ -42,6 +125,17 @@ export class EditEventPage implements OnInit {
     this.getEventProfile(this.id);
   }
 
+  ionViewWillEnter() {
+    this.storage.get('language').then(value => {
+      if (value) {
+        this.htmlControls = this.LANGUAGE[value];
+        this.language = value;
+      } else {
+        this.language = 'english';
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+    });
+  }
 
   addAll() {
     for (const student of this.STUDENTS) {
@@ -73,26 +167,50 @@ export class EditEventPage implements OnInit {
   async editEvent() {
     try {
       if (this.studentIds.length < 1) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to choose at least one user from the list!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: '¡Tienes que escoger por lo menos un usario de la lista!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to choose at least one user from the list!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.startDate && !this.infiniteDates) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to choose a start date!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: 'Tienes que escoger una fecha de inicio!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to choose a start date!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
       if (!this.eventName) {
-        const opts: ISimpleAlertOptions = {
-          header: 'Error',
-          message: 'Have to write a name for the event!'
-        };
+        let opts: ISimpleAlertOptions;
+        if (this.language === 'spanish') {
+          opts = {
+            header: 'Error',
+            message: '¡Tienes que escribir un nombre para el evento!'
+          };
+        } else {
+          opts = {
+            header: 'Error',
+            message: 'Have to write a name for the event!'
+          };
+        }
         this.showSimpleAlert(opts);
         return;
       }
@@ -132,39 +250,75 @@ export class EditEventPage implements OnInit {
       } else if (!this.hasEndDate) {
         this.resetEndDate();
       }
-      const alert = await this.alertCtrl.create({
-        header: 'Warning!',
-        message: `Are you sure you want to edit ${this.eventName} event?`,
-        buttons: [
-          { text: 'No' },
-          {
-            text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
-              const response = this.db.updateEvent(this.event);
-              if (response.success === true) {
-                navTransition.then(() => {
+      if (this.language === 'spanish') {
+        const alert = await this.alertCtrl.create({
+          header: '¡Advertencia!',
+          message: `¿Estás seguro que quieres editar el evento ${this.eventName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Si',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.updateEvent(this.event);
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    const options = {
+                      header: '¡Éxito!',
+                      message: `${this.eventName} fue editado exitosamente.`
+                    };
+                    this.showAdvancedAlert(options);
+                  });
+                } else {
                   const options = {
-                    header: 'Success!',
-                    message: `${this.eventName} was edited successfully.`
+                    header: 'Error',
+                    message: 'Usuario no se pudo editar. Por favor trate de nuevo.'
                   };
-                  this.showAdvancedAlert(options);
-                });
-              } else {
-                const options = {
-                  header: 'Error',
-                  message: response.error
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
               }
-              return false;
             }
-          }
-        ]
-      });
-      alert.present();
+          ]
+        });
+        alert.present();
+      } else {
+        const alert = await this.alertCtrl.create({
+          header: 'Warning!',
+          message: `Are you sure you want to edit ${this.eventName} event?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.updateEvent(this.event);
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    const options = {
+                      header: 'Success!',
+                      message: `${this.eventName} was edited successfully.`
+                    };
+                    this.showAdvancedAlert(options);
+                  });
+                } else {
+                  const options = {
+                    header: 'Error',
+                    message: 'User couldn\'t be edited. Please try again!'
+                  };
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }
     } catch (error) {
       const opts: ISimpleAlertOptions = {
         header: 'Error',
@@ -177,7 +331,7 @@ export class EditEventPage implements OnInit {
   getStudents() {
     this.students = [];
     this.STUDENTS = [];
-    const response = this.db.getAllStudents();
+    const response = this.db.getAllStudents(true);
     if (response.success) {
       this.students = [...response.data];
       this.STUDENTS = [...response.data];
@@ -228,9 +382,9 @@ export class EditEventPage implements OnInit {
       );
     } else {
       // Only for Dev Purposes
-      this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
-      /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
-      f97`;
+      // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
+      // /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
+      // f97`;
     }
   }
 
@@ -300,41 +454,80 @@ export class EditEventPage implements OnInit {
 
   async removeEvent() {
     try {
-      const alert = await this.alertCtrl.create({
-        header: 'Warning!',
-        message: `Are you sure you want to delete ${this.eventName} event?`,
-        buttons: [
-          { text: 'No' },
-          {
-            text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
-              const response = this.db.removeEvent(this.event);
-              if (response.success === true) {
-                this.id = undefined;
-                navTransition.then(() => {
-                  const opts = {
-                    header: 'Success!',
-                    message: 'Event was removed successfully from DB!',
-                    event: 'delete'
+      if (this.language === 'spanish') {
+        const alert = await this.alertCtrl.create({
+          header: '¡Advertencia!',
+          message: `¿Estás seguro que quieres borrar el evento ${this.eventName}?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Si',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.removeEvent(this.event);
+                if (response.success === true) {
+                  this.id = undefined;
+                  navTransition.then(() => {
+                    const opts = {
+                      header: '¡éxisto!',
+                      message: '¡El evento se borro exitosamente!',
+                      event: 'delete'
+                    };
+                    this.showAdvancedAlert(opts);
+                  });
+                } else {
+                  const options = {
+                    header: 'Error',
+                    message: response.error
                   };
-                  this.showAdvancedAlert(opts);
-                });
-              } else {
-                const options = {
-                  header: 'Error',
-                  message: response.error
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
               }
-              return false;
             }
-          }
-        ]
-      });
-      alert.present();
+          ]
+        });
+        alert.present();
+      } else {
+        const alert = await this.alertCtrl.create({
+          header: 'Warning!',
+          message: `Are you sure you want to delete ${this.eventName} event?`,
+          buttons: [
+            { text: 'No' },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = this.db.removeEvent(this.event);
+                if (response.success === true) {
+                  this.id = undefined;
+                  navTransition.then(() => {
+                    const opts = {
+                      header: 'Success!',
+                      message: 'Event was removed successfully!',
+                      event: 'delete'
+                    };
+                    this.showAdvancedAlert(opts);
+                  });
+                } else {
+                  const options = {
+                    header: 'Error',
+                    message: response.error
+                  };
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }
+
     } catch (error) {
       handleError(error);
     }
