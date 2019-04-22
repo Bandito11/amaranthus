@@ -121,7 +121,7 @@ export class SettingsPage implements OnInit {
         },
         {
           language: 'spanish',
-          controls: 'Spanish',
+          controls: 'Español',
           checked: false
         }
       ];
@@ -171,6 +171,44 @@ export class SettingsPage implements OnInit {
 
   setLanguage(language: { checked, language, controls }) {
     this.storage.set('language', language.language);
+    this.languages = [
+      {
+        language: 'english',
+        controls: 'English',
+        checked: true
+      },
+      {
+        language: 'spanish',
+        controls: 'Español',
+        checked: false
+      }
+    ];
+    if (language.language === 'spanish') {
+      this.language = 'spanish';
+    } else {
+      this.language = 'english';
+    }
+    this.htmlControls = this.LANGUAGE[this.language];
+    if (language.language === 'spanish') {
+      this.languages[0].checked = false;
+      this.languages[1].checked = true;
+      this.htmlControls = {
+        ...this.htmlControls,
+        masterKey: {
+          title: 'La Llave Maestra!',
+          description: 'Elimina el límite de 10 usuarios a la base de datos.'
+        }
+      };
+    } else {
+      this.languages[0].checked = true;
+      this.htmlControls = {
+        ...this.htmlControls,
+        masterKey: {
+          title: 'The Master Key!',
+          description: 'Unlock limit of 10 users to database.'
+        }
+      };
+    }
   }
 
   openMarketPage() {
