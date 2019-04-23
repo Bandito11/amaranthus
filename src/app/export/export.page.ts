@@ -1,5 +1,3 @@
-import { MONTHSLABELS } from 'src/app/common/constants';
-import { MESESLABELS } from './../common/constants';
 import { AmaranthusDBProvider } from './../services/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';

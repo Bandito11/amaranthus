@@ -6,8 +6,9 @@ import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Storage } from '@ionic/storage';
+import { File } from '@ionic-native/file/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-create-event',
@@ -111,8 +112,9 @@ export class CreateEventPage implements OnInit {
     public modalCtrl: ModalController,
     public db: AmaranthusDBProvider,
     public alertCtrl: AlertController,
-    private sanitizer: DomSanitizer,
-    private storage: Storage
+    private file: File,
+    private storage: Storage,
+    private webview: WebView
 
   ) { }
 
@@ -359,23 +361,64 @@ export class CreateEventPage implements OnInit {
       const options: CameraOptions = {
         quality: 100,
         sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-        targetWidth: 250,
-        targetHeight: 250,
         destinationType: this.camera.DestinationType.FILE_URI,
         mediaType: this.camera.MediaType.PICTURE,
-        encodingType: this.camera.EncodingType.PNG
+        encodingType: this.camera.EncodingType.PNG,
+        targetWidth: 250,
+        targetHeight: 250
       };
-      this.camera.getPicture(options).then(
-        imageData => {
-          this.logo = this.sanitizer.bypassSecurityTrustUrl(imageData);
+      this.camera.getPicture(options)
+        .then((imageData: string) => {
+          if (this.platform.is('android')) {
+            this.logo = this.webview.convertFileSrc(imageData);
+            return 0;
+          }
+          const array = imageData.split('/');
+          const fileName = array.pop();
+          const directory = array.slice(0, array.length).join('/');
+          const path = this.file.dataDirectory;
+          const outDirectory = 'images';
+          this.file.checkDir(path, outDirectory).then(() => {
+            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+              .catch(e => {
+                if (e.code === 12) {
+                  this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  return 0;
+                }
+                const opts: ISimpleAlertOptions = {
+                  header: 'Error!',
+                  message: JSON.stringify(e)
+                };
+                this.showSimpleAlert(opts);
+              });
+          }).catch(() => {
+            this.file.createDir(path, outDirectory, true).then(() => {
+              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+                .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+                .catch(e => {
+                  if (e.code === 12) {
+                    this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                    return 0;
+                  }
+                  const opts: ISimpleAlertOptions = {
+                    header: 'Error',
+                    message: JSON.stringify(e)
+                  };
+                  this.showSimpleAlert(opts);
+                });
+            });
+          });
         },
-        error => handleError(error)
-      );
+          error => handleError(error)
+        );
     } else {
       // Only for Dev Purposes
-      // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com/o/
-      // cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857f97`;
+      // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
+      // /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
+      // f97`;
     }
+
   }
 
   addToEvent(id) {

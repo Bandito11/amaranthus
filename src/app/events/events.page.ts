@@ -4,6 +4,7 @@ import { NavController, ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
 import { formatDate } from '../common/format';
 import { Storage } from '@ionic/storage';
+
 @Component({
   selector: 'app-events',
   templateUrl: './events.page.html',

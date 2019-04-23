@@ -5,7 +5,6 @@ import { IStudent, IRecord, IEvent, INote, IResponse, ICalendar } from 'src/app/
 import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
-import { Options } from 'selenium-webdriver';
 
 /**
  * Collections use on db

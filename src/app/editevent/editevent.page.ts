@@ -1,3 +1,4 @@
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Component, OnInit } from '@angular/core';
 import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
@@ -5,8 +6,8 @@ import { NavController, NavParams, Platform, ModalController, AlertController } 
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Storage } from '@ionic/storage';
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-editevent',
@@ -108,15 +109,16 @@ export class EditEventPage implements OnInit {
   language;
 
   constructor(
-    public navCtrl: NavController,
-    public navParams: NavParams,
-    public camera: Camera,
-    public platform: Platform,
-    public modalCtrl: ModalController,
-    public db: AmaranthusDBProvider,
-    public alertCtrl: AlertController,
-    private sanitizer: DomSanitizer,
-    private storage: Storage
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private camera: Camera,
+    private platform: Platform,
+    private modalCtrl: ModalController,
+    private db: AmaranthusDBProvider,
+    private alertCtrl: AlertController,
+    private file: File,
+    private storage: Storage,
+    private webview: WebView
   ) { }
 
   ngOnInit() {
@@ -368,18 +370,57 @@ export class EditEventPage implements OnInit {
       const options: CameraOptions = {
         quality: 100,
         sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-        targetWidth: 250,
-        targetHeight: 250,
         destinationType: this.camera.DestinationType.FILE_URI,
         mediaType: this.camera.MediaType.PICTURE,
-        encodingType: this.camera.EncodingType.PNG
+        encodingType: this.camera.EncodingType.PNG,
+        targetWidth: 250,
+        targetHeight: 250
       };
-      this.camera.getPicture(options).then(
-        imageData => {
-          this.logo = this.sanitizer.bypassSecurityTrustUrl(imageData);
+      this.camera.getPicture(options)
+        .then((imageData: string) => {
+          if (this.platform.is('android')) {
+            this.logo = this.webview.convertFileSrc(imageData);
+            return 0;
+          }
+          const array = imageData.split('/');
+          const fileName = array.pop();
+          const directory = array.slice(0, array.length).join('/');
+          const path = this.file.dataDirectory;
+          const outDirectory = 'images';
+          this.file.checkDir(path, outDirectory).then(() => {
+            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+              .catch(e => {
+                if (e.code === 12) {
+                  this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  return 0;
+                }
+                const opts: ISimpleAlertOptions = {
+                  header: 'Error!',
+                  message: JSON.stringify(e)
+                };
+                this.showSimpleAlert(opts);
+              });
+          }).catch(() => {
+            this.file.createDir(path, outDirectory, true).then(() => {
+              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+                .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+                .catch(e => {
+                  if (e.code === 12) {
+                    this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                    return 0;
+                  }
+                  const opts: ISimpleAlertOptions = {
+                    header: 'Error',
+                    message: JSON.stringify(e)
+                  };
+                  this.showSimpleAlert(opts);
+                });
+            });
+          });
         },
-        error => handleError(error)
-      );
+          error => handleError(error)
+        );
     } else {
       // Only for Dev Purposes
       // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com

@@ -6,7 +6,7 @@ import { AppPurchaseProvider } from '../services/app-purchase/app-purchase';
 import { Market } from '@ionic-native/market/ngx';
 import { stateAndroid } from '../common/constants';
 import { Storage } from '@ionic/storage';
-import { TabsPage } from '../tabs/tabs.page';
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
@@ -18,7 +18,7 @@ export class SettingsPage implements OnInit {
   isIos: boolean;
   isAndroid: boolean;
   bought: boolean;
-  languages;
+  languages: { language: string, controls: string, checked: boolean }[];
   language;
   LANGUAGE = {
     spanish: {
@@ -171,18 +171,13 @@ export class SettingsPage implements OnInit {
 
   setLanguage(language: { checked, language, controls }) {
     this.storage.set('language', language.language);
-    this.languages = [
-      {
-        language: 'english',
-        controls: 'English',
-        checked: true
-      },
-      {
-        language: 'spanish',
-        controls: 'Español',
-        checked: false
-      }
-    ];
+    if (language.language === 'spanish') {
+      this.languages[0].checked = false;
+      this.languages[1].checked = true;
+    } else {
+      this.languages[0].checked = true;
+      this.languages[1].checked = false;
+    }
     if (language.language === 'spanish') {
       this.language = 'spanish';
     } else {

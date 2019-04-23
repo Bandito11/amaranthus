@@ -283,7 +283,7 @@ export class EditPage implements OnInit {
     if (!opts.firstName || !opts.lastName || !opts.id) {
       if (this.language === 'spanish') {
         options = {
-          ...options, 
+          ...options,
           header: '¡Advertencia!',
           message: 'Algunos campos no están llenos.',
           buttons: ['Si']

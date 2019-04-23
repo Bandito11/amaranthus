@@ -12,7 +12,8 @@ export function filterStudentsList(opts: { students: IStudent[], query: string }
             student.id === opts.query ||
             student.firstName.toLowerCase().includes(opts.query.toLowerCase()) ||
             student.lastName.toLowerCase().includes(opts.query.toLowerCase()) ||
-            fullName === opts.query.toLowerCase()) {
+            fullName === opts.query.toLowerCase()
+        ) {
             return student;
         }
     });
