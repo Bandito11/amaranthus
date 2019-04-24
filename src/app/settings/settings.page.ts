@@ -20,7 +20,6 @@ export class SettingsPage implements OnInit {
   bought: boolean;
   languages: { language: string, controls: string, checked: boolean }[];
   language;
-  text;
   LANGUAGE = {
     spanish: {
       toolbar: {
@@ -101,7 +100,7 @@ export class SettingsPage implements OnInit {
       title: ''
     }
   };
-  body: string;
+  textArea: string;
 
   constructor(
     public emailComposer: EmailComposer,
@@ -112,6 +111,34 @@ export class SettingsPage implements OnInit {
     public alertCtrl: AlertController,
     public market: Market
   ) { }
+
+  setTextArea() {
+    if (this.language === 'spanish') {
+      this.textArea = `
+      Hola,
+      Para problemas:
+      [Escriba el modelo del teléfono]
+      Problema: [Escribe un resumen del problema!]
+      Para recomendaciones:
+      [Modelo del teléfono]
+      Idea: [¡Resumen de mi asombrosa idea!]
+
+      Notes:
+      `;
+    } else {
+      this.textArea = `
+      Hi,
+      For issues:
+      [Phone Model]
+      Issue: [Write a summary of my issue!]
+      For Feedback:
+      [Phone Model]
+      Idea: [Summary of my awesome idea!]
+
+      Notes:
+      `;
+    }
+  }
 
   ngOnInit() {
     this.storage.get('language').then(value => {
@@ -153,31 +180,7 @@ export class SettingsPage implements OnInit {
           }
         };
       }
-      if (this.language === 'spanish') {
-        this.body = `
-        Hola,
-        Para problemas:
-        [Escriba el modelo del teléfono]
-        Issue: [Escribe un resumen del problema!]
-        <br>
-        Para recomendaciones.:
-        [Modelo del teléfono]
-        Idea: [¡Resumen de mi asombrosa idea!]
-        Descripción:
-        `;
-      } else {
-        this.body = `
-        Hi,
-        For issues:
-        [Phone Model]
-        Issue: [Write a summary of my issue!]
-        <br>
-        For Feedback:
-        [Phone Model]
-        Idea: [Summary of my awesome idea!]
-        Description:
-        `;
-      }
+      this.setTextArea();
     });
     if (this.platform.is('ios')) {
       this.isIos = true;
@@ -210,6 +213,7 @@ export class SettingsPage implements OnInit {
     } else {
       this.language = 'english';
     }
+    this.setTextArea();
     this.htmlControls = this.LANGUAGE[this.language];
     if (language.language === 'spanish') {
       this.languages[0].checked = false;
@@ -247,7 +251,7 @@ export class SettingsPage implements OnInit {
       to: 'attendancelogtracker@gmail.com',
       subject: 'Attendance Log: Browser',
       body: body,
-      isHtml: true
+      isHtml: false
     };
     if (this.platform.is('cordova')) {
       if (this.platform.is('android')) {

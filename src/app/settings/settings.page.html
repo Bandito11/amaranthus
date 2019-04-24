@@ -65,11 +65,12 @@
     <p>
       {{htmlControls.feedback.message}}
     </p>
-    <textarea #message value="{{text}}"></textarea>
+    <textarea #message value="{{textArea}}"></textarea>
     <br>
     <ion-button color="primary" (click)="sendEmail(message.value)">{{htmlControls.feedback.button}}</ion-button>
     <hr>
   </div>
+
   <ion-list>
     <ion-radio-group>
       <ion-list-header>
