@@ -20,6 +20,7 @@ export class SettingsPage implements OnInit {
   bought: boolean;
   languages: { language: string, controls: string, checked: boolean }[];
   language;
+  text;
   LANGUAGE = {
     spanish: {
       toolbar: {
@@ -100,6 +101,7 @@ export class SettingsPage implements OnInit {
       title: ''
     }
   };
+  body: string;
 
   constructor(
     public emailComposer: EmailComposer,
@@ -150,6 +152,31 @@ export class SettingsPage implements OnInit {
             description: 'Unlock limit of 10 users to database.'
           }
         };
+      }
+      if (this.language === 'spanish') {
+        this.body = `
+        Hola,
+        Para problemas:
+        [Escriba el modelo del teléfono]
+        Issue: [Escribe un resumen del problema!]
+        <br>
+        Para recomendaciones.:
+        [Modelo del teléfono]
+        Idea: [¡Resumen de mi asombrosa idea!]
+        Descripción:
+        `;
+      } else {
+        this.body = `
+        Hi,
+        For issues:
+        [Phone Model]
+        Issue: [Write a summary of my issue!]
+        <br>
+        For Feedback:
+        [Phone Model]
+        Idea: [Summary of my awesome idea!]
+        Description:
+        `;
       }
     });
     if (this.platform.is('ios')) {
@@ -215,18 +242,7 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  sendEmail(message: string) {
-    const body = `
-    <p>Hi,</p>
-    <p>For issues:</p>
-    <p>[Phone Model]</p>
-    <p>Issue: [Write a summary of my issue!]</p>
-    <br>
-    <p>For Feedback:</p>
-    <p>[Phone Model]</p>
-    <p>Idea: [Summary of my awesome idea!]</p>
-    <p>Description: ${message}</p>
-    `;
+  sendEmail(body: string) {
     let email = {
       to: 'attendancelogtracker@gmail.com',
       subject: 'Attendance Log: Browser',

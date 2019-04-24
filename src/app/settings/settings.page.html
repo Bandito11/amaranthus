@@ -65,7 +65,7 @@
     <p>
       {{htmlControls.feedback.message}}
     </p>
-    <textarea #message></textarea>
+    <textarea #message value="{{text}}"></textarea>
     <br>
     <ion-button color="primary" (click)="sendEmail(message.value)">{{htmlControls.feedback.button}}</ion-button>
     <hr>
