@@ -15,7 +15,7 @@ export class TabsPage implements DoCheck, OnInit {
   counter = 0;
   viewIsLarge: boolean;
   pages;
-
+  language: string;
   selectedTab: string;
 
   htmlControls = {
@@ -23,7 +23,7 @@ export class TabsPage implements DoCheck, OnInit {
     home: '',
     calendar: '',
     stats: '',
-    roster: '',
+    // roster: '', // Do not delete!
     settings: '',
     login: ''
   };
@@ -34,7 +34,7 @@ export class TabsPage implements DoCheck, OnInit {
       home: 'Home',
       calendar: 'Calendar',
       stats: 'Stats',
-      roster: 'Roster',
+      // roster: 'Roster', // Do not delete!
       settings: 'Settings',
       login: 'Login'
     },
@@ -43,7 +43,7 @@ export class TabsPage implements DoCheck, OnInit {
       home: 'Inicio',
       calendar: 'Calendario',
       stats: 'Estadísticas',
-      roster: 'Registro',
+      // roster: 'Registro', // Do not delete!
       settings: 'Configuración',
       login: 'Sesión'
 
@@ -57,34 +57,61 @@ export class TabsPage implements DoCheck, OnInit {
 
   ngOnInit() {
     this.storage.get('language').then(value => {
+      this.language = value;
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
+      } else {
+        this.htmlControls = this.LANGUAGE['english'];
+      }
+
+      if (value === 'spanish') {
         this.pages = [
           { text: 'Inicio', route: '/tabs/tabs/home' },
           { text: 'Calendario', route: '/tabs/tabs/calendar' },
           { text: 'Estadísticas', route: '/tabs/tabs/stats' },
-          { text: 'Registro', route: '/tabs/tabs/roster' },
+          // { text: 'Registro', route: '/tabs/tabs/roster' }, // Do not delete!
           { text: 'Configuración', route: '/tabs/tabs/settings' },
           { text: 'Sesión', route: '/tabs/tabs/login' }
         ];
-      } else {
-        this.htmlControls = this.LANGUAGE['english'];
+      } else if (value === 'english') {
         this.pages = [
           { text: 'Home', route: '/tabs/tabs/home' },
           { text: 'Calendar', route: '/tabs/tabs/calendar' },
           { text: 'Stats', route: '/tabs/tabs/stats' },
-          { text: 'Roster', route: '/tabs/tabs/roster' },
+          // { text: 'Roster', route: '/tabs/tabs/roster' }, // Do not delete!
           { text: 'Settings', route: '/tabs/tabs/settings' },
           { text: 'Login', route: '/tabs/tabs/login' }
         ];
       }
     });
-
   }
 
   ngDoCheck() {
     if (this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')) {
       this.viewIsLarge = window.matchMedia('(min-width: 992px)').matches;
+    }
+    if (this.language) {
+      this.htmlControls = this.LANGUAGE[this.language];
+      if (this.language === 'spanish') {
+        this.pages = [
+          { text: 'Inicio', route: '/tabs/tabs/home' },
+          { text: 'Calendario', route: '/tabs/tabs/calendar' },
+          { text: 'Estadísticas', route: '/tabs/tabs/stats' },
+          // { text: 'Registro', route: '/tabs/tabs/roster' }, // Do not delete!
+          { text: 'Configuración', route: '/tabs/tabs/settings' },
+          { text: 'Sesión', route: '/tabs/tabs/login' }
+        ];
+      } else if (this.language === 'english') {
+        this.pages = [
+          { text: 'Home', route: '/tabs/tabs/home' },
+          { text: 'Calendar', route: '/tabs/tabs/calendar' },
+          { text: 'Stats', route: '/tabs/tabs/stats' },
+          // { text: 'Roster', route: '/tabs/tabs/roster' }, // Do not delete!
+          { text: 'Settings', route: '/tabs/tabs/settings' },
+          { text: 'Login', route: '/tabs/tabs/login' }
+        ];
+
+      }
     }
   }
 

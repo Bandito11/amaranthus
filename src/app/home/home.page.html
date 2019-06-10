@@ -14,22 +14,21 @@
 <ion-content id="home">
   <ion-searchbar placeholder="{{htmlControls.search}}" (ionInput)="searchStudent($event)" animated="true" type="search">
   </ion-searchbar>
-  <ion-item>
+  <ion-item lines="none">
     <ion-label>{{htmlControls.sort}}</ion-label>
     <ion-select interface="popover" multiple="false" #sort (ionChange)="sortData(sort.value)">
       <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item>
+  <ion-item lines="none">
     <ion-label>{{htmlControls.filter}}</ion-label>
-    <ion-select interface="popover" multiple="false" #filter
-      (ionChange)="filterByClass(filter.value)">
+    <ion-select interface="popover" multiple="false" #filter (ionChange)="filterByClass(filter.value)">
       <ion-select-option *ngFor="let class of filterOptions" value="{{class}}">{{class}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-list lines="none" padding>
-    <ion-virtual-scroll [items]="students" approxHeaderHeight="44px" approxItemHeight="270px">
-      <ion-card *virtualItem="let student" class="bottom">
+  <ion-virtual-scroll [items]="students">
+    <div class="bottom" *virtualItem="let student">
+      <ion-card>
         <ion-card-header>
           <ion-card-title>{{student.firstName}}
             <span *ngIf="student.initial">{{student.initial[0]}}.</span> {{student.lastName}}
@@ -47,12 +46,12 @@
                 </ion-thumbnail>
               </ion-col>
               <ion-col size="9">
-                <ion-item *ngIf="student.class">
+                <ion-item lines="none" *ngIf="student.class">
                   <ion-label text-wrap>
                     <span class="label">{{htmlControls.class}}</span>{{student.class}}
                   </ion-label>
                 </ion-item>
-                <ion-item *ngIf="student.phoneNumber">
+                <ion-item lines="none" *ngIf="student.phoneNumber">
                   <ion-label text-wrap>
                     <span class="label">{{htmlControls.phone}}</span>{{student.phoneNumber}}
                   </ion-label>
@@ -74,10 +73,10 @@
               <ion-icon name="paper"></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-item *ngIf="toggle == student.id" class="top">
+          <ion-item lines="none" *ngIf="toggle == student.id" class="top">
             <textarea #notes (keyup)="addNotes({id: student.id, notes:notes.value})">{{student.notes}}</textarea>
           </ion-item>
-          <ion-item>
+          <ion-item lines="none">
             <ion-label class="attended" *ngIf="student.attendance" text-wrap>
               {{student.firstName}}{{htmlControls.present}}
             </ion-label>
@@ -87,7 +86,6 @@
           </ion-item>
         </ion-card-content>
       </ion-card>
-    </ion-virtual-scroll>
-  </ion-list>
-
+    </div>
+  </ion-virtual-scroll>
 </ion-content>

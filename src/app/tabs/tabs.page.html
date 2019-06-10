@@ -21,9 +21,9 @@
   <ion-tabs id="menu-content">
 
     <ion-tab-bar *ngIf="!viewIsLarge" slot="bottom" color="primary">
-
+     
+      <!--was MainPage in v3-->
       <ion-tab-button tab="home">
-        <!--was MainPage in v3-->
         <ion-icon name="home"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
           {{htmlControls.home}}
@@ -37,21 +37,21 @@
         </ion-label>
       </ion-tab-button>
 
+      <!--WaÎs TablePage in v3-->
       <ion-tab-button tab="stats">
-        <!--Was TablePage in v3-->
         <ion-icon name="stats"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
           {{htmlControls.stats}}
         </ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="roster">
-        <!--Was StudentListPage in v3-->
+      <!-- Was StudentListPage in v3 -->
+      <!-- <ion-tab-button tab="roster"> 
         <ion-icon name="people"></ion-icon>
         <ion-label *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')">
           {{htmlControls.roster}}
         </ion-label>
-      </ion-tab-button>
+      </ion-tab-button> -->
 
       <ion-tab-button tab="settings">
         <ion-icon name="cog"></ion-icon>

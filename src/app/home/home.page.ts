@@ -119,13 +119,13 @@ export class HomePage implements OnInit {
       }
       this.htmlControls = this.LANGUAGE[this.language];
       if (this.language === 'spanish') {
-        this.selectOptions = ['ID', 'Nombre', 'Sin filtro'];
-        this.sortElement.placeholder = 'Sin filtro';
-        this.filterElement.placeholder = 'Sin filtro';
+        this.selectOptions = ['ID', 'Nombre', 'Ninguno'];
+        this.sortElement.value = 'Ninguno';
+        this.filterElement.value = 'Activo';
       } else {
         this.selectOptions = ['ID', 'Name', 'None'];
-        this.sortElement.placeholder = 'None';
-        this.filterElement.placeholder = 'None';
+        this.sortElement.value = 'None';
+        this.filterElement.value = 'Active';
       }
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
@@ -145,7 +145,12 @@ export class HomePage implements OnInit {
     try {
       const studentResponse = this.db.getAllActiveStudents(date);
       if (studentResponse.success === true && studentResponse.data) {
-        this.students = studentResponse.data;
+        this.students = studentResponse.data.filter(student => {
+          if (student.isActive) {
+            return student;
+          }
+        });
+        // this.students = studentResponse.data; //Do not delete!
         this.unfilteredStudents = studentResponse.data;
       } else {
         const loading = await this.loadingController.create();
@@ -216,10 +221,11 @@ export class HomePage implements OnInit {
       }
     }
     if (this.language === 'spanish') {
-      options = [...options, 'Masculino', 'Femenino', 'No revelado', 'Sin filtro'];
+      options = [...options, 'Activo', 'Inactivo', 'Masculino', 'Femenino', 'No revelado', 'Todos'];
     } else {
-      options = [...options, 'Male', 'Female', 'Undisclosed', 'None'];
+      options = [...options, 'Active', 'Not Active', 'Male', 'Female', 'Undisclosed', 'All'];
     }
+
     return options;
   }
 
@@ -246,10 +252,35 @@ export class HomePage implements OnInit {
       case 'No revelado':
         this.filterByClass('Undisclosed');
         break;
-      case 'Sin filtro':
-        this.filterByClass('None');
+      case 'Todos':
+        this.filterByClass('All');
         break;
-      case 'None':
+      case 'All':
+        this.initializeStudentsList();
+        break;
+      case 'Activo':
+        this.filterByClass('Active');
+        break;
+      case 'Inactivo':
+        this.filterByClass('Not Active');
+        break;
+      case 'Active':
+        newQuery = this.unfilteredStudents.filter(student => {
+          if (student.isActive) {
+            return student;
+          }
+        });
+        this.students = [...newQuery];
+        break;
+      case 'Not Active':
+        newQuery = this.unfilteredStudents.filter(student => {
+          if (!student.isActive) {
+            return student;
+          }
+        });
+        this.students = [...newQuery];
+        break;
+      case 'All':
         this.initializeStudentsList();
         break;
       default:

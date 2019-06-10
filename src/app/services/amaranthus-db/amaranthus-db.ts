@@ -1136,7 +1136,7 @@ export class AmaranthusDBProvider {
       return response;
     }
   }
-  // query by isActive
+
   getAllStudents(event?: boolean): IResponse<IStudent[]> {
     let response: IResponse<IStudent[]> = {
       success: false,
@@ -1182,11 +1182,12 @@ export class AmaranthusDBProvider {
    */
   getAllActiveStudents(date: ICalendar): IResponse<any[]> {
     try {
-      const students = studentsColl.find({
-        'isActive': {
-          '$eq': true
-        }
-      });
+      // const students = studentsColl.find({
+      //   'isActive': {
+      //     '$eq': true
+      //   }
+      // }); // Do not delete!
+      const students = studentsColl.data; // Return all the students records
       let record: IRecord;
       const results = students.map(student => {
         record = {
@@ -1216,7 +1217,8 @@ export class AmaranthusDBProvider {
           gender: student.gender,
           attendance: false,
           absence: false,
-          notes: null
+          notes: null,
+          isActive: student.isActive // Added on Jun 9th 2019
         };
         if (record != null && record.id === student.id) {
           newStudent = {
