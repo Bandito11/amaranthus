@@ -1,10 +1,11 @@
 {
   "name": "amaranthus2",
   "integrations": {
-    "cordova": {}
+    "cordova": {},
+    "capacitor": {}
   },
   "type": "angular",
   "hooks": {
-    "build:after":"src/util.js"
+    "build:after": "src/util.js"
   }
 }
