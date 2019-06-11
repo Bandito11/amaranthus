@@ -71,7 +71,7 @@ export class TabsPage implements DoCheck, OnInit {
           { text: 'Configuración', route: '/tabs/tabs/settings' },
           { text: 'Sesión', route: '/tabs/tabs/login' }
         ];
-      } else if (value === 'english') {
+      } else {
         this.pages = [
           { text: 'Home', route: '/tabs/tabs/home' },
           { text: 'Calendar', route: '/tabs/tabs/calendar' },
