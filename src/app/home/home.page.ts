@@ -317,15 +317,15 @@ export class HomePage implements OnInit {
   }
 
   private sortStudentsbyId() {
-    this.students = <any> sortStudentsbyId(this.students);
+    this.students = <any>sortStudentsbyId(this.students);
   }
 
   private sortStudentsName() {
-    this.students = <any> sortStudentsName(this.students);
+    this.students = <any>sortStudentsName(this.students);
   }
 
   private filterStudentsList(query: string) {
-    this.students = <any> filterStudentsList({ query: query, students: this.unfilteredStudents });
+    this.students = <any>filterStudentsList({ query: query, students: this.unfilteredStudents });
   }
 
   addAttendance(opts: { id: string }) {

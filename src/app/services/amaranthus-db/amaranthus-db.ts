@@ -24,10 +24,10 @@ let amaranthusDB: Loki;
 })
 export class AmaranthusDBProvider {
   constructor(private storage: Storage) {
-    this.initialize();
+    this.init();
   }
 
-  initialize() {
+  init() {
     const ionicStorageAdapter = new IonicStorageAdapter();
     const lokiOptions: Partial<LokiConfigOptions> = {
       autosave: true,
@@ -38,6 +38,11 @@ export class AmaranthusDBProvider {
     amaranthusDB = new Loki('amaranthus.db', lokiOptions);
   }
 
+  deletePoundSign() {
+    studentsColl.findAndRemove({ 'id': { '$containsAny': '/' },  });
+    studentsColl.findAndRemove({ 'id': { '$containsAny': '#' } });
+    studentsColl.findAndRemove({ 'id': { '$containsAny': '%' } });
+  }
   /**
    * Use to convert Legacy data.
    */
@@ -782,7 +787,7 @@ export class AmaranthusDBProvider {
       }
       return response;
     } catch (error) {
-// tslint:disable-next-line: no-shadowed-variable
+      // tslint:disable-next-line: no-shadowed-variable
       const response = {
         success: false,
         error: error,
@@ -1187,6 +1192,7 @@ export class AmaranthusDBProvider {
       //     '$eq': true
       //   }
       // }); // Do not delete!
+      this.deletePoundSign();
       const students = studentsColl.data; // Return all the students records
       let record: IRecord;
       const results = students.map(student => {

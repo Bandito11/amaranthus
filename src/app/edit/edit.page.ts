@@ -307,43 +307,83 @@ export class EditPage implements OnInit {
         gender: this.gender,
         isActive: this.isActive
       };
-      const alert = await this.alertCtrl.create({
-        header: '¡Advertencia!',
-        message: `¿Estas seguro que quieres editar el récord de ${opts.firstName} ${opts.lastName}?`,
-        buttons: [
-          {
-            text: 'No'
-          },
-          {
-            text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
-              const response = {
-                ...this.db.updateStudent(student)
-              };
-              if (response.success === true) {
-                navTransition.then(() => {
-                  options = {
-                    header: '¡Éxito!',
-                    message: `${opts.firstName} ${opts.lastName} ha sido editado.`
-                  };
-                  this.showAdvancedAlert(options);
-                });
-              } else {
-                options = {
-                  header: 'Error',
-                  message: 'Hubo un error tratando de editar el récord. Por favor intente de nuevo.'
+      if (this.language === 'spanish') {
+        const alert = await this.alertCtrl.create({
+          header: '¡Advertencia!',
+          message: `¿Estas seguro que quieres editar el récord de ${opts.firstName} ${opts.lastName}?`,
+          buttons: [
+            {
+              text: 'No'
+            },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = {
+                  ...this.db.updateStudent(student)
                 };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    options = {
+                      header: '¡Éxito!',
+                      message: `${opts.firstName} ${opts.lastName} ha sido editado.`
+                    };
+                    this.showAdvancedAlert(options);
+                  });
+                } else {
+                  options = {
+                    header: 'Error',
+                    message: `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`
+                  };
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
               }
-              return false;
             }
-          }
-        ]
-      });
-      alert.present();
+          ]
+        });
+        alert.present();
+      } else {
+        const alert = await this.alertCtrl.create({
+          header: 'Warning!',
+          message: `Are you sure you want to edit ${opts.firstName} ${opts.lastName}'s record?`,
+          buttons: [
+            {
+              text: 'No'
+            },
+            {
+              text: 'Yes',
+              handler: () => {
+                // user has clicked the alert button
+                // begin the alert's dismiss transition
+                const navTransition = alert.dismiss();
+                const response = {
+                  ...this.db.updateStudent(student)
+                };
+                if (response.success === true) {
+                  navTransition.then(() => {
+                    options = {
+                      header: 'Success!',
+                      message: `${opts.firstName} ${opts.lastName} record was edited.`
+                    };
+                    this.showAdvancedAlert(options);
+                  });
+                } else {
+                  options = {
+                    header: 'Error',
+                    message: `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`
+                  };
+                  navTransition.then(() => this.showAdvancedAlert(options));
+                }
+                return false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      }
     }
   }
 

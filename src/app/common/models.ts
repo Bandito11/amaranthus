@@ -2,7 +2,7 @@ export interface IStudent {
   firstName: string;
   initial?: string;
   lastName: string;
-  id: any;
+  id: string;
   address: string;
   phoneNumber: string;
   town: string;

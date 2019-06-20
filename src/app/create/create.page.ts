@@ -237,7 +237,7 @@ export class CreatePage {
         options = {
           ...options,
           header: '¡Advertencia!',
-          message: 'Algunos campos no están llenos.',
+          message: 'Algunos campos no contienen la información requerida.',
           buttons: ['Si']
         };
 
@@ -249,6 +249,24 @@ export class CreatePage {
           buttons: ['Ok']
         };
 
+      }
+      this.showSimpleAlert(options);
+    } else if (opts.id.includes('#') || opts.id.includes('/') || opts.id.includes('%')) {
+      if (this.language === 'spanish') {
+        options = {
+          ...options,
+          header: '¡Advertencia!',
+          message: 'El campo de ID no puede contener "#" o "/" o "%".',
+          buttons: ['Si']
+        };
+
+      } else {
+        options = {
+          ...options,
+          header: 'Warning!',
+          message: 'The ID field can\'t contain "#" or "/" or "%"',
+          buttons: ['Ok']
+        };
       }
       this.showSimpleAlert(options);
     } else {

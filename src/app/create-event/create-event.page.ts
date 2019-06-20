@@ -199,6 +199,31 @@ export class CreateEventPage implements OnInit {
         this.showSimpleAlert(opts);
         return;
       }
+      if (this.eventName.includes('#') || this.eventName.includes('/') || this.eventName.includes('%')) {
+        let options: ISimpleAlertOptions = {
+          header: '',
+          message: '',
+          buttons: []
+        }
+        if (this.language === 'spanish') {
+          options = {
+            ...options,
+            header: '¡Advertencia!',
+            message: 'El campo de ID no puede contener "#" o "/" o "%".',
+            buttons: ['Si']
+          };
+
+        } else {
+          options = {
+            ...options,
+            header: 'Warning!',
+            message: 'The ID field can\'t contain "#" or "/" or "%"',
+            buttons: ['Ok']
+          };
+        }
+        this.showSimpleAlert(options);
+        return;
+      }
       const members = this.studentIds.map(studentId => {
         return {
           id: studentId,
