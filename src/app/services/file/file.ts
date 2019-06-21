@@ -45,11 +45,29 @@ export class FileProvider {
           .catch(error => reject(error));
       }
       if (this.platform.is('desktop')) {
-        const message = 'This feature is still not available for the web :\'(';
-        reject(message);
+        this.writeToDesktop(opts)
+          .then(response => {
+            return resolve(response);
+          })
+          .catch(error => reject(error));
       }
     });
   }
+
+  /**
+   * 
+   * @param {{ fileName: string, text: any, type: string }} opts
+   * @returns {Promise<IResponse<any>>}
+   * @memberof FileProvider
+   *    */
+  writeToDesktop(opts: { fileName: string, text: any, type: string }): Promise<IResponse<any>> {
+    //TODO: Implement a FILE download for files.
+
+    return new Promise((resolve, reject) => {
+
+    });
+  }
+
 
   /**
    *

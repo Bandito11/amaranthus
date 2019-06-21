@@ -25,7 +25,7 @@ export class StatsPage implements OnInit {
   years: number[] = [...YEARLABELS];
   selectOptions: string[];
   bought: boolean;
-  @ViewChild('filter') filterElement;
+  @ViewChild('filter', { static: false }) filterElement;
   event;
   studentIds: string[];
   htmlControls = {

@@ -1,3 +1,4 @@
+import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { IonicStorageAdapter } from './adapter';
 import * as Loki from 'lokijs';
@@ -23,7 +24,7 @@ let amaranthusDB: Loki;
   providedIn: 'root'
 })
 export class AmaranthusDBProvider {
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage, private platform: Platform) {
     this.init();
   }
 
@@ -39,7 +40,7 @@ export class AmaranthusDBProvider {
   }
 
   deletePoundSign() {
-    studentsColl.findAndRemove({ 'id': { '$containsAny': '/' },  });
+    studentsColl.findAndRemove({ 'id': { '$containsAny': '/' }, });
     studentsColl.findAndRemove({ 'id': { '$containsAny': '#' } });
     studentsColl.findAndRemove({ 'id': { '$containsAny': '%' } });
   }
