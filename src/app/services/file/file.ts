@@ -61,10 +61,43 @@ export class FileProvider {
    * @memberof FileProvider
    *    */
   writeToDesktop(opts: { fileName: string, text: any, type: string }): Promise<IResponse<any>> {
-    //TODO: Implement a FILE download for files.
-
+    const options: IWriteOptions = {
+      replace: true
+    };
+    const path = this.file.dataDirectory;
+    const outDirectory = 'Attendance Log';
     return new Promise((resolve, reject) => {
-
+      this.file.checkDir(path, outDirectory)
+        .then(() => {
+          this.file.writeFile(path + outDirectory, opts.fileName, opts.text, options)
+            .then(() => {
+              this.toFileOpener({
+                ...opts,
+                path: path,
+                directory: outDirectory
+              })
+                .then(data => resolve(data))
+                .catch(error => reject(error));
+            })
+            .catch(_ => reject('There was an error reading the directory, please try again!'));
+        })
+        .catch(() => {
+          this.file.createDir(path, outDirectory, true)
+            .then(directory => {
+              this.file.writeFile(path + directory.name, opts.fileName, opts.text, options)
+                .then(() => {
+                  this.toFileOpener({
+                    ...opts,
+                    path: path,
+                    directory: directory.name
+                  })
+                    .then(data => resolve(data))
+                    .catch(error => reject(error));
+                })
+                .catch(_ => reject('There was an error when the file was created, please try again!'));
+            })
+            .catch(_ => reject('There was an error creating the directory, please try again!'));
+        });
     });
   }
 
