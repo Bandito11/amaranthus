@@ -104,7 +104,7 @@ export class ExportPage {
     if (this.month) {
       this.date = this.date.slice(0, 7);
     }
-    const fileName = `AttendanceLog ${this.date}.xlsx`;
+    const fileName = `AttendanceLog-${this.date}.xlsx`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'
@@ -112,10 +112,10 @@ export class ExportPage {
     loading.present();
     try {
       if (this.month) {
-        xlsxResponse = await this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students });
+        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students });
       }
       if (this.day) {
-        xlsxResponse = await this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students });
+        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students });
       }
       if (xlsxResponse.success) {
         try {
@@ -150,7 +150,7 @@ export class ExportPage {
     if (this.month) {
       this.date = this.date.slice(0, 7);
     }
-    const fileName = `AttendanceLog ${this.date}.txt`;
+    const fileName = `AttendanceLog-${this.date}.txt`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'
@@ -196,7 +196,7 @@ export class ExportPage {
     if (this.month) {
       this.date = this.date.slice(0, 7);
     }
-    const fileName = `AttendanceLog ${this.date}.csv`;
+    const fileName = `AttendanceLog-${this.date}.csv`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
       message: 'Creating the File...'

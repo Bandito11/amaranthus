@@ -4,6 +4,9 @@ import { Platform } from '@ionic/angular';
 import { IResponse } from 'src/app/common/models';
 import { IWriteOptions, File } from '@ionic-native/file/ngx';
 
+declare const fs;
+declare const process;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -55,49 +58,25 @@ export class FileProvider {
   }
 
   /**
-   * 
+   *
    * @param {{ fileName: string, text: any, type: string }} opts
    * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    *    */
-  writeToDesktop(opts: { fileName: string, text: any, type: string }): Promise<IResponse<any>> {
-    const options: IWriteOptions = {
-      replace: true
-    };
-    const path = this.file.dataDirectory;
-    const outDirectory = 'Attendance Log';
+  writeToDesktop(opts: { fileName: string, text: any, type: string }): Promise<IResponse<string>> {
+
     return new Promise((resolve, reject) => {
-      this.file.checkDir(path, outDirectory)
-        .then(() => {
-          this.file.writeFile(path + outDirectory, opts.fileName, opts.text, options)
-            .then(() => {
-              this.toFileOpener({
-                ...opts,
-                path: path,
-                directory: outDirectory
-              })
-                .then(data => resolve(data))
-                .catch(error => reject(error));
-            })
-            .catch(_ => reject('There was an error reading the directory, please try again!'));
-        })
-        .catch(() => {
-          this.file.createDir(path, outDirectory, true)
-            .then(directory => {
-              this.file.writeFile(path + directory.name, opts.fileName, opts.text, options)
-                .then(() => {
-                  this.toFileOpener({
-                    ...opts,
-                    path: path,
-                    directory: directory.name
-                  })
-                    .then(data => resolve(data))
-                    .catch(error => reject(error));
-                })
-                .catch(_ => reject('There was an error when the file was created, please try again!'));
-            })
-            .catch(_ => reject('There was an error creating the directory, please try again!'));
+      fs.writeFile(`${process.env.HOME}/Documents/${opts.fileName}`, opts.text, {}, (err) => {
+        if (err) {
+          reject(err);
+        }
+        resolve({
+          success: true,
+          data: `The file has been saved on Documents/${opts.fileName}`,
+          dateStamp: new Date().toString(),
+          error: null,
         });
+      });
     });
   }
 

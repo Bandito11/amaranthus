@@ -1,23 +1,25 @@
+import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
+import { addZeroInFront } from 'src/app/common/validation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class XLSXProvider {
 
-  constructor() { }
+  constructor(private platform: Platform) { }
 
-  async exportXLSXToFile(opts: { type: string, records: IRecord[] }): Promise<IResponse<Blob>> {
-    let response: IResponse<Blob> = {
+  exportXLSXToFile(opts: { type: string, records: IRecord[] }): IResponse<Blob> {
+    let response: IResponse<any> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const data = await this.createXLSX({ type: opts.type, records: opts.records });
+      const data = this.createXLSX({ type: opts.type, records: opts.records });
       response = {
         ...response,
         success: true,
@@ -57,12 +59,20 @@ export class XLSXProvider {
         const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(studentRecords);
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Students Attendance Records');
-        const wbout: ArrayBuffer = XLSX.write(wb, {
-          bookType: 'xlsx',
-          type: 'array'
-        });
-        const blob = new Blob([wbout], { type: 'application/octet-stream' });
-        resolve(blob);
+        if (this.platform.is('desktop')) {
+          const date = new Date();
+// tslint:disable-next-line: max-line-length
+          const fileName = `AttendanceLog-${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}.xlsx`;
+          XLSX.writeFile(wb, fileName);
+          resolve(undefined);
+        } else {
+          const wbout: ArrayBuffer = XLSX.write(wb, {
+            bookType: 'xlsx',
+            type: 'array'
+          });
+          const blob = new Blob([wbout], { type: 'application/octet-stream' });
+          resolve(blob);
+        }
       } catch (error) {
         reject('There are no students created in database!');
       }
