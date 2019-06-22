@@ -1,3 +1,4 @@
+import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
@@ -8,7 +9,7 @@ import * as XLSX from 'xlsx';
 })
 export class TextTabDelimitedProvider {
 
-  constructor() { }
+  constructor(private platform: Platform) { }
 
   async exportTextTabDelimited(opts: { type: string, records: IRecord[] }): Promise<IResponse<Blob>> {
     let response: IResponse<Blob> = {
@@ -55,8 +56,13 @@ export class TextTabDelimitedProvider {
         });
         studentRecords.unshift(headers);
         const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(studentRecords);
-        const txt = XLSX.utils.sheet_to_txt(ws);
-        const blob = new Blob([txt], { type: 'application/octet-stream' });
+        const text = XLSX.utils.sheet_to_txt(ws);
+        let blob;
+        if (this.platform.is('desktop')) {
+          blob = text;
+        } else {
+          blob = new Blob([text], { type: 'application/octet-stream' });
+        }
         resolve(blob);
       } catch (error) {
         reject('There are no students created in database!');

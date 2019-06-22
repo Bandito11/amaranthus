@@ -1,3 +1,4 @@
+import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
@@ -8,7 +9,7 @@ import * as XLSX from 'xlsx';
 })
 export class CSVProvider {
 
-  constructor() { }
+  constructor(private platform: Platform) { }
 
   async exportCSV(opts: { type: string, records: IRecord[] }): Promise<IResponse<Blob>> {
     let response: IResponse<Blob> = {
@@ -56,7 +57,12 @@ export class CSVProvider {
         studentRecords.unshift(headers);
         const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(studentRecords);
         const csv = XLSX.utils.sheet_to_csv(ws);
-        const blob = new Blob([csv], { type: 'application/octet-stream' });
+        let blob;
+        if (this.platform.is('desktop')) {
+          blob = csv;
+        } else {
+          blob = new Blob([csv], { type: 'application/octet-stream' });
+        }
         resolve(blob);
       } catch (error) {
         reject('There are no students created in database!');
