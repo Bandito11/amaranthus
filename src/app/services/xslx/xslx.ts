@@ -35,9 +35,8 @@ export class XLSXProvider {
     }
   }
 
-  private createXLSX(opts: { type: string, records: IRecord[] }): Promise<Blob> {
+  private createXLSX(opts: { type: string, records: IRecord[] }) {
     let headers;
-    return new Promise((resolve, reject) => {
       if (opts.type === recordType.month) {
         headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
       }
@@ -64,19 +63,18 @@ export class XLSXProvider {
 // tslint:disable-next-line: max-line-length
           const fileName = `AttendanceLog-${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}.xlsx`;
           XLSX.writeFile(wb, fileName);
-          resolve(undefined);
+          return undefined;
         } else {
           const wbout: ArrayBuffer = XLSX.write(wb, {
             bookType: 'xlsx',
             type: 'array'
           });
           const blob = new Blob([wbout], { type: 'application/octet-stream' });
-          resolve(blob);
+          return blob;
         }
       } catch (error) {
-        reject('There are no students created in database!');
+        return 'There are no students created in database!';
       }
-    });
   }
 
 }

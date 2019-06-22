@@ -117,22 +117,11 @@ export class ExportPage {
       if (this.day) {
         xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students });
       }
+      loading.dismiss();
       if (xlsxResponse.success) {
-        try {
-          const fileResponse = await this.file.exportFile({
-            fileName: fileName,
-            text: xlsxResponse.data,
-            type: 'xlsx'
-          });
-          if (fileResponse.success) {
-            loading.dismiss();
-            this.modal.dismiss(fileResponse.data);
-          }
-        } catch (error) { // If FileProvider err
-          loading.dismiss();
-          this.modal.dismiss(error);
-        }
-
+        this.modal.dismiss('File was saved!');
+      } else {
+        this.modal.dismiss(xlsxResponse.error);
       }
     } catch (error) { // If XLSX Provider err
       loading.dismiss();
