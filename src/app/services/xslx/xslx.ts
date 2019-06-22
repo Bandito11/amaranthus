@@ -12,30 +12,28 @@ export class XLSXProvider {
 
   constructor(private platform: Platform) { }
 
-  exportXLSXToFile(opts: { type: string, records: IRecord[] }): IResponse<Blob> {
-    let response: IResponse<any> = {
+  exportXLSXToFile(opts: { type: string, records: IRecord[] }): IResponse<Blob | string> {
+    const response: IResponse<any> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const data = this.createXLSX({ type: opts.type, records: opts.records });
-      response = {
+      const blob = this.createXLSX({ type: opts.type, records: opts.records });
+      return {
         ...response,
         success: true,
-        data: data
-      };
-      return response;
+        data: blob
+      };;
     } catch (error) {
-      response = {
+      return {
         ...response,
         error: error
       };
-      return error;
     }
   }
 
-  private createXLSX(opts: { type: string, records: IRecord[] }) {
+  private createXLSX(opts: { type: string, records: IRecord[] }): Blob| string {
     let headers;
       if (opts.type === recordType.month) {
         headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];

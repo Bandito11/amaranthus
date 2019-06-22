@@ -26,11 +26,10 @@ export class TextTabDelimitedProvider {
       };
       return response;
     } catch (error) {
-      response = {
+      return {
         ...response,
         error: error
       };
-      return error;
     }
   }
 

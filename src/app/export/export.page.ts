@@ -110,7 +110,6 @@ export class ExportPage {
       message: message
     });
     loading.present();
-    loading.present();
     try {
       if (this.month) {
         xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students });
@@ -118,7 +117,6 @@ export class ExportPage {
       if (this.day) {
         xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students });
       }
-      loading.dismiss();
       if (xlsxResponse.success) {
         if (!this.platform.is('desktop')) {
           try {
@@ -134,12 +132,16 @@ export class ExportPage {
             loading.dismiss();
             if (fileResponse.success) {
               this.modal.dismiss(fileResponse.data);
+            } else {
+              this.modal.dismiss(fileResponse.error);
             }
           } catch (error) { // If FileProvider err
+            loading.dismiss();
             this.modal.dismiss(error);
           }
         } else {
-          this.modal.dismiss(xlsxResponse);
+          loading.dismiss();
+          this.modal.dismiss(xlsxResponse.error);
         }
       } else {
         loading.dismiss();
@@ -175,7 +177,6 @@ export class ExportPage {
       message: message
     });
     loading.present();
-    loading.present();
     try {
       if (this.month) {
         textTabResponse = await this.textTab.exportTextTabDelimited({ type: recordType.month, records: this.students });
@@ -190,9 +191,11 @@ export class ExportPage {
             text: textTabResponse.data,
             type: 'txt'
           });
+          loading.dismiss();
           if (fileResponse.success) {
-            loading.dismiss();
             this.modal.dismiss(fileResponse.data);
+          } else {
+            this.modal.dismiss(fileResponse.error);
           }
         } catch (error) { // If FileProvider err
           loading.dismiss();
@@ -202,11 +205,7 @@ export class ExportPage {
       }
     } catch (error) { // If TextTabDelimited Provider err
       loading.dismiss();
-      if (this.language === 'spanish') {
-        this.modal.dismiss(error);
-      } else {
-        this.modal.dismiss(error);
-      }
+      this.modal.dismiss(error.error);
     }
   }
 
@@ -244,9 +243,11 @@ export class ExportPage {
             text: csvResponse.data,
             type: 'csv'
           });
+          loading.dismiss();
           if (fileResponse.success) {
-            loading.dismiss();
             this.modal.dismiss(fileResponse.data);
+          } else {
+            this.modal.dismiss(fileResponse.error);
           }
         } catch (error) { // If FileProvider err
           loading.dismiss();
@@ -256,7 +257,7 @@ export class ExportPage {
       }
     } catch (error) { // If CSV Provider err
       loading.dismiss();
-      this.modal.dismiss(error);
+      this.modal.dismiss(error.error);
     }
   }
 
