@@ -13,7 +13,8 @@
               "publisher": "CN=59068C27-1742-4B82-9E31-39280F36A437",
               "publisherDisplayName": "Esteban Morales",
               "applicationId": "9N3HQP029Q59",
-              "displayName": "Attendance Log Tracker*"
+              "displayName": "Attendance Log Tracker",
+              "packageFamilyName":"7363EstebanMorales.AttendanceLogTracker_csk7df5p0wfpg"
             }
           }
 }
