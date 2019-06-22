@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content padding id="settings">
-  <div *ngIf="this.platform.is('cordova')">
+  <div *ngIf="!this.platform.is('desktop')">
     <app-loader *ngIf="noProducts"></app-loader>
     <div *ngFor="let product of products">
       <ion-icon name="pricetag"></ion-icon>
@@ -50,7 +50,7 @@
       <hr>
     </div>
   </div>
-  <div *ngIf="this.platform.is('cordova')">
+  <div *ngIf="!this.platform.is('desktop')">
     <h4>{{htmlControls.rate.title}}</h4>
     <ion-button *ngIf="platform.is('ios')" (click)="openMarketPage()">
       {{htmlControls.rate.iOS}}&nbsp; <ion-icon name="logo-apple"></ion-icon>

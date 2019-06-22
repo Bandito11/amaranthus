@@ -25,7 +25,7 @@ export class StatsPage implements OnInit {
   years: number[] = [...YEARLABELS];
   selectOptions: string[];
   bought: boolean;
-  @ViewChild('filter', { static: false }) filterElement;
+  @ViewChild('filter') filterElement;
   event;
   studentIds: string[];
   htmlControls = {
@@ -340,11 +340,19 @@ export class StatsPage implements OnInit {
     modal.onDidDismiss().then(response => {
       try {
         if (response.data) {
-          this.showSimpleAlert({
-            buttons: ['OK'],
-            header: 'Information!',
-            message: response.data
-          });
+          if (this.language === 'spanish') {
+            this.showSimpleAlert({
+              buttons: ['OK'],
+              header: '¡Información!',
+              message: response.data
+            });
+          } else {
+            this.showSimpleAlert({
+              buttons: ['OK'],
+              header: 'Information!',
+              message: response.data
+            });
+          }
         }
       } catch (error) {
         console.error(error);

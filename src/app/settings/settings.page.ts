@@ -194,7 +194,7 @@ export class SettingsPage implements OnInit {
         this.bought = false;
       }
     });
-    if (this.platform.is('cordova')) {
+    if (!this.platform.is('desktop')) {
       this.getProducts();
     }
   }

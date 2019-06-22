@@ -1,6 +1,6 @@
 import { AmaranthusDBProvider } from './../services/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, ModalController, Platform } from '@ionic/angular';
 import { CSVProvider } from '../services/csv/csv';
 import { TextTabDelimitedProvider } from '../services/text-tab-delimited/text-tab-delimited';
 import { FileProvider } from '../services/file/file';
@@ -73,7 +73,8 @@ export class ExportPage {
     private xlsx: XLSXProvider,
     private db: AmaranthusDBProvider,
     private route: ActivatedRoute,
-    private storage: Storage
+    private storage: Storage,
+    private platform: Platform
   ) { }
 
   ionViewWillEnter() {
@@ -101,14 +102,14 @@ export class ExportPage {
  */
   async exportAsXLSX() {
     let xlsxResponse;
-    if (this.month) {
-      this.date = this.date.slice(0, 7);
+    let message = 'Creating the File...';
+    if (this.language === 'spanish') {
+      message = 'Creando el archivo...';
     }
-    const fileName = `AttendanceLog-${this.date}.xlsx`;
-    this.getRecordsByDate({ query: 'Date', date: this.date });
     const loading = await this.loading.create({
-      message: 'Creating the File...'
+      message: message
     });
+    loading.present();
     loading.present();
     try {
       if (this.month) {
@@ -119,13 +120,38 @@ export class ExportPage {
       }
       loading.dismiss();
       if (xlsxResponse.success) {
-        this.modal.dismiss('File was saved!');
+        if (!this.platform.is('desktop')) {
+          try {
+            if (this.month) {
+              this.date = this.date.slice(0, 7);
+            }
+            const fileName = `AttendanceLog-${this.date}.xlsx`;
+            const fileResponse = await this.file.exportFile({
+              fileName: fileName,
+              text: xlsxResponse.data,
+              type: 'xlsx'
+            });
+            loading.dismiss();
+            if (fileResponse.success) {
+              this.modal.dismiss(fileResponse.data);
+            }
+          } catch (error) { // If FileProvider err
+            this.modal.dismiss(error);
+          }
+        } else {
+          this.modal.dismiss(xlsxResponse);
+        }
       } else {
+        loading.dismiss();
         this.modal.dismiss(xlsxResponse.error);
       }
     } catch (error) { // If XLSX Provider err
       loading.dismiss();
-      this.modal.dismiss('There was an error while creating the file. Please try again later!');
+      if (this.language === 'spanish') {
+        this.modal.dismiss('Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!');
+      } else {
+        this.modal.dismiss('There was an error while creating the file. Please try again later!');
+      }
     }
   }
 
@@ -141,9 +167,14 @@ export class ExportPage {
     }
     const fileName = `AttendanceLog-${this.date}.txt`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
+    let message = 'Creating the File...';
+    if (this.language === 'spanish') {
+      message = 'Creando el archivo...';
+    }
     const loading = await this.loading.create({
-      message: 'Creating the File...'
+      message: message
     });
+    loading.present();
     loading.present();
     try {
       if (this.month) {
@@ -171,7 +202,11 @@ export class ExportPage {
       }
     } catch (error) { // If TextTabDelimited Provider err
       loading.dismiss();
-      this.modal.dismiss('There was an error while creating the file. Please try again later!');
+      if (this.language === 'spanish') {
+        this.modal.dismiss(error);
+      } else {
+        this.modal.dismiss(error);
+      }
     }
   }
 
@@ -187,8 +222,12 @@ export class ExportPage {
     }
     const fileName = `AttendanceLog-${this.date}.csv`;
     this.getRecordsByDate({ query: 'Date', date: this.date });
+    let message = 'Creating the File...';
+    if (this.language === 'spanish') {
+      message = 'Creando el archivo...';
+    }
     const loading = await this.loading.create({
-      message: 'Creating the File...'
+      message: message
     });
     loading.present();
     try {
@@ -217,7 +256,7 @@ export class ExportPage {
       }
     } catch (error) { // If CSV Provider err
       loading.dismiss();
-      this.modal.dismiss('There was an error while creating the file. Please try again later!');
+      this.modal.dismiss(error);
     }
   }
 
