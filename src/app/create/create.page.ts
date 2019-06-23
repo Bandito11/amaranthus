@@ -8,6 +8,10 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
+import { DomSanitizer } from '@angular/platform-browser';
+
+declare const fs;
+declare const process;
 
 @Component({
   selector: 'app-create',
@@ -125,8 +129,9 @@ export class CreatePage {
     private camera: Camera,
     private webview: WebView,
     private file: File,
-    private platform: Platform,
-    private storage: Storage
+    public platform: Platform,
+    private storage: Storage,
+    private sanitizer: DomSanitizer
   ) { }
 
   ionViewWillEnter() {
@@ -156,6 +161,47 @@ export class CreatePage {
       }
     } catch (error) {
       handleError(error);
+    }
+  }
+
+  getPicture() {
+    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
+    const directory = `${process.env.HOME}/Documents/Attendance-Log-Tracker-pics/`;
+    if (chosenPic.files.length !== 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        fs.mkdir( directory, { recursive: true }, (err) => {
+          if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
+              if (err) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.picture = reader.result;
+              }
+            });
+          } else {
+            this.getPicture();
+          }
+        });
+
+      }
+      reader.readAsDataURL(chosenPic.files[0]);
+      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
+      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
     }
   }
 

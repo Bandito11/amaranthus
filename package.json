@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "serve": "ionic build --prod && cordova run electron --nobuild",
+    "electron-serve": "ionic build --prod && cordova run electron --nobuild",
     "electron-build": "ionic build --prod && cordova build electron --release"
   },
   "private": true,

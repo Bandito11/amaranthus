@@ -2,10 +2,10 @@
   <ion-toolbar color="primary">
     <ion-title>{{htmlControls.toolbar.title}}</ion-title>
     <ion-buttons slot="start">
-        <app-cancel></app-cancel>
-      </ion-buttons>
-      <ion-buttons slot="end">
-          <ion-button (click)="createStudent({
+      <app-cancel></app-cancel>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="createStudent({
             firstName: firstName.value,
             initial: initial.value,
             lastName: lastName.value,
@@ -24,18 +24,18 @@
             gender: null,
             isActive: null
           })">
-            {{htmlControls.toolbar.buttons.create}}
-          </ion-button>
-        </ion-buttons>
-    
+        {{htmlControls.toolbar.buttons.create}}
+      </ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding id="create">
-    <div *ngIf="picture" class="profile-image">
-        <img src="{{picture}}" alt="A profile picture">
-      </div>
-      <form #studentForm="ngForm" (ngSubmit)="createStudent({
+  <div *ngIf="picture" class="profile-image">
+    <img [src]="picture" alt="A profile picture">
+  </div>
+  <form #studentForm="ngForm" (ngSubmit)="createStudent({
           firstName: firstName.value,
           initial: initial.value,
           lastName: lastName.value,
@@ -54,100 +54,110 @@
           gender: null,
           isActive: null
         })">
-        <ion-item-group>
+    <ion-item-group>
+      <div id="input">
+        <div *ngIf="platform.is('desktop'); else notDesktop">
+          <ion-button>
+            <input id="inputFile" (change)="getPicture()" type="file" accept="image/*" />
+            {{htmlControls.change}}
+          </ion-button>
+        </div>
+        <ng-template #notDesktop>
           <ion-button (click)="browsePicture()" color="primary">{{htmlControls.change}}</ion-button>
-          <ion-button (click)="picture = ''" color="secondary">{{htmlControls.reset}}</ion-button>
-          <ion-item>
-            <ion-label stacked>ID</ion-label>
-            <ion-input type="text" #id value="{{idInput}}"></ion-input>
-            <ion-icon id="form-icon" item-right name="warning" *ngIf="!id.value"></ion-icon>
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.firstName}}</ion-label>
-            <ion-input type="text" #firstName></ion-input>
-            <ion-icon id="form-icon" item-right name="warning" *ngIf="!firstName.value"></ion-icon>
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.initial}}</ion-label>
-            <ion-input type="text" #initial></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.lastName}}</ion-label>
-            <ion-input type="text" #lastName></ion-input>
-            <ion-icon id="form-icon" item-right name="warning" *ngIf="!lastName.value"></ion-icon>
-          </ion-item>
-          <ion-list lines="none">
-            <ion-radio-group [(ngModel)]="gender" name="gender" ngDefaultControl>
+        </ng-template>
+        <ion-button (click)="picture = ''" color="secondary">{{htmlControls.reset}}</ion-button>
+      </div>
+      <ion-item>
+        <ion-label stacked>ID</ion-label>
+        <ion-input type="text" #id value="{{idInput}}"></ion-input>
+        <ion-icon id="form-icon" item-right name="warning" *ngIf="!id.value"></ion-icon>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.firstName}}</ion-label>
+        <ion-input type="text" #firstName></ion-input>
+        <ion-icon id="form-icon" item-right name="warning" *ngIf="!firstName.value"></ion-icon>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.initial}}</ion-label>
+        <ion-input type="text" #initial></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.lastName}}</ion-label>
+        <ion-input type="text" #lastName></ion-input>
+        <ion-icon id="form-icon" item-right name="warning" *ngIf="!lastName.value"></ion-icon>
+      </ion-item>
+      <ion-list lines="none">
+        <ion-radio-group [(ngModel)]="gender" name="gender" ngDefaultControl>
           <ion-list-header>{{htmlControls.gender}}</ion-list-header>
-            <ion-item>
-              <ion-label>{{htmlControls.male}}</ion-label>
-              <ion-radio slot="start" value="male" checked></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>{{htmlControls.female}}</ion-label>
-              <ion-radio slot="start" value="female"></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>{{htmlControls.undisclosed}}</ion-label>
-              <ion-radio slot="start" value="undisclosed"></ion-radio>
-            </ion-item>
-            </ion-radio-group>
-          </ion-list>
-          <h5 id="optional">{{htmlControls.optional}}</h5>
           <ion-item>
-            <ion-label stacked>{{htmlControls.address}}</ion-label>
-            <ion-input type="text" #address></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!address.value"></ion-icon> -->
+            <ion-label>{{htmlControls.male}}</ion-label>
+            <ion-radio slot="start" value="male" checked></ion-radio>
           </ion-item>
           <ion-item>
-            <ion-label stacked>{{htmlControls.phone}}</ion-label>
-            <ion-input type="text" #phoneNumber></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="phoneNumber.value"></ion-icon> -->
+            <ion-label>{{htmlControls.female}}</ion-label>
+            <ion-radio slot="start" value="female"></ion-radio>
           </ion-item>
           <ion-item>
-            <ion-label stacked>{{htmlControls.city}}</ion-label>
-            <ion-input type="text" #town></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!town.value"></ion-icon> -->
+            <ion-label>{{htmlControls.undisclosed}}</ion-label>
+            <ion-radio slot="start" value="undisclosed"></ion-radio>
           </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.state}}</ion-label>
-            <ion-input type="text" #state></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!state.value"></ion-icon> -->
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.class}}</ion-label>
-            <ion-input type="text" #class></ion-input>
-          </ion-item>
-          <h6>{{htmlControls.father}}</h6>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.name}}</ion-label>
-            <ion-input type="text" #fatherName></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!fatherName.value"></ion-icon> -->
-          </ion-item>
-          <h6>{{htmlControls.mother}}</h6>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.name}}</ion-label>
-            <ion-input type="text" #motherName></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!motherName.value"></ion-icon> -->
-          </ion-item>
-          <h6>{{htmlControls.emergency.title}}</h6>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.name}}</ion-label>
-            <ion-input type="text" #emergencyContactName></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!emergencyContactName.value"></ion-icon> -->
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.emergency.relationship}}</ion-label>
-            <ion-input type="text" #emergencyRelationship></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!emergencyRelationship.value"></ion-icon> -->
-          </ion-item>
-          <ion-item>
-            <ion-label stacked>{{htmlControls.phone}}</ion-label>
-            <ion-input type="text" #emergencyContactPhoneNumber></ion-input>
-            <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="validatePhoneNumber(emergencyContactPhoneNumber.value)"></ion-icon> -->
-          </ion-item>
-        </ion-item-group>
-        <!-- <ion-button type="submit" color="primary">{{htmlControls.toolbar.buttons.create}}</ion-button>
+        </ion-radio-group>
+      </ion-list>
+      <h5 id="optional">{{htmlControls.optional}}</h5>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.address}}</ion-label>
+        <ion-input type="text" #address></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!address.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.phone}}</ion-label>
+        <ion-input type="text" #phoneNumber></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="phoneNumber.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.city}}</ion-label>
+        <ion-input type="text" #town></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!town.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.state}}</ion-label>
+        <ion-input type="text" #state></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!state.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.class}}</ion-label>
+        <ion-input type="text" #class></ion-input>
+      </ion-item>
+      <h6>{{htmlControls.father}}</h6>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.name}}</ion-label>
+        <ion-input type="text" #fatherName></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!fatherName.value"></ion-icon> -->
+      </ion-item>
+      <h6>{{htmlControls.mother}}</h6>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.name}}</ion-label>
+        <ion-input type="text" #motherName></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!motherName.value"></ion-icon> -->
+      </ion-item>
+      <h6>{{htmlControls.emergency.title}}</h6>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.name}}</ion-label>
+        <ion-input type="text" #emergencyContactName></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!emergencyContactName.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.emergency.relationship}}</ion-label>
+        <ion-input type="text" #emergencyRelationship></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="!emergencyRelationship.value"></ion-icon> -->
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>{{htmlControls.phone}}</ion-label>
+        <ion-input type="text" #emergencyContactPhoneNumber></ion-input>
+        <!-- <ion-icon id="form-icon" item-right name="warning" *ngIf="validatePhoneNumber(emergencyContactPhoneNumber.value)"></ion-icon> -->
+      </ion-item>
+    </ion-item-group>
+    <!-- <ion-button type="submit" color="primary">{{htmlControls.toolbar.buttons.create}}</ion-button>
         <ion-button type="button" color="secondary" (click)="
           firstName.value = '';
           initial.value = '';
@@ -166,13 +176,13 @@
           picture = '';
           gender = 'male';
           ">{{htmlControls.reset}}</ion-button> -->
-      </form>
-    
+  </form>
+
 </ion-content>
 <ion-footer>
   <ion-toolbar color="primary">
     <ion-buttons slot="end">
-        <ion-button type="button" color="danger" (click)="
+      <ion-button type="button" color="danger" (click)="
         firstName.value = '';
         initial.value = '';
         lastName.value = '';
@@ -190,7 +200,7 @@
         picture = '';
         gender = 'male';
         ">{{htmlControls.reset}}</ion-button>
-        <ion-button (click)="createStudent({
+      <ion-button (click)="createStudent({
           firstName: firstName.value,
           initial: initial.value,
           lastName: lastName.value,
@@ -209,8 +219,8 @@
           gender: null,
           isActive: null
         })">
-          {{htmlControls.toolbar.buttons.create}}
-        </ion-button>
+        {{htmlControls.toolbar.buttons.create}}
+      </ion-button>
 
     </ion-buttons>
   </ion-toolbar>
