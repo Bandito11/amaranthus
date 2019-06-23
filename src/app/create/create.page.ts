@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { Component } from '@angular/core';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
@@ -8,10 +9,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
-import { DomSanitizer } from '@angular/platform-browser';
+import { directory } from '../common/constants';
 
 declare const fs;
-declare const process;
 
 @Component({
   selector: 'app-create',
@@ -166,11 +166,12 @@ export class CreatePage {
 
   getPicture() {
     const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const directory = `${process.env.HOME}/Documents/Attendance-Log-Tracker-pics/`;
+    const blob = window.URL.createObjectURL(chosenPic.files[0]);
+    this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
     if (chosenPic.files.length !== 0) {
       const reader = new FileReader();
       reader.onload = () => {
-        fs.mkdir( directory, { recursive: true }, (err) => {
+        fs.mkdir(directory, { recursive: true }, (err) => {
           if (err) {
             fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
               if (err) {
@@ -197,8 +198,7 @@ export class CreatePage {
             this.getPicture();
           }
         });
-
-      }
+      };
       reader.readAsDataURL(chosenPic.files[0]);
       // const blob = window.URL.createObjectURL(chosenPic.files[0]);
       // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);

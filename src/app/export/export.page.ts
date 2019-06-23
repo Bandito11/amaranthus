@@ -103,6 +103,11 @@ export class ExportPage {
   async exportAsXLSX() {
     let xlsxResponse;
     let message = 'Creating the File...';
+    if (this.month) {
+      this.date = this.date.slice(0, 7);
+    }
+    const fileName = `AttendanceLog-${this.date}.xlsx`;
+    this.getRecordsByDate({ query: 'Date', date: this.date });
     if (this.language === 'spanish') {
       message = 'Creando el archivo...';
     }
@@ -112,18 +117,14 @@ export class ExportPage {
     loading.present();
     try {
       if (this.month) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students });
+        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students, fileName: fileName });
       }
       if (this.day) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students });
+        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students, fileName: fileName });
       }
       if (xlsxResponse.success) {
         if (!this.platform.is('desktop')) {
           try {
-            if (this.month) {
-              this.date = this.date.slice(0, 7);
-            }
-            const fileName = `AttendanceLog-${this.date}.xlsx`;
             const fileResponse = await this.file.exportFile({
               fileName: fileName,
               text: xlsxResponse.data,

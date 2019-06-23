@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Component, OnInit } from '@angular/core';
@@ -8,6 +9,9 @@ import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
+import { directory } from '../common/constants';
+
+declare const fs;
 
 @Component({
   selector: 'app-editevent',
@@ -65,7 +69,7 @@ export class EditEventPage implements OnInit {
       },
       picture: 'Add a Picture',
       reset: 'Reset',
-      optional: 'Optional',
+      optional: 'Image is not required.',
       eventName: 'Name',
       placeholder: 'Write your Event Name',
       start: 'Start Date:',
@@ -90,7 +94,7 @@ export class EditEventPage implements OnInit {
       },
       picture: 'Añadir imagen',
       reset: 'Reiniciar',
-      optional: 'Opcional',
+      optional: 'La imagen no es requerido.',
       eventName: 'Nombre',
       placeholder: 'Escribe un nombre para el evento',
       start: 'Inicia en:',
@@ -112,13 +116,14 @@ export class EditEventPage implements OnInit {
     private navCtrl: NavController,
     private navParams: NavParams,
     private camera: Camera,
-    private platform: Platform,
+    public platform: Platform,
     private modalCtrl: ModalController,
     private db: AmaranthusDBProvider,
     private alertCtrl: AlertController,
     private file: File,
     private storage: Storage,
-    private webview: WebView
+    private webview: WebView,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -137,6 +142,47 @@ export class EditEventPage implements OnInit {
         this.htmlControls = this.LANGUAGE['english'];
       }
     });
+  }
+
+  getPicture() {
+    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
+    const blob = window.URL.createObjectURL(chosenPic.files[0]);
+    this.logo = this.sanitizer.bypassSecurityTrustUrl(blob);
+    if (chosenPic.files.length !== 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        fs.mkdir( directory, { recursive: true }, (err) => {
+          if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
+              if (err) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.logo = reader.result;
+              }
+            });
+          } else {
+            this.getPicture();
+          }
+        });
+      };
+      reader.readAsDataURL(chosenPic.files[0]);
+      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
+      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    }
   }
 
   addAll() {

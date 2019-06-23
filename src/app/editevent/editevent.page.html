@@ -13,17 +13,24 @@
 </ion-header>
 
 <ion-content padding id="editevent">
-  <div *ngIf="logo" class="logo-image"><img src="{{logo}}" alt="A picture for the logo for the event" /></div>
-  <div id="logo">
-    <ion-button (click)="addLogo()" type="button" color="primary">{{htmlControls.picture}}</ion-button>
-    <ion-button (click)="logo = ''" type="button" color="secondary">{{htmlControls.reset}}</ion-button>
+  <div *ngIf="logo" class="logo-image">
+    <img src="{{logo}}" alt="A picture for the logo for the event" />
   </div>
-  <ion-item>
-    <ion-label>
-        ({{htmlControls.optional}})
-    </ion-label>
-  </ion-item>
-  <ion-item>
+  <div id="logo">
+      <div id="input">
+        <div *ngIf="platform.is('desktop'); else notDesktop">
+          <ion-button>
+            <input id="inputFile" (change)="getPicture()" type="file" accept="image/*" />
+            {{htmlControls.picture}}
+          </ion-button>
+        </div>
+        <ng-template #notDesktop>
+          <ion-button (click)="addLogo()" type="button" color="primary">{{htmlControls.picture}}</ion-button>
+        </ng-template>
+        <ion-button (click)="logo = '' " type="button" color="secondary">{{htmlControls.reset}}</ion-button>
+      </div>
+      <p>({{htmlControls.optional}})</p>
+    </div>  <ion-item>
     <ion-label stacked>{{htmlControls.eventName}}</ion-label>
     <ion-input type="text" #name placeholder="Write your Event Name" [(ngModel)]="eventName"></ion-input>
     <ion-icon id="form-icon" item-right name="warning" *ngIf="!name.value"></ion-icon>

@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { OnInit, Component } from '@angular/core';
 import { IStudent, IResponse, ISimpleAlertOptions } from '../common/models';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
@@ -8,6 +9,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
+import { directory } from '../common/constants';
+
+declare const fs;
 
 @Component({
   selector: 'app-edit',
@@ -151,8 +155,9 @@ export class EditPage implements OnInit {
     private modalCtrl: ModalController,
     private webview: WebView,
     private file: File,
-    private platform: Platform,
-    private storage: Storage
+    public platform: Platform,
+    private storage: Storage,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -181,6 +186,49 @@ export class EditPage implements OnInit {
       }
     });
   }
+
+  getPicture() {
+    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
+    const blob = window.URL.createObjectURL(chosenPic.files[0]);
+    this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    if (chosenPic.files.length !== 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        fs.mkdir(directory, { recursive: true }, (err) => {
+          if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
+              if (err) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.picture = reader.result;
+              }
+            });
+          } else {
+            this.getPicture();
+          }
+        });
+      };
+      reader.readAsDataURL(chosenPic.files[0]);
+      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
+      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    }
+  }
+
+
   getStudentFromDB(student: IStudent): IResponse<IStudent> {
     try {
       const response = this.db.getStudentById(student);

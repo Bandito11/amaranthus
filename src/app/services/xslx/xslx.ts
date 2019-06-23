@@ -12,14 +12,14 @@ export class XLSXProvider {
 
   constructor(private platform: Platform) { }
 
-  exportXLSXToFile(opts: { type: string, records: IRecord[] }): IResponse<Blob | string> {
+  exportXLSXToFile(opts: { type: string, records: IRecord[], fileName: string }): IResponse<Blob | string> {
     const response: IResponse<any> = {
       success: false,
       error: null,
       data: undefined
     };
     try {
-      const blob = this.createXLSX({ type: opts.type, records: opts.records });
+      const blob = this.createXLSX({ type: opts.type, records: opts.records, fileName: opts.fileName });
       return {
         ...response,
         success: true,
@@ -33,7 +33,7 @@ export class XLSXProvider {
     }
   }
 
-  private createXLSX(opts: { type: string, records: IRecord[] }): Blob| string {
+  private createXLSX(opts: { type: string, records: IRecord[], fileName: string }): Blob| string {
     let headers;
       if (opts.type === recordType.month) {
         headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
@@ -57,9 +57,7 @@ export class XLSXProvider {
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Students Attendance Records');
         if (this.platform.is('desktop')) {
-          const date = new Date();
-// tslint:disable-next-line: max-line-length
-          const fileName = `AttendanceLog-${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}.xlsx`;
+          const fileName = opts.fileName;
           XLSX.writeFile(wb, fileName);
           return undefined;
         } else {

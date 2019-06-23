@@ -16,8 +16,18 @@
     <img src="{{logo}}" alt="A picture for the logo for the event">
   </div>
   <div id="logo">
-    <ion-button (click)="addLogo()" type="button" color="primary">{{htmlControls.picture}}</ion-button>
-    <ion-button (click)="logo = '' " type="button" color="secondary">{{htmlControls.reset}}</ion-button>
+    <div id="input">
+      <div *ngIf="platform.is('desktop'); else notDesktop">
+        <ion-button>
+          <input id="inputFile" (change)="getPicture()" type="file" accept="image/*" />
+          {{htmlControls.picture}}
+        </ion-button>
+      </div>
+      <ng-template #notDesktop>
+        <ion-button (click)="addLogo()" type="button" color="primary">{{htmlControls.picture}}</ion-button>
+      </ng-template>
+      <ion-button (click)="logo = '' " type="button" color="secondary">{{htmlControls.reset}}</ion-button>
+    </div>
     <p>({{htmlControls.optional}})</p>
   </div>
   <ion-item>
@@ -28,8 +38,12 @@
   <div *ngIf="!infiniteDates else noStartDate">
     <ion-item>
       <ion-label>{{htmlControls.start}}</ion-label>
-      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
-      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>   
+      <ion-datetime *ngIf="language == 'spanish'"
+        monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
+        displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
+      <ion-datetime *ngIf="language == 'english'"
+        monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
+        displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="startDate"></ion-datetime>
     </ion-item>
   </div>
   <ng-template #noStartDate>
@@ -45,8 +59,12 @@
   <div *ngIf="!infiniteDates else noEndDate">
     <ion-item *ngIf="hasEndDate">
       <ion-label>{{htmlControls.end}}</ion-label>
-      <ion-datetime *ngIf="language == 'spanish'" monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
-      <ion-datetime *ngIf="language == 'english'" monthNames="January,February,March,April,May,June,July,August,September,October,November,December" displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-datetime *ngIf="language == 'spanish'"
+        monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
+        displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-datetime *ngIf="language == 'english'"
+        monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
+        displayFormat="MMMM DD YYYY" pickerFormat="MMMM DD YYYY" [(ngModel)]="endDate"></ion-datetime>
       <ion-icon id="form-icon" name="warning" *ngIf="!this.endDate && hasEndDate"></ion-icon>
     </ion-item>
   </div>
@@ -73,16 +91,16 @@
         </ion-col>
         <ion-col size="10">
           <ion-item>
-              <ion-label text-wrap>
-                <span class="label name">{{htmlControls.studentName}}</span>
-                <span class="name">{{student.firstName}} <span *ngIf="student.initial">{{student.initial}}</span>
-                  {{student.lastName}}</span>
-              </ion-label>
+            <ion-label text-wrap>
+              <span class="label name">{{htmlControls.studentName}}</span>
+              <span class="name">{{student.firstName}} <span *ngIf="student.initial">{{student.initial}}</span>
+                {{student.lastName}}</span>
+            </ion-label>
           </ion-item>
           <ion-item>
-              <ion-label>
-                <span class="label">ID: </span>{{student.id}}
-              </ion-label>
+            <ion-label>
+              <span class="label">ID: </span>{{student.id}}
+            </ion-label>
           </ion-item>
         </ion-col>
         <ion-buttons>
@@ -109,7 +127,7 @@
 <ion-footer>
   <ion-toolbar color="primary">
     <ion-buttons slot="end">
-        <ion-button (click)="addAll()">{{htmlControls.toolbar.buttons.add}}</ion-button>
+      <ion-button (click)="addAll()">{{htmlControls.toolbar.buttons.add}}</ion-button>
       <ion-button (click)="createNewEvent()">{{htmlControls.toolbar.buttons.create}}</ion-button>
     </ion-buttons>
   </ion-toolbar>

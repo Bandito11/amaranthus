@@ -9,6 +9,10 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { directory } from '../common/constants';
+import { DomSanitizer } from '@angular/platform-browser';
+
+declare const fs;
 
 @Component({
   selector: 'app-create-event',
@@ -64,7 +68,7 @@ export class CreateEventPage implements OnInit {
       },
       picture: 'Add a Picture',
       reset: 'Reset',
-      optional: 'Optional',
+      optional: 'Image is not required.',
       eventName: 'Name',
       placeholder: 'Write your Event Name',
       start: 'Start Date:',
@@ -88,7 +92,7 @@ export class CreateEventPage implements OnInit {
       },
       picture: 'Añadir imagen',
       reset: 'Reiniciar',
-      optional: 'Opcional',
+      optional: 'La imagen no es requerido.',
       eventName: 'Nombre',
       placeholder: 'Escribe un nombre para el evento',
       start: 'Inicia en:',
@@ -114,8 +118,8 @@ export class CreateEventPage implements OnInit {
     public alertCtrl: AlertController,
     private file: File,
     private storage: Storage,
-    private webview: WebView
-
+    private webview: WebView,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -137,6 +141,47 @@ export class CreateEventPage implements OnInit {
         this.htmlControls = this.LANGUAGE['english'];
       }
     });
+  }
+
+  getPicture() {
+    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
+    const blob = window.URL.createObjectURL(chosenPic.files[0]);
+    this.logo = this.sanitizer.bypassSecurityTrustUrl(blob);
+    if (chosenPic.files.length !== 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        fs.mkdir(directory, { recursive: true }, (err) => {
+          if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
+              if (err) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: err,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.logo = reader.result;
+              }
+            });
+          } else {
+            this.getPicture();
+          }
+        });
+      };
+      reader.readAsDataURL(chosenPic.files[0]);
+      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
+      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    }
   }
 
   resetEndDate() {
