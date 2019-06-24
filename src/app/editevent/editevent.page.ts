@@ -153,19 +153,19 @@ export class EditEventPage implements OnInit {
       reader.onload = () => {
         fs.mkdir( directory, { recursive: true }, (err) => {
           if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
-              if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
+              if (error) {
                 let options;
                 if (this.language === 'spanish') {
                   options = {
                     header: '¡Información!',
-                    message: err,
+                    message: error,
                     buttons: ['OK']
                   };
                 } else {
                   options = {
                     header: 'Information!',
-                    message: err,
+                    message: error,
                     buttons: ['OK']
                   };
                 }
@@ -180,8 +180,6 @@ export class EditEventPage implements OnInit {
         });
       };
       reader.readAsDataURL(chosenPic.files[0]);
-      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
-      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
     }
   }
 
@@ -267,7 +265,7 @@ export class EditEventPage implements OnInit {
           header: '',
           message: '',
           buttons: []
-        }
+        };
         if (this.language === 'spanish') {
           options = {
             ...options,
@@ -454,11 +452,11 @@ export class EditEventPage implements OnInit {
           }
           const array = imageData.split('/');
           const fileName = array.pop();
-          const directory = array.slice(0, array.length).join('/');
+          const mobileDirectory = array.slice(0, array.length).join('/');
           const path = this.file.dataDirectory;
           const outDirectory = 'images';
           this.file.checkDir(path, outDirectory).then(() => {
-            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+            this.file.copyFile(mobileDirectory, fileName, path + outDirectory, fileName)
               .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
               .catch(e => {
                 if (e.code === 12) {
@@ -473,7 +471,7 @@ export class EditEventPage implements OnInit {
               });
           }).catch(() => {
             this.file.createDir(path, outDirectory, true).then(() => {
-              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              this.file.copyFile(mobileDirectory, fileName, path + outDirectory, fileName)
                 .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
                 .catch(e => {
                   if (e.code === 12) {

@@ -179,8 +179,6 @@ export class CreateEventPage implements OnInit {
         });
       };
       reader.readAsDataURL(chosenPic.files[0]);
-      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
-      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
     }
   }
 

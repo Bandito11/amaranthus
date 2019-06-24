@@ -27,9 +27,13 @@
   <!--Only for Electron apps-->
   <script src="cordova.js"></script>
   <script>
-    if (require) {
-      window.fs = require('fs');
-    }
+    try {
+      if (require) {
+        window.fs = require('fs');
+      }
+    } catch (error) {
+      process = { env: { HOME: '' } };
+    } 
   </script>
 </head>
 
