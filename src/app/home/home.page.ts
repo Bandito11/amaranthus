@@ -97,7 +97,7 @@ export class HomePage implements OnInit {
     private storage: Storage
   ) { }
 
-  ngOnInit() {
+  ngOnInit() {      
     const currentDate = new Date();
     this.date = {
       month: currentDate.getMonth(),

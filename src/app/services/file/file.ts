@@ -66,7 +66,13 @@ export class FileProvider {
   writeToDesktop(opts: { fileName: string, text: any, type: string }): Promise<IResponse<string>> {
 
     return new Promise((resolve, reject) => {
-      fs.writeFile(`${process.env.HOME}/Documents/${opts.fileName}`, opts.text, {}, (err) => {
+      let path = ``;
+      if (navigator.userAgent.match('Mac')) {
+        path = `${process.env.HOME}/Documents/${opts.fileName}`;
+      } else if (navigator.userAgent.match('Windows')) {
+        path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
+      }
+      fs.writeFile(path, opts.text, {}, (err) => {
         if (err) {
           reject(err);
         }
