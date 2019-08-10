@@ -9,10 +9,10 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { directory } from '../common/constants';
 import { DomSanitizer } from '@angular/platform-browser';
 
 declare const fs;
+declare const process;
 
 @Component({
   selector: 'app-create-event',
@@ -147,6 +147,12 @@ export class CreateEventPage implements OnInit {
     const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
     const blob = window.URL.createObjectURL(chosenPic.files[0]);
     this.logo = this.sanitizer.bypassSecurityTrustUrl(blob);
+    let directory = '';
+    if (navigator.userAgent.match('Mac')) {
+      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
+    } else if (navigator.userAgent.match('Windows')) {
+      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
+    }
     if (chosenPic.files.length !== 0) {
       const reader = new FileReader();
       reader.onload = () => {

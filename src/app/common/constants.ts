@@ -1,7 +1,5 @@
 declare const process;
 
-export const directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-
 export const MONTHSLABELS = [
   'January',
   'February',

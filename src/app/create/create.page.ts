@@ -9,9 +9,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
-import { directory } from '../common/constants';
 
 declare const fs;
+declare const process;
 
 @Component({
   selector: 'app-create',
@@ -168,6 +168,12 @@ export class CreatePage {
     const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
     const blob = window.URL.createObjectURL(chosenPic.files[0]);
     this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    let directory = '';
+    if (navigator.userAgent.match('Mac')) {
+      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
+    } else if (navigator.userAgent.match('Windows')) {
+      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
+    }
     if (chosenPic.files.length !== 0) {
       const reader = new FileReader();
       reader.onload = () => {
