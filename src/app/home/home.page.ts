@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, ModalController, NavController, LoadingController } from '@ionic/angular';
+import { AlertController, ModalController, NavController, LoadingController, Platform } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, ISimpleAlertOptions, IRecord } from 'src/app/common/models';
 import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
@@ -94,10 +94,11 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private loadingController: LoadingController,
-    private storage: Storage
+    private storage: Storage,
+    private platform: Platform
   ) { }
 
-  ngOnInit() {      
+  ngOnInit() {
     const currentDate = new Date();
     this.date = {
       month: currentDate.getMonth(),
@@ -107,6 +108,9 @@ export class HomePage implements OnInit {
     this.students = [];
     this.unfilteredStudents = [];
     this.getStudents();
+    if (this.platform.is('electron')) {
+      this.storage.set('bought', true);
+    }
   }
 
   ionViewWillEnter() {
