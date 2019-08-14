@@ -108,8 +108,8 @@ export class HomePage implements OnInit {
     this.students = [];
     this.unfilteredStudents = [];
     this.getStudents();
-    if (this.platform.is('electron')) {
-      this.storage.set('bought', true);
+    if (this.platform.is('desktop')) {
+      this.storage.set('boughtMasterKey', true);
     }
   }
 
