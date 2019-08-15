@@ -108,9 +108,10 @@ export class HomePage implements OnInit {
     this.students = [];
     this.unfilteredStudents = [];
     this.getStudents();
-    if (this.platform.is('desktop')) {
+    if (this.platform.is('desktop') && navigator.userAgent.match('Windows')) {
       this.storage.set('boughtMasterKey', true);
     }
+    this.storage.get('boughtMasterKey').then(val => console.log(val))
   }
 
   ionViewWillEnter() {

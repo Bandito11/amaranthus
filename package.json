@@ -11,7 +11,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "electron-serve": "ionic build --prod && cordova run electron --nobuild",
-    "electron-build": "ionic build --prod && cordova build electron --release"
+    "electron-build": "ionic build --prod && cordova build electron --release",
+    "electron-store": "ionic build --prod && cordova build electron --store"
   },
   "private": true,
   "dependencies": {

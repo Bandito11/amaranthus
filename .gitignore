@@ -1,6 +1,14 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
+amaranthus-key.jks
+amaranthus-password.txt
+attendancelogtracker.apk
+windows-store
+resources/electron/Esteban_Morales.provisionprofile
+Esteban_Morales.provisionprofile
+MacStoreGen
+
 *~
 *.sw[mnpcod]
 *.log
@@ -11,7 +19,6 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
-
 .idea/
 .ionic/
 .sourcemaps/
@@ -32,8 +39,3 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-
-amaranthus-key.jks
-amaranthus-password.txt
-attendancelogtracker.apk
-windows-store
