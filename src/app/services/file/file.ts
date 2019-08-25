@@ -67,7 +67,7 @@ export class FileProvider {
 
     return new Promise((resolve, reject) => {
       let path = ``;
-      if (navigator.userAgent.match('Mac')) {
+      if (navigator.userAgent.match('Macintosh')) {
         path = `${process.env.HOME}/Documents/${opts.fileName}`;
       } else if (navigator.userAgent.match('Windows')) {
         path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
