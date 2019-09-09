@@ -44,25 +44,6 @@ export class AmaranthusDBProvider {
     studentsColl.findAndRemove({ 'id': { '$containsAny': '#' } });
     studentsColl.findAndRemove({ 'id': { '$containsAny': '%' } });
   }
-  /**
-   * Use to convert Legacy data.
-   */
-  convertLegacyData() {
-    const notes = notesColl.data;
-    const noEventPropNotes = notes.map(note => {
-      if (!note['event']) {
-        return {
-          ...note,
-          event: ''
-        };
-      } else {
-        return note;
-      }
-    });
-    if (noEventPropNotes) {
-      notesColl.update(noEventPropNotes);
-    }
-  }
 
   private loadDatabase() {
     studentsColl = amaranthusDB.getCollection<IStudent>('students');
