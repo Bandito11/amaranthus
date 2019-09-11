@@ -166,7 +166,6 @@ export class HomePage implements OnInit {
           await loading.dismiss();
           if (this.students.length > 0) {
             this.appStart = true;
-            this.db.convertLegacyData();
             clearTimeout(studentTimeout);
           }
         }, 3000);
