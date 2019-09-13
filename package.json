@@ -90,7 +90,7 @@
     "tslint": "^5.17.0",
     "typescript": "~3.2.4"
   },
-  "description": "An Ionic project",
+  "description": "Take attendance using your mobile device and let it manage it for you.",
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
