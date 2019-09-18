@@ -458,16 +458,46 @@ export class EditPage implements OnInit {
    *
    * @memberof EditPage
    */
-  browsePicture() {
-    const options: CameraOptions = {
+  async browsePicture() {
+    let options: CameraOptions = {
       quality: 100,
-      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
       destinationType: this.camera.DestinationType.FILE_URI,
       mediaType: this.camera.MediaType.PICTURE,
       encodingType: this.camera.EncodingType.PNG,
       targetWidth: 250,
       targetHeight: 250
     };
+    const alert = await this.alertCtrl.create({
+      header: 'Information!',
+      message: 'Get picture from photo album or camera.',
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        cssClass: 'secondary'
+      }, {
+        text: 'Browse Photo Album',
+        handler: () => {
+          options = {
+            ...options,
+            sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+          };
+          this.getPictureFromNativeCamera(options);
+        }
+      }, {
+        text: 'Take a picture!',
+        handler: () => {
+          options = {
+            ...options,
+            sourceType: this.camera.PictureSourceType.CAMERA,
+          };
+          this.getPictureFromNativeCamera(options);
+        }
+      }]
+    });
+    await alert.present();
+  }
+
+  getPictureFromNativeCamera(options: CameraOptions) {
     this.camera.getPicture(options)
       .then((imageData: string) => {
         if (this.platform.is('android')) {
@@ -514,7 +544,6 @@ export class EditPage implements OnInit {
         error => handleError(error)
       );
   }
-
   private async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
       header: options.header,
