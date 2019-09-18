@@ -84,9 +84,9 @@ export class HomePage implements OnInit {
       search: 'Buscar por ID o Nombre'
     }
   };
-  @ViewChild('notes') notesElement;
-  @ViewChild('sort') sortElement;
-  @ViewChild('filter') filterElement;
+  @ViewChild('notes', { static: false }) notesElement;
+  @ViewChild('sort', { static: false }) sortElement;
+  @ViewChild('filter', { static: false }) filterElement;
 
   constructor(
     private alertCtrl: AlertController,
