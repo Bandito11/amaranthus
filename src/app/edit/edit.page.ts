@@ -202,19 +202,19 @@ export class EditPage implements OnInit {
       reader.onload = () => {
         fs.mkdir(directory, { recursive: true }, (err) => {
           if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, (err) => {
-              if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
+              if (error) {
                 let options;
                 if (this.language === 'spanish') {
                   options = {
                     header: '¡Información!',
-                    message: err,
+                    message: error,
                     buttons: ['OK']
                   };
                 } else {
                   options = {
                     header: 'Information!',
-                    message: err,
+                    message: error,
                     buttons: ['OK']
                   };
                 }
