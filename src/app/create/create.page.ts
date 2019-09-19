@@ -154,14 +154,6 @@ export class CreatePage {
    */
   generateId() {
     this.idInput = `XY${Math.ceil(Math.random() * 100000000)}`;
-    try {
-      const value = this.db.checkIfStudentExists({ id: this.idInput });
-      if (!value) {
-        this.generateId();
-      }
-    } catch (error) {
-      handleError(error);
-    }
   }
 
   getPicture() {
@@ -371,6 +363,7 @@ export class CreatePage {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
+                //TODO: add generateID method here
                 this.db.insertStudent(student)
                   .then((response) => {
                     if (response.success === true) {
@@ -389,7 +382,10 @@ export class CreatePage {
                       navTransition.then(() => this.showAdvancedAlert(errorMsg));
                     }
                   })
-                  .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
+                  .catch(error => {
+                    this.showSimpleAlert({ header: 'Error', message: error.error });
+                    this.generateId();
+                  });
                 return false;
               }
             }
@@ -426,7 +422,10 @@ export class CreatePage {
                       navTransition.then(() => this.showAdvancedAlert(errorMsg));
                     }
                   })
-                  .catch(error => this.showSimpleAlert({ header: 'Error', message: error.error }));
+                  .catch(error => {
+                    this.showSimpleAlert({ header: 'Error', message: error.error });
+                    this.generateId();
+                  });
                 return false;
               }
             }

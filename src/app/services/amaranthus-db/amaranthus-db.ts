@@ -404,7 +404,7 @@ export class AmaranthusDBProvider {
           '$eq': opts.id
         }
       });
-      if (results) {
+      if (results['id']) {
         return true;
       } else {
         return false;
