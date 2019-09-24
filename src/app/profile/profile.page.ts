@@ -114,9 +114,6 @@ export class ProfilePage implements OnInit {
     this.student = { ...this.student, id: this.route.snapshot.paramMap.get('id') };
     this.getStudentFromDB(this.student);
     this.getNotesFromDB(this.student.id);
-  }
-
-  ionViewWillEnter() {
     this.storage.get('language').then(value => {
       if (value) {
         this.language = value;
