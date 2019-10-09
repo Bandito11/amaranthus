@@ -18,7 +18,7 @@
     </ion-select>
   </ion-item>
   <ion-card *ngFor="let event of events" (click)="goToEventProfile(event.$loki)">
-    <img src={{event.logo}} />
+    <img [src]="event.logo" />
     <ion-card-content>
       <ion-card-title>
         {{event.name}}

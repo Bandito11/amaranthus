@@ -36,7 +36,7 @@ export interface INote {
 }
 
 export interface IEvent {
-  logo: string;
+  logo;
   name: string;
   startDate: string;
   endDate: string;

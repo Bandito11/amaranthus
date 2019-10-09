@@ -7,6 +7,7 @@ import { MONTHSLABELS } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { EditPage } from '../edit/edit.page';
 import { Storage } from '@ionic/storage';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -15,7 +16,7 @@ import { Storage } from '@ionic/storage';
 })
 export class ProfilePage implements OnInit {
 
-  picture = '';
+  picture;
   gender = 'male';
   isActive = false;
   student: IStudent = <IStudent>{};
@@ -101,13 +102,14 @@ export class ProfilePage implements OnInit {
       }
     }
   };
-  language: any;
+  language;
 
   constructor(
     private route: ActivatedRoute,
     private modalCtrl: ModalController,
     private db: AmaranthusDBProvider,
-    private storage: Storage
+    private storage: Storage,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
@@ -164,7 +166,7 @@ export class ProfilePage implements OnInit {
       if (response.success) {
         this.isActive = response.data.isActive;
         this.gender = response.data.gender;
-        this.picture = response.data.picture;
+        this.picture = this.sanitizer.bypassSecurityTrustUrl(response.data.picture);
         this.student = {
           ...response.data,
           gender: response.data.gender[0].toUpperCase() +

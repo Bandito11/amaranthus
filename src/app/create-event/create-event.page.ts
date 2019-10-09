@@ -108,6 +108,7 @@ export class CreateEventPage implements OnInit {
     }
   };
   language;
+  imgSrc;
 
   constructor(
     public navCtrl: NavController,
@@ -399,12 +400,13 @@ export class CreateEventPage implements OnInit {
   }
 
   getStudents() {
-    this.students = [];
-    this.STUDENTS = [];
     const response = this.db.getAllStudents(true);
     if (response.success) {
-      this.students = [...response.data];
-      this.STUDENTS = [...response.data];
+      this.students = response.data;
+      this.STUDENTS = response.data;
+    } else {
+      this.students = [];
+      this.STUDENTS = [];
     }
   }
 
@@ -431,68 +433,68 @@ export class CreateEventPage implements OnInit {
   }
 
   addLogo() {
-    if (this.platform.is('cordova')) {
-      const options: CameraOptions = {
-        quality: 100,
-        sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-        destinationType: this.camera.DestinationType.FILE_URI,
-        mediaType: this.camera.MediaType.PICTURE,
-        encodingType: this.camera.EncodingType.PNG,
-        targetWidth: 250,
-        targetHeight: 250
-      };
-      this.camera.getPicture(options)
-        .then((imageData: string) => {
-          if (this.platform.is('android')) {
-            this.logo = this.webview.convertFileSrc(imageData);
-            return 0;
-          }
-          const array = imageData.split('/');
-          const fileName = array.pop();
-          const directory = array.slice(0, array.length).join('/');
-          const path = this.file.dataDirectory;
-          const outDirectory = 'images';
-          this.file.checkDir(path, outDirectory).then(() => {
+    const options: CameraOptions = {
+      quality: 100,
+      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      mediaType: this.camera.MediaType.PICTURE,
+      encodingType: this.camera.EncodingType.PNG,
+      targetWidth: 250,
+      targetHeight: 250
+    };
+    this.camera.getPicture(options)
+      .then((imageData: string) => {
+        if (this.platform.is('android')) {
+          this.logo = this.webview.convertFileSrc(imageData);
+          return 0;
+        }
+        const array = imageData.split('/');
+        const fileName = array.pop();
+        const directory = array.slice(0, array.length).join('/');
+        const path = this.file.dataDirectory;
+        const outDirectory = 'images';
+        this.file.checkDir(path, outDirectory).then(() => {
+          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+            .then(image => {
+              this.logo = this.webview.convertFileSrc(image.nativeURL);
+              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(image.nativeURL));
+            })
+            .catch(e => {
+              if (e.code === 12) {
+                this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(path + outDirectory + fileName));
+                return 0;
+              }
+              const opts: ISimpleAlertOptions = {
+                header: 'Error!',
+                message: JSON.stringify(e)
+              };
+              this.showSimpleAlert(opts);
+            });
+        }).catch(() => {
+          this.file.createDir(path, outDirectory, true).then(() => {
             this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-              .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+              .then(image => {
+                this.logo = this.webview.convertFileSrc(image.nativeURL);
+                this.logo = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(image.nativeURL));
+              })
               .catch(e => {
                 if (e.code === 12) {
                   this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(path + outDirectory + fileName));
                   return 0;
                 }
                 const opts: ISimpleAlertOptions = {
-                  header: 'Error!',
+                  header: 'Error',
                   message: JSON.stringify(e)
                 };
                 this.showSimpleAlert(opts);
               });
-          }).catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-                .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
-                .catch(e => {
-                  if (e.code === 12) {
-                    this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                    return 0;
-                  }
-                  const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e)
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
           });
-        },
-          error => handleError(error)
-        );
-    } else {
-      // Only for Dev Purposes
-      // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
-      // /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
-      // f97`;
-    }
-
+        });
+      },
+        error => handleError(error)
+      );
   }
 
   addToEvent(id) {

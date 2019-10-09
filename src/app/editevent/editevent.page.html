@@ -13,8 +13,8 @@
 </ion-header>
 
 <ion-content padding id="editevent">
-  <div *ngIf="logo" class="logo-image">
-    <img src="{{logo}}" alt="A picture for the logo for the event" />
+  <div *ngIf="imgSrc" class="logo-image">
+    <img [src]="imgSrc" alt="A picture for the logo for the event" />
   </div>
   <div id="logo">
       <div id="input">
@@ -81,7 +81,7 @@
       <ion-row *ngFor="let student of students">
         <ion-col size="2">
           <ion-avatar>
-            <img src="{{student.picture}}" alt="{{student.firstName}}'s profile image">
+            <ion-img src="{{student.picture}}" alt="{{student.firstName}}'s profile image"></ion-img>
           </ion-avatar>
         </ion-col>
         <ion-col size="10">

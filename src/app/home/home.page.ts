@@ -1,3 +1,4 @@
+import { AppPurchaseProvider } from './../services/app-purchase/app-purchase';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AlertController, ModalController, NavController, LoadingController, Platform } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
@@ -6,6 +7,7 @@ import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-
 import { handleError } from 'src/app/common/handleError';
 import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/common/search';
 import { Storage } from '@ionic/storage';
+import { stateAndroid } from '../common/constants';
 
 @Component({
   selector: 'app-home',
@@ -95,10 +97,29 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     private loadingController: LoadingController,
     private storage: Storage,
-    private platform: Platform
+    private platform: Platform,
+    private iap: AppPurchaseProvider
   ) { }
 
   ngOnInit() {
+    const bought = 'boughtMasterKey';
+    this.storage.set(bought, false);
+    if (this.platform.is('android')) {
+      this.iap.restoreAndroidPurchase().then(products => {
+        products.forEach(product => {
+          const receipt = JSON.parse(product.receipt);
+          if (product.productId === 'master.key' && stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)) {
+            this.storage.set(bought, true);
+            const options: ISimpleAlertOptions = {
+              header: 'Information',
+              message: 'Restored the purchase!',
+              buttons: ['OK']
+            };
+            this.showSimpleAlert(options);
+          }
+        });
+      });
+    }
     const currentDate = new Date();
     this.date = {
       month: currentDate.getMonth(),
@@ -111,11 +132,11 @@ export class HomePage implements OnInit {
     if (this.platform.is('desktop') && navigator.userAgent.match('Windows')) {
       this.storage.set('boughtMasterKey', true);
     }
-      //////////// Use for testing only!///////////
-      // for (let i = 0; i < 500; i++) {
-      //   this.db.insertTest();
-      // }
-      /////////////////////////////////////////////
+    //////////// Use for testing only!///////////
+    // for (let i = 0; i < 500; i++) {
+    //   this.db.insertTest();
+    // }
+    /////////////////////////////////////////////
   }
 
   ionViewWillEnter() {

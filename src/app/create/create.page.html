@@ -32,8 +32,8 @@
 </ion-header>
 
 <ion-content padding id="create">
-  <div *ngIf="picture" class="profile-image">
-    <img [src]="picture" alt="A profile picture">
+  <div class="profile-image">
+    <img [src]="imgSrc" alt="A profile picture">
   </div>
   <form #studentForm="ngForm" (ngSubmit)="createStudent({
           firstName: firstName.value,
@@ -65,7 +65,7 @@
         <ng-template #notDesktop>
           <ion-button (click)="browsePicture()" color="primary">{{htmlControls.change}}</ion-button>
         </ng-template>
-        <ion-button (click)="picture = ''" color="secondary">{{htmlControls.reset}}</ion-button>
+        <ion-button (click)="imgSrc = './assets/profilePics/defaultMale.png'; picture = './assets/profilePics/defaultMale.png'" color="secondary">{{htmlControls.reset}}</ion-button>
       </div>
       <ion-item>
         <ion-label stacked>ID</ion-label>

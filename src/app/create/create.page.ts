@@ -1,6 +1,6 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { ModalController, AlertController, Platform } from '@ionic/angular';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { IStudent, ISimpleAlertOptions } from '../common/models';
@@ -18,7 +18,7 @@ declare const process;
   templateUrl: './create.page.html',
   styleUrls: ['./create.page.scss'],
 })
-export class CreatePage {
+export class CreatePage implements OnInit{
 
   gender: string;
   picture;
@@ -122,6 +122,8 @@ export class CreatePage {
   };
 
   language;
+  imgSrc;
+
   constructor(
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
@@ -134,7 +136,7 @@ export class CreatePage {
     private sanitizer: DomSanitizer
   ) { }
 
-  ionViewWillEnter() {
+  ngOnInit() {
     this.storage.get('language').then(value => {
       if (value) {
         this.language = value;
@@ -146,7 +148,8 @@ export class CreatePage {
     });
     this.generateId();
     this.gender = 'male';
-    this.picture = './assets/profilePics/default.png';
+    this.imgSrc = '/assets/profilePics/default.png';
+    this.picture = '/assets/profilePics/default.png';
     this.phoneNumber = '';
   }
   /**
@@ -159,7 +162,7 @@ export class CreatePage {
   getPicture() {
     const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
     const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
+    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
     let directory = '';
     if (navigator.userAgent.match('Mac')) {
       directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
@@ -193,7 +196,27 @@ export class CreatePage {
               }
             });
           } else {
-            this.getPicture();
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
+              if (error) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.picture = reader.result;
+              }
+            });
           }
         });
       };
@@ -252,6 +275,7 @@ export class CreatePage {
       .then((imageData: string) => {
         if (this.platform.is('android')) {
           this.picture = this.webview.convertFileSrc(imageData);
+          this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
           return 0;
         }
         const array = imageData.split('/');
@@ -261,35 +285,42 @@ export class CreatePage {
         const outDirectory = 'images';
         this.file.checkDir(path, outDirectory).then(() => {
           this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-            .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
+            .then(image => {
+              this.picture = this.webview.convertFileSrc(image.nativeURL);
+              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
+            })
             .catch(e => {
               if (e.code === 12) {
                 this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
                 return 0;
-              }
-              const opts: ISimpleAlertOptions = {
+              } const opts: ISimpleAlertOptions = {
                 header: 'Error!',
                 message: JSON.stringify(e)
               };
               this.showSimpleAlert(opts);
             });
-        }).catch(() => {
-          this.file.createDir(path, outDirectory, true).then(() => {
-            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-              .then(image => this.picture = this.webview.convertFileSrc(image.nativeURL))
-              .catch(e => {
-                if (e.code === 12) {
-                  this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
-                  return 0;
-                }
-                const opts: ISimpleAlertOptions = {
-                  header: 'Error',
-                  message: JSON.stringify(e)
-                };
-                this.showSimpleAlert(opts);
-              });
+        })
+          .catch(() => {
+            this.file.createDir(path, outDirectory, true).then(() => {
+              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+                .then(image => {
+                  this.picture = this.webview.convertFileSrc(image.nativeURL);
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
+                })
+                .catch(e => {
+                  if (e.code === 12) {
+                    this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
+                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
+                    return 0;
+                  } const opts: ISimpleAlertOptions = {
+                    header: 'Error',
+                    message: JSON.stringify(e)
+                  };
+                  this.showSimpleAlert(opts);
+                });
+            });
           });
-        });
       },
         error => handleError(error)
       );
@@ -363,7 +394,7 @@ export class CreatePage {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                //TODO: add generateID method here
+                // TODO: add generateID method here
                 this.db.insertStudent(student)
                   .then((response) => {
                     if (response.success === true) {

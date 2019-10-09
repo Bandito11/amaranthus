@@ -35,7 +35,7 @@
   <!-- Picture will be taken from gallery or camera.  If the input is empty a default one will
        be chosen from based by gender. -->
   <div class="profile-image">
-    <img src="{{picture}}" alt="A profile picture">
+    <img [src]="imgSrc" alt="A profile picture">
   </div>
   <form #studentForm="ngForm" (ngSubmit)="editStudent({
         firstName: firstName.value,
@@ -57,19 +57,19 @@
         isActive: null
         })">
     <ion-item-group>
-        <div id="input">
-            <div *ngIf="platform.is('desktop'); else notDesktop">
-              <ion-button>
-                <input id="inputFile" (change)="getPicture()" type="file" accept="image/*" />
-                {{htmlControls.change}}
-              </ion-button>
-            </div>
-            <ng-template #notDesktop>
-              <ion-button (click)="browsePicture()" color="primary">{{htmlControls.change}}</ion-button>
-            </ng-template>
-            <ion-button (click)="picture = ''" color="secondary">{{htmlControls.reset}}</ion-button>
-          </div>
-          <ion-item>
+      <div id="input">
+        <div *ngIf="platform.is('desktop'); else notDesktop">
+          <ion-button>
+            <input id="inputFile" (change)="getPicture()" type="file" accept="image/*" />
+            {{htmlControls.change}}
+          </ion-button>
+        </div>
+        <ng-template #notDesktop>
+          <ion-button (click)="browsePicture()" color="primary">{{htmlControls.change}}</ion-button>
+        </ng-template>
+        <ion-button (click)="imgSrc = './assets/profilePics/defaultMale.png'; picture = './assets/profilePics/defaultMale.png'" color="secondary">{{htmlControls.reset}}</ion-button>
+      </div>
+      <ion-item>
         <ion-label stacked>ID</ion-label>
         <ion-input [value]="student.id" type="text" #id readonly="true"></ion-input>
         <ion-icon id="form-icon" item-right name="warning" *ngIf="!id.value"></ion-icon>

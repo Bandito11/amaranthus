@@ -111,6 +111,7 @@ export class EditEventPage implements OnInit {
     }
   };
   language;
+  imgSrc;
 
   constructor(
     private navCtrl: NavController,
@@ -144,51 +145,6 @@ export class EditEventPage implements OnInit {
     });
   }
 
-  getPicture() {
-    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.logo = this.sanitizer.bypassSecurityTrustUrl(blob);
-    let directory = '';
-    if (navigator.userAgent.match('Mac')) {
-      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-    } else if (navigator.userAgent.match('Windows')) {
-      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
-    }
-    if (chosenPic.files.length !== 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fs.mkdir(directory, { recursive: true }, (err) => {
-          if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                }
-                this.showSimpleAlert(options);
-              } else {
-                this.logo = reader.result;
-              }
-            });
-          } else {
-            this.getPicture();
-          }
-        });
-      };
-      reader.readAsDataURL(chosenPic.files[0]);
-    }
-  }
-
   addAll() {
     for (const student of this.STUDENTS) {
       this.addToEvent(student.id);
@@ -201,6 +157,7 @@ export class EditEventPage implements OnInit {
     if (response.success) {
       this.event = { ...response.data };
       this.infiniteDates = this.event.infiniteDates;
+      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(response.data.logo);
       this.logo = response.data.logo;
       this.eventName = response.data.name;
       this.startDate = response.data.startDate;
@@ -405,12 +362,13 @@ export class EditEventPage implements OnInit {
   }
 
   getStudents() {
-    this.students = [];
-    this.STUDENTS = [];
     const response = this.db.getAllStudents(true);
     if (response.success) {
-      this.students = [...response.data];
-      this.STUDENTS = [...response.data];
+      this.students = response.data;
+      this.STUDENTS = response.data;
+    } else {
+      this.students = [];
+      this.STUDENTS = [];
     }
   }
 
@@ -439,68 +397,135 @@ export class EditEventPage implements OnInit {
     this.students = [...newQuery];
   }
 
-  addLogo() {
-    if (this.platform.is('cordova')) {
-      const options: CameraOptions = {
-        quality: 100,
-        sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-        destinationType: this.camera.DestinationType.FILE_URI,
-        mediaType: this.camera.MediaType.PICTURE,
-        encodingType: this.camera.EncodingType.PNG,
-        targetWidth: 250,
-        targetHeight: 250
-      };
-      this.camera.getPicture(options)
-        .then((imageData: string) => {
-          if (this.platform.is('android')) {
-            this.logo = this.webview.convertFileSrc(imageData);
-            return 0;
+  getPicture() {
+    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
+    const blob = window.URL.createObjectURL(chosenPic.files[0]);
+    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
+    let directory = '';
+    if (navigator.userAgent.match('Mac')) {
+      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
+    } else if (navigator.userAgent.match('Windows')) {
+      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
+    }
+    if (chosenPic.files.length !== 0) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        fs.mkdir(directory, { recursive: true }, (err) => {
+          if (err) {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
+              if (error) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.logo = reader.result;
+              }
+            });
+          } else {
+            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
+              if (error) {
+                let options;
+                if (this.language === 'spanish') {
+                  options = {
+                    header: '¡Información!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                } else {
+                  options = {
+                    header: 'Information!',
+                    message: error,
+                    buttons: ['OK']
+                  };
+                }
+                this.showSimpleAlert(options);
+              } else {
+                this.logo = reader.result;
+              }
+            });
           }
-          const array = imageData.split('/');
-          const fileName = array.pop();
-          const mobileDirectory = array.slice(0, array.length).join('/');
-          const path = this.file.dataDirectory;
-          const outDirectory = 'images';
-          this.file.checkDir(path, outDirectory).then(() => {
-            this.file.copyFile(mobileDirectory, fileName, path + outDirectory, fileName)
-              .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
+        });
+      };
+      reader.readAsDataURL(chosenPic.files[0]);
+    }
+  }
+
+  addLogo() {
+    const options: CameraOptions = {
+      quality: 100,
+      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      mediaType: this.camera.MediaType.PICTURE,
+      encodingType: this.camera.EncodingType.PNG,
+      targetWidth: 250,
+      targetHeight: 250
+    };
+    this.camera.getPicture(options)
+      .then((imageData: string) => {
+        if (this.platform.is('android')) {
+          this.logo = this.webview.convertFileSrc(imageData);
+          this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+          return 0;
+        }
+        const array = imageData.split('/');
+        const fileName = array.pop();
+        const directory = array.slice(0, array.length).join('/');
+        const path = this.file.dataDirectory;
+        const outDirectory = 'images';
+        this.file.checkDir(path, outDirectory).then(() => {
+          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+            .then(image => {
+              this.logo = this.webview.convertFileSrc(image.nativeURL);
+              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+            })
+            .catch(e => {
+              if (e.code === 12) {
+                this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+                return 0;
+              }
+              const opts: ISimpleAlertOptions = {
+                header: 'Error!',
+                message: JSON.stringify(e)
+              };
+              this.showSimpleAlert(opts);
+            });
+        }).catch(() => {
+          this.file.createDir(path, outDirectory, true).then(() => {
+            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
+              .then(image => {
+                this.logo = this.webview.convertFileSrc(image.nativeURL);
+                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+              })
               .catch(e => {
                 if (e.code === 12) {
                   this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
                   return 0;
                 }
                 const opts: ISimpleAlertOptions = {
-                  header: 'Error!',
+                  header: 'Error',
                   message: JSON.stringify(e)
                 };
                 this.showSimpleAlert(opts);
               });
-          }).catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file.copyFile(mobileDirectory, fileName, path + outDirectory, fileName)
-                .then(image => this.logo = this.webview.convertFileSrc(image.nativeURL))
-                .catch(e => {
-                  if (e.code === 12) {
-                    this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                    return 0;
-                  }
-                  const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e)
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
           });
-        },
-          error => handleError(error)
-        );
-    } else {
-      // Only for Dev Purposes
-      // this.logo = `https://firebasestorage.googleapis.com/v0/b/ageratum-ec8a3.appspot.com
-      // /o/cordova_logo_normal_dark.png?alt=media&token=3b89f56e-8685-4f56-b5d7-2441f8857
-      // f97`;
-    }
+        });
+      },
+        error => handleError(error)
+      );
   }
 
   addToEvent(id) {

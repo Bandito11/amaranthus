@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IEvent, ISimpleAlertOptions, IEventControls } from '../common/models';
@@ -22,7 +23,8 @@ export class EventProfilePage implements OnInit {
     private db: AmaranthusDBProvider,
     private alertCtrl: AlertController,
     private modal: ModalController,
-    private storage: Storage
+    private storage: Storage,
+    private sanitizer: DomSanitizer
   ) { }
 
   /**
@@ -138,7 +140,7 @@ export class EventProfilePage implements OnInit {
     const response = this.db.getEvent(id);
     if (response.success) {
       this.event = { ...response.data };
-      let members = [];
+      const members = [];
       this.studentIds = [];
       for (const member of response.data.members) {
         this.studentIds = [...this.studentIds, member.id];
@@ -162,47 +164,45 @@ export class EventProfilePage implements OnInit {
                 absence: false
               };
             }
-            members = [
-              ...members,
-              {
-                id: studentResponse.data.id,
-                firstName: studentResponse.data.firstName,
-                initial: studentResponse.data.initial,
-                lastName: studentResponse.data.lastName,
-                phoneNumber: studentResponse.data.phoneNumber,
-                picture: studentResponse.data.picture,
-                class: studentResponse.data.class,
-                attendance: member.attendance,
-                absence: member.absence,
-                record: record
-              }
-            ];
+            members.push({
+              id: studentResponse.data.id,
+              firstName: studentResponse.data.firstName,
+              initial: studentResponse.data.initial,
+              lastName: studentResponse.data.lastName,
+              phoneNumber: studentResponse.data.phoneNumber,
+              picture: this.sanitizer.bypassSecurityTrustUrl(studentResponse.data.picture),
+              class: studentResponse.data.class,
+              attendance: member.attendance,
+              absence: member.absence,
+              record: record
+            });
           } else {
-            members = [
-              ...members,
-              {
-                id: studentResponse.data.id,
-                firstName: studentResponse.data.firstName,
-                initial: studentResponse.data.initial,
-                lastName: studentResponse.data.lastName,
-                phoneNumber: studentResponse.data.phoneNumber,
-                picture: studentResponse.data.picture,
-                class: studentResponse.data.class,
-                attendance: member.attendance,
-                absence: member.absence
-              }
-            ];
+            members.push({
+              id: studentResponse.data.id,
+              firstName: studentResponse.data.firstName,
+              initial: studentResponse.data.initial,
+              lastName: studentResponse.data.lastName,
+              phoneNumber: studentResponse.data.phoneNumber,
+              picture: this.sanitizer.bypassSecurityTrustUrl(studentResponse.data.picture),
+              class: studentResponse.data.class,
+              attendance: member.attendance,
+              absence: member.absence
+            });
           }
         }
       }
+      this.eventControls = {
+        ...response.data,
+        members: members
+      };
       if (response.data.startDate) {
         this.eventControls = {
-          ...response.data,
+          ...this.eventControls,
           startDate: formatDate(response.data.startDate)
         };
       } else {
         this.eventControls = {
-          ...response.data,
+          ...this.eventControls,
           startDate: ''
         };
       }
@@ -213,9 +213,9 @@ export class EventProfilePage implements OnInit {
         };
       }
       this.eventControls = {
-        ...response.data,
-        members: [...members]
-      };
+        ...this.eventControls,
+        logo: this.sanitizer.bypassSecurityTrustUrl(response.data.logo)
+      }
     } else {
       handleError(response.error);
     }

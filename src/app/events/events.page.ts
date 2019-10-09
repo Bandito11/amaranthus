@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { CreateEventPage } from './../create-event/create-event.page';
 import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
@@ -65,7 +66,8 @@ export class EventsPage {
     private navCtrl: NavController,
     private db: AmaranthusDBProvider,
     private modal: ModalController,
-    private storage: Storage
+    private storage: Storage,
+    private sanitizer: DomSanitizer
   ) { }
 
   goBack() {
@@ -178,6 +180,7 @@ export class EventsPage {
         }
         let event: any = {
           ...data,
+          logo: this.sanitizer.bypassSecurityTrustUrl(data.logo),
           startDate: formatDate(data.startDate),
           totalMembers: totalMembers,
           totalAttendance: attendance,
