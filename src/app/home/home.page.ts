@@ -111,7 +111,11 @@ export class HomePage implements OnInit {
     if (this.platform.is('desktop') && navigator.userAgent.match('Windows')) {
       this.storage.set('boughtMasterKey', true);
     }
-    // this.storage.get('boughtMasterKey').then(val => console.log(val));
+      //////////// Use for testing only!///////////
+      // for (let i = 0; i < 500; i++) {
+      //   this.db.insertTest();
+      // }
+      /////////////////////////////////////////////
   }
 
   ionViewWillEnter() {
@@ -134,11 +138,6 @@ export class HomePage implements OnInit {
       }
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
-      //////////// Use for testing only!///////////
-      // for (let i = 0; i < this.students.length; i++) {
-      //   this.db.insertTest();
-      // }
-      /////////////////////////////////////////////
     });
   }
 
@@ -229,7 +228,6 @@ export class HomePage implements OnInit {
     } else {
       options = [...options, 'Active', 'Not Active', 'Male', 'Female', 'Undisclosed', 'All'];
     }
-
     return options;
   }
 
