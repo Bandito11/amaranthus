@@ -169,6 +169,7 @@ export class EditPage implements OnInit {
         this.isActive = response.data.isActive;
         this.gender = response.data.gender;
         this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(response.data.picture);
+        this.picture = response.data.picture;
         this.student = { ...response.data };
       }
     } catch (error) {
