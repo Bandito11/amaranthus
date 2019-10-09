@@ -147,7 +147,7 @@ export class CreateEventPage implements OnInit {
   getPicture() {
     const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
     const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.logo = this.sanitizer.bypassSecurityTrustUrl(blob);
+    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
     let directory = '';
     if (navigator.userAgent.match('Mac')) {
       directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
