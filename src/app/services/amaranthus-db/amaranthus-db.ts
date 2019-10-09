@@ -23,6 +23,34 @@ let amaranthusDB: Loki;
   providedIn: 'root'
 })
 export class AmaranthusDBProvider {
+
+  // insertTest() {
+
+  //   const student: IStudent = {
+  //     id: (Math.random() * 100).toString(),
+  //     firstName: 'Esteban',
+  //     lastName: 'Morales',
+  //     address: 'string',
+  //     phoneNumber: 'string',
+  //     town: 'string',
+  //     state: 'string',
+  //     picture: './assets/profilePics/default.png',
+  //     gender: 'male',
+  //     fatherName: 'string',
+  //     motherName: 'string',
+  //     emergencyContactName: 'tring',
+  //     emergencyRelationship: 'string',
+  //     emergencyContactPhoneNumber: 'string',
+  //     isActive: true,
+  //     class: 'string'
+  //   };
+  //   try {
+  //     studentsColl.insert(student);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
   constructor(private storage: Storage) {
     this.init();
   }
@@ -404,7 +432,7 @@ export class AmaranthusDBProvider {
           '$eq': opts.id
         }
       });
-      if (results['id']) {
+      if (results) {
         return true;
       } else {
         return false;
@@ -413,33 +441,6 @@ export class AmaranthusDBProvider {
       if (!studentsColl) {
         return error;
       }
-    }
-  }
-
-  insertTest() {
-
-    const student: IStudent = {
-      id: (Math.random() * 100).toString(),
-      firstName: 'Esteban',
-      lastName: 'Morales',
-      address: 'string',
-      phoneNumber: 'string',
-      town: 'string',
-      state: 'string',
-      picture: './assets/profilePics/default.png',
-      gender: 'male',
-      fatherName: 'string',
-      motherName: 'string',
-      emergencyContactName: 'tring',
-      emergencyRelationship: 'string',
-      emergencyContactPhoneNumber: 'string',
-      isActive: true,
-      class: 'string'
-    };
-    try {
-      studentsColl.insert(student);
-    } catch (error) {
-      console.error(error);
     }
   }
 
