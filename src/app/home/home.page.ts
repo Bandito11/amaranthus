@@ -95,7 +95,7 @@ export class HomePage implements OnInit {
     private db: AmaranthusDBProvider,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
-    private loadingController: LoadingController,
+    // private loadingController: LoadingController,
     private storage: Storage,
     private platform: Platform,
     private iap: AppPurchaseProvider
@@ -132,11 +132,6 @@ export class HomePage implements OnInit {
     if (this.platform.is('desktop') && navigator.userAgent.match('Windows')) {
       this.storage.set('boughtMasterKey', true);
     }
-    //////////// Use for testing only!///////////
-    // for (let i = 0; i < 500; i++) {
-    //   this.db.insertTest();
-    // }
-    /////////////////////////////////////////////
   }
 
   ionViewWillEnter() {
@@ -175,19 +170,23 @@ export class HomePage implements OnInit {
             return student;
           }
         });
-        // this.students = studentResponse.data; //Do not delete!
         this.unfilteredStudents = studentResponse.data;
       } else {
-        const loading = await this.loadingController.create();
-        await loading.present();
+        // const loading = await this.loadingController.create();
+        // await loading.present();
         const studentTimeout = setTimeout(async () => {
-          this.getStudents();
-          this.filterOptions = this.getFilterOptions();
-          await loading.dismiss();
           if (this.students.length > 0) {
+            // await loading.dismiss();
             this.appStart = true;
             clearTimeout(studentTimeout);
+            //////////// Use for testing only!///////////
+            // for (let i = 0; i < 1000; i++) {
+            //   this.db.insertTest();
+            // }
+            /////////////////////////////////////////////
           }
+          this.getStudents();
+          this.filterOptions = this.getFilterOptions();
         }, 3000);
       }
     } catch (error) {
