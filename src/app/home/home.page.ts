@@ -174,7 +174,7 @@ export class HomePage implements OnInit {
       } else {
         // const loading = await this.loadingController.create();
         // await loading.present();
-        const studentTimeout = setTimeout(async () => {
+        const studentTimeout = setTimeout(() => {
           if (this.students.length > 0) {
             // await loading.dismiss();
             this.appStart = true;
