@@ -303,6 +303,7 @@ export class AmaranthusDBProvider {
     };
     eventsColl.update(event);
   }
+
   insertEvent(event: IEvent) {
     let response: IResponse<null> = {
       success: false,
@@ -322,25 +323,6 @@ export class AmaranthusDBProvider {
     } catch (error) {
       response = { ...response, error: error };
       return response;
-    }
-  }
-
-  removeEvent(event: IEvent) {
-    const response: IResponse<null> = {
-      success: false,
-      error: null,
-      data: undefined
-    };
-    try {
-      const results = eventsColl.get(event['$loki']);
-      eventsColl.remove(results);
-      const records = recordsColl.find({
-        'event': results.name
-      });
-      records.forEach(record => recordsColl.remove(record));
-      return { ...response, success: true };
-    } catch (error) {
-      return { ...response, error: error };
     }
   }
 
@@ -366,6 +348,25 @@ export class AmaranthusDBProvider {
         ...response,
         error: error
       };
+    }
+  }
+
+  removeEvent(event: IEvent) {
+    const response: IResponse<null> = {
+      success: false,
+      error: null,
+      data: undefined
+    };
+    try {
+      const results = eventsColl.get(event['$loki']);
+      eventsColl.remove(results);
+      const records = recordsColl.find({
+        'event': results.name
+      });
+      records.forEach(record => recordsColl.remove(record));
+      return { ...response, success: true };
+    } catch (error) {
+      return { ...response, error: error };
     }
   }
 
