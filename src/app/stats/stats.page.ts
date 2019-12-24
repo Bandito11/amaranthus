@@ -50,7 +50,7 @@ export class StatsPage implements OnInit {
   LANGUAGE = {
     english: {
       toolbar: {
-        title: 'STATS',
+        title: 'Stats',
         buttons: {
           export: 'EXPORT'
         }
