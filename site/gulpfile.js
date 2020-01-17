@@ -17,10 +17,24 @@ const paths = {
         src: 'src/**/*.html',
         dest: 'dist'
     },
-    app: {
-        src: 'src/www/**/*',
-        dest: 'dist/www'
+    sitemap: {
+        src: 'src/sitemap.xml',
+        dest: 'dist'
+    },
+    robots: {
+        src: 'src/robots.txt',
+        dest: 'dist'
     }
+}
+
+function robots() {
+    return src(paths.robots.src)
+        .pipe(dest(paths.robots.dest));
+}
+
+function sitemap() {
+    return src(paths.sitemap.src)
+        .pipe(dest(paths.sitemap.dest));
 }
 
 function assets() {
@@ -70,5 +84,5 @@ async function debug() {
     });
 }
 
-exports.build = series(clean, parallel(pages, styles, assets, build));
-exports.default = series(clean, parallel(pages, styles, assets, build), debug);
+exports.build = series(clean, parallel(pages, styles, assets, sitemap, robots, build));
+exports.default = series(clean, parallel(pages, styles, assets, sitemap, robots, build), debug);
