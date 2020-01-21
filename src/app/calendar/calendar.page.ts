@@ -20,7 +20,7 @@ export class CalendarPage {
   private unfilteredStudents: IRecord[];
   private date: ICalendar;
   timer;
-  @ViewChild('notes') notesElement: ElementRef;
+  @ViewChild('notes', {static: true}) notesElement: ElementRef;
 
   toggle: string;
   search: string;

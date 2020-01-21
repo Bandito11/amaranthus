@@ -86,9 +86,9 @@ export class HomePage implements OnInit {
       search: 'Buscar por ID o Nombre'
     }
   };
-  @ViewChild('notes') notesElement;
-  @ViewChild('sort') sortElement;
-  @ViewChild('filter') filterElement;
+  @ViewChild('notes', {static: true}) notesElement;
+  @ViewChild('sort', {static: true}) sortElement;
+  @ViewChild('filter', {static: true}) filterElement;
 
   constructor(
     private alertCtrl: AlertController,

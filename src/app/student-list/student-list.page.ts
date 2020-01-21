@@ -18,8 +18,8 @@ export class StudentListPage implements OnInit {
   query: string;
   selectOptions;
   filterOptions: string[];
-  @ViewChild('sort') sortElement;
-  @ViewChild('filter') filterElement;
+  @ViewChild('sort', {static: true}) sortElement;
+  @ViewChild('filter', {static: true}) filterElement;
 
   htmlControls = {
     toolbar: {
