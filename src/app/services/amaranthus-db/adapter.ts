@@ -1,11 +1,13 @@
 import { Storage } from '@ionic/storage';
+import { File } from '@ionic-native/file/ngx';
 
+const file = new File();
 const storage = new Storage({});
 /**
  * A loki persistence adapter which persists to web browser's local storage object
  * @constructor IonicStorageAdapter
  */
-export function IonicStorageAdapter() {}
+export function IonicStorageAdapter() { }
 
 /**
  * loadDatabase() - Load data from IonicStorage
@@ -29,6 +31,12 @@ IonicStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callb
  */
 IonicStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
     storage.set(dbname, dbstring);
+    if (navigator.userAgent.toLowerCase().match('android')) {
+        file.writeFile(`${file.externalRootDirectory}`, 'Attendance Log', dbstring);
+    } else if (navigator.userAgent.toLowerCase().match('iphone') || navigator.userAgent.toLowerCase().match('ipad')) {
+        file.writeFile(`${file.dataDirectory}`, 'Attendance Log', dbstring);
+    }
+
     callback(null);
 };
 
