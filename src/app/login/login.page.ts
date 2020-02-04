@@ -28,7 +28,7 @@ export class LoginPage {
   LANGUAGE = {
     english: {
       toolbar: {
-        title: 'Login',
+        title: 'Enter Form',
         buttons: {
           cancel: 'Cancel',
           password: 'Set Password'
@@ -40,7 +40,7 @@ export class LoginPage {
     },
     spanish: {
       toolbar: {
-        title: 'Sesión',
+        title: 'Forma de Entrada',
         buttons: {
           cancel: 'Cancelar',
           password: 'Contraseña'

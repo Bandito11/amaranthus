@@ -76,11 +76,11 @@
           <ion-item lines="none" *ngIf="toggle == student.id" class="top">
             <textarea #notes (keyup)="addNotes({id: student.id, notes:notes.value})">{{student.notes}}</textarea>
           </ion-item>
-          <ion-item lines="none">
-            <ion-label class="attended" *ngIf="student.attendance" class="ion-text-wrap">
+          <ion-item lines="none" class="attended" >
+            <ion-label *ngIf="student.attendance" class="ion-text-wrap">
               {{student.firstName}}{{htmlControls.present}}
             </ion-label>
-            <ion-label class="attended" *ngIf="student.absence" class="ion-text-wrap">
+            <ion-label *ngIf="student.absence" class="ion-text-wrap">
               {{student.firstName}}{{htmlControls.absent}}
             </ion-label>
           </ion-item>

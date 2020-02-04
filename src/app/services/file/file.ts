@@ -99,7 +99,7 @@ export class FileProvider {
       replace: true
     };
     const path = this.file.externalRootDirectory;
-    const outDirectory = 'Attendance Log';
+    const outDirectory = 'AttendanceLog';
     return new Promise((resolve, reject) => {
       this.file.checkDir(path, outDirectory)
         .then(() => {
@@ -147,7 +147,7 @@ export class FileProvider {
       replace: true
     };
     const path = this.file.dataDirectory;
-    const outDirectory = 'Attendance Log';
+    const outDirectory = 'AttendanceLog';
     return new Promise((resolve, reject) => {
       this.file.checkDir(path, outDirectory)
         .then(() => {
@@ -161,22 +161,22 @@ export class FileProvider {
                 .then(data => resolve(data))
                 .catch(error => reject(error));
             })
-            .catch(_ => reject('There was an error reading the directory, please try again!'));
+            .catch(() => reject('There was an error reading the directory, please try again!'));
         })
         .catch(() => {
           this.file.createDir(path, outDirectory, true)
             .then(directory => {
               this.file.writeFile(path + directory.name, opts.fileName, opts.text, options)
-                .then(res => {
+                .then(() => {
                   this.toFileOpener({
                     ...opts,
                     path: path,
-                    directory: directory.name
+                    directory: outDirectory
                   })
                     .then(data => resolve(data))
                     .catch(error => reject(error));
                 })
-                .catch(_ => reject('There was an error when the file was created, please try again!'));
+                .catch(error => reject(JSON.stringify(error)));
             })
             .catch(_ => reject('There was an error creating the directory, please try again!'));
         });
@@ -197,14 +197,14 @@ export class FileProvider {
         error: '',
         data: ''
       };
+      const path = `${opts.path}${opts.directory}/${opts.fileName}`;
       if (opts.type === 'xlsx') {
         response = {
           ...response,
           success: true,
           data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`
         };
-        this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`,
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        this.fileOpener.open(path, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
           .then(() => resolve(response))
           .catch(_ => reject(
             `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
@@ -217,7 +217,7 @@ export class FileProvider {
           success: true,
           data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`
         };
-        this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`, 'text/plain')
+        this.fileOpener.open(path, 'text/plain')
           .then(() => resolve(response))
           .catch(_ => reject(
             `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
@@ -230,7 +230,7 @@ export class FileProvider {
           success: true,
           data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`
         };
-        this.fileOpener.open(`${opts.path}${opts.directory}/${opts.fileName}`, 'text/csv')
+        this.fileOpener.open(path, 'text/csv')
           .then(() => resolve(response))
           .catch(_ => reject(
             `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
