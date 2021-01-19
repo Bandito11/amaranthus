@@ -5,6 +5,8 @@ import { IStudent, IRecord, IEvent, INote, IResponse, ICalendar } from 'src/app/
 import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
+import { CapacitorFileLokiAdapter } from './capacitor-file-loki-adapter';
+import { dateToISO } from 'src/app/common/utils';
 
 /**
  * Collections use on db
@@ -14,15 +16,28 @@ let recordsColl: Collection<IRecord>;
 let eventsColl: Collection<IEvent>;
 let notesColl: Collection<INote>;
 
+let studentsColl2: Collection<any>;
+let eventsColl2: Collection<any>;
 /**
  * Declaration of DB
  */
 let amaranthusDB: Loki;
 
+let localDB: Loki;
+
+
+let students: any[];
+let events: any[];
+let records: any[];
+let notes: any[];
+
+let view;
+
 @Injectable({
   providedIn: 'root'
 })
 export class AmaranthusDBProvider {
+
 
   insertTest() {
 
@@ -30,19 +45,19 @@ export class AmaranthusDBProvider {
       id: (Math.random() * 100).toString(),
       firstName: 'Esteban',
       lastName: 'Morales',
-      address: 'string',
-      phoneNumber: 'string',
-      town: 'string',
-      state: 'string',
+      address: '123 street  ',
+      phoneNumber: '122345667',
+      town: 'arroyo',
+      state: 'pr',
       picture: './assets/profilePics/default.png',
       gender: 'male',
-      fatherName: 'string',
-      motherName: 'string',
-      emergencyContactName: 'tring',
-      emergencyRelationship: 'string',
-      emergencyContactPhoneNumber: 'string',
+      fatherName: 'esteban',
+      motherName: 'rosa',
+      emergencyContactName: 'dom  ',
+      emergencyRelationship: 'friend',
+      emergencyContactPhoneNumber: '6543',
       isActive: true,
-      class: 'string'
+      class: '11-2'
     };
     try {
       studentsColl.insert(student);
@@ -52,6 +67,10 @@ export class AmaranthusDBProvider {
   }
 
   constructor(private storage: Storage) {
+    students = [];
+    events = [];
+    records = [];
+    notes = [];
     this.init();
   }
 
@@ -61,18 +80,27 @@ export class AmaranthusDBProvider {
       autosave: true,
       autoload: true,
       adapter: ionicStorageAdapter,
-      autoloadCallback: this.loadDatabase
+      autoloadCallback: this._loadDatabase
     };
     amaranthusDB = new Loki('amaranthus.db', lokiOptions);
+
+
+    const adapter = new Loki.LokiPartitioningAdapter(new CapacitorFileLokiAdapter(), { paging: true });
+    localDB = new Loki('amaranthus2.db', {
+      autosave: true,
+      autoload: true,
+      adapter: adapter,
+      autoloadCallback: this._loadLocalDatabase2
+    });
   }
 
-  deletePoundSign() {
+  deleteInvalidCharacters() {
     studentsColl.findAndRemove({ 'id': { '$containsAny': '/' }, });
     studentsColl.findAndRemove({ 'id': { '$containsAny': '#' } });
     studentsColl.findAndRemove({ 'id': { '$containsAny': '%' } });
   }
 
-  private loadDatabase() {
+  private _loadDatabase() {
     studentsColl = amaranthusDB.getCollection<IStudent>('students');
     recordsColl = amaranthusDB.getCollection<IRecord>('records');
     eventsColl = amaranthusDB.getCollection<IEvent>('events');
@@ -89,6 +117,120 @@ export class AmaranthusDBProvider {
     if (!notesColl) {
       notesColl = amaranthusDB.addCollection<INote>('notes');
     }
+
+    let studentView = studentsColl.getDynamicView('students');
+    if (!studentView) {
+      studentView = studentsColl.addDynamicView('students');
+    }
+    let recordsView = recordsColl.getDynamicView('records');
+    if (!recordsView) {
+      recordsView = recordsColl.addDynamicView('records');
+    }
+    let notesView = notesColl.getDynamicView('notes');
+    if (!notesView) {
+      notesView = notesColl.addDynamicView('notes');
+    }
+    let eventsView = eventsColl.getDynamicView('events');
+    if (!eventsView) {
+      eventsView = eventsColl.addDynamicView('events');
+    }
+
+    students = studentView.data({ removeMeta: true });
+    records = recordsView.data({ removeMeta: true });
+    notes = notesView.data({ removeMeta: true });
+    events = eventsView.data({ removeMeta: true });
+  }
+
+  private _loadLocalDatabase2() {
+    studentsColl2 = localDB.getCollection('students');
+    eventsColl2 = localDB.getCollection('events');
+    if (!studentsColl2) {
+      studentsColl2 = localDB.addCollection('students');
+    }
+    if (!eventsColl2) {
+      eventsColl2 = localDB.addCollection('events');
+    }
+
+    if (students.length > 0) {
+      students.forEach(studentData => {
+        const newStudent = {
+          records: new Loki.Collection('records'),
+          notes: new Loki.Collection('notes'),
+          ...studentData
+        };
+        if (records.length > 0) {
+          records.forEach(recordData => {
+            try {
+              newStudent.records.insertOne({
+                attendance: recordData.attendance,
+                date: dateToISO(recordData.year, recordData.month, recordData.day),
+                event: recordData.event
+              })
+            } catch (error) {
+              console.error(error);
+              newStudent.records.update({
+                attendance: recordData.attendance,
+                date: dateToISO(recordData.year, recordData.month, recordData.day),
+                event: recordData.event
+              })
+            }
+          });
+        }
+        if (notes.length > 0) {
+          notes.forEach(note => {
+            try {
+              newStudent.notes.insertOne({
+                notes: note.notes,
+                event: note.event,
+                date: dateToISO(note.year, note.month, note.day)
+              })
+            } catch (error) {
+              console.error(error);
+              newStudent.notes.update({
+                notes: note.notes,
+                event: note.event,
+                date: dateToISO(note.year, note.month, note.day)
+              })
+            }
+
+          });
+        }
+        try {
+          const found = studentsColl2.findOne({ id: newStudent.id });
+          if (!found) {
+            studentsColl2.insert(newStudent);
+          } else {
+            studentsColl2.update({
+              ...found,
+              ...newStudent
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    }
+    try {
+      if (events.length > 0) {
+        events.forEach(event => {
+          const studentMembers = [] as IStudent[];
+          event.members.forEach(member => {
+            const newStudent = studentsColl2.findOne({ id: member.id });
+            studentMembers.push(newStudent);
+          });
+          const newEvent = {
+            picture: event.logo,
+            name: event.name,
+            startDate: new Date(event.startDate).valueOf(),
+            students: studentMembers
+          }
+          eventsColl2.insertOne(newEvent);
+        })
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
   }
 
   checkIfUserExists(opts: { username: string; password }) {
@@ -1175,7 +1317,7 @@ export class AmaranthusDBProvider {
       //     '$eq': true
       //   }
       // }); // Do not delete!
-      this.deletePoundSign();
+      this.deleteInvalidCharacters();
       const students = studentsColl.data; // Return all the students records
       let record: IRecord;
       const results = students.map(student => {
