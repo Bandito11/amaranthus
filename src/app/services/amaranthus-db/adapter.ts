@@ -49,5 +49,11 @@ IonicStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstr
  */
 IonicStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
     storage.remove(dbname);
+    if (navigator.userAgent.toLowerCase().match('android')) {
+        file.removeFile(`${file.externalRootDirectory}`, 'Attendance Log');
+    } else if (navigator.userAgent.toLowerCase().match('iphone') || navigator.userAgent.toLowerCase().match('ipad')) {
+        file.removeFile(`${file.dataDirectory}`, 'Attendance Log');
+    }
+
     callback(null);
 };

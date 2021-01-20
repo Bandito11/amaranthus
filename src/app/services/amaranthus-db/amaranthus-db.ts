@@ -8,6 +8,8 @@ import { Storage } from '@ionic/storage';
 import { CapacitorFileLokiAdapter } from './capacitor-file-loki-adapter';
 import { dateToISO } from 'src/app/common/utils';
 
+
+const adapter = new Loki.LokiPartitioningAdapter(new CapacitorFileLokiAdapter(), { paging: true });
 /**
  * Collections use on db
  */
@@ -31,7 +33,6 @@ let events: any[];
 let records: any[];
 let notes: any[];
 
-let view;
 
 @Injectable({
   providedIn: 'root'
@@ -74,18 +75,16 @@ export class AmaranthusDBProvider {
     this.init();
   }
 
-  init() {
-    const ionicStorageAdapter = new IonicStorageAdapter();
-    const lokiOptions: Partial<LokiConfigOptions> = {
+  async init() {
+    let lokiOptions: Partial<LokiConfigOptions> = {
       autosave: true,
       autoload: true,
-      adapter: ionicStorageAdapter,
       autoloadCallback: this._loadDatabase
     };
+    const ionicStorageAdapter = new IonicStorageAdapter();
+    lokiOptions.adapter = ionicStorageAdapter;
     amaranthusDB = new Loki('amaranthus.db', lokiOptions);
 
-
-    const adapter = new Loki.LokiPartitioningAdapter(new CapacitorFileLokiAdapter(), { paging: true });
     localDB = new Loki('amaranthus2.db', {
       autosave: true,
       autoload: true,
@@ -224,13 +223,24 @@ export class AmaranthusDBProvider {
             startDate: new Date(event.startDate).valueOf(),
             students: studentMembers
           }
-          eventsColl2.insertOne(newEvent);
+          try {
+            const found = eventsColl2.findOne({ name: newEvent.name });
+            if (!found) {
+              eventsColl2.insertOne(newEvent);
+            } else {
+              eventsColl2.update({
+                ...found,
+                ...newEvent
+              });
+            }
+          } catch (error) {
+            console.error(error);
+          }
         })
       }
     } catch (error) {
       console.error(error);
     }
-
   }
 
   checkIfUserExists(opts: { username: string; password }) {

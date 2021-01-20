@@ -189,7 +189,7 @@ export class HomePage implements OnInit {
           this.filterOptions = this.getFilterOptions();
         }, 3000);
       }
-    } catch (error) {
+    } catch (error) { 
       handleError(error);
     }
   }

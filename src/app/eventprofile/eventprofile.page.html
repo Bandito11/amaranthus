@@ -25,7 +25,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding id="event-profile">
+<ion-content class="ion-padding" id="event-profile">
   <img [src]="eventControls.logo" />
   <div *ngIf="!eventControls.infiniteDates; else: infiniteDatesIsTrue">
     <h5>

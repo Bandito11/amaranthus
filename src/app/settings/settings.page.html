@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding id="settings">
+<ion-content class="ion-padding" id="settings">
   <div *ngIf="!this.platform.is('desktop')">
     <app-loader *ngIf="noProducts"></app-loader>
     <div *ngFor="let product of products">

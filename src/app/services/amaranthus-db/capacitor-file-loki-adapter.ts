@@ -7,14 +7,15 @@ export function CapacitorFileLokiAdapter() { }
 
 CapacitorFileLokiAdapter.prototype.loadDatabase = async function (dbName: string, callback: Function) {
     try {
-        callback(await createLocalDirectory({ dbName: dbName }));
+         const d = await createLocalDirectory({ dbName: dbName });
+         callback(d)
     } catch (error) {
-        callback(new Error(error));
+        callback(error);
     }
 };
 
 CapacitorFileLokiAdapter.prototype.saveDatabase = async function (dbName: string, dbString: string, callback: Function) {
-    try {
+    try { 
         await Filesystem.writeFile({
             path: `${directoryName}/${dbName}.txt`,
             data: dbString,
@@ -23,7 +24,7 @@ CapacitorFileLokiAdapter.prototype.saveDatabase = async function (dbName: string
         });
         callback(null)
     } catch (error) {
-        callback(new Error(error));
+        callback(error);
     }
 };
 
@@ -35,7 +36,7 @@ CapacitorFileLokiAdapter.prototype.deleteDatabase = async function deleteDatabas
         });
         callback(null);
     } catch (error) {
-        callback(new Error(error));
+        callback(error);
     }
 };
 
