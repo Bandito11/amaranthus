@@ -73,7 +73,6 @@
     "@angular/language-service": "~8.2.14",
     "@capacitor/cli": "^2.4.6",
     "@ionic/angular-toolkit": "^2.1.1",
-    "@ionic/v4-migration-tslint": "^1.7.1",
     "@types/jasmine": "3.5.0",
     "@types/jasminewd2": "2.0.8",
     "@types/lokijs": "^1.5.2",
