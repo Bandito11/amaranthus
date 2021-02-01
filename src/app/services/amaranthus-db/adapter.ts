@@ -1,8 +1,46 @@
 import { Storage } from '@ionic/storage';
-import { File } from '@ionic-native/file/ngx';
+import { Plugins, FilesystemDirectory, FilesystemEncoding } from "@capacitor/core";
 
-const file = new File();
+const { Filesystem } = Plugins;
+const directoryName = 'database';
+
 const storage = new Storage({});
+
+
+async function createLocalDirectory(opts: { dbName: string }) {
+    try {
+        await Filesystem.mkdir({
+            path: directoryName,
+            directory: FilesystemDirectory.Documents,
+            recursive: false // like mkdir -p
+        });
+        return readLocalFile({ dbName: opts.dbName });
+    } catch (e) {
+        try {
+            return readLocalFile({ dbName: opts.dbName });
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+}
+
+async function readLocalFile(opts: { dbName: string }) {
+    try {
+        const lokiDBContents = await Filesystem.readFile({
+            path: `${directoryName}/${opts.dbName}.txt`,
+            directory: FilesystemDirectory.Documents,
+            encoding: FilesystemEncoding.UTF8
+        });
+        return lokiDBContents.data;
+    } catch (error) {
+        throw error;
+    }
+
+}
+
+
+
 /**
  * A loki persistence adapter which persists to web browser's local storage object
  * @constructor IonicStorageAdapter
@@ -16,6 +54,11 @@ export function IonicStorageAdapter() { }
  * @memberof IonicStorageAdapter
  */
 IonicStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
+    try {
+        createLocalDirectory({ dbName: dbname });
+    } catch (error) {
+        console.error(error);
+    }
     storage.get(dbname)
         .then(value => {
             callback(value);
@@ -29,12 +72,32 @@ IonicStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callb
  * @param {function} callback - the callback to handle the result
  * @memberof IonicStorageAdapter
  */
-IonicStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
-    storage.set(dbname, dbstring);
+IonicStorageAdapter.prototype.saveDatabase = async function saveDatabase(dbName, dbString, callback) {
+    storage.set(dbName, dbString);
     if (navigator.userAgent.toLowerCase().match('android')) {
-        file.writeFile(`${file.externalRootDirectory}`, 'Attendance Log', dbstring);
+        try {
+            await Filesystem.writeFile({
+                path: `${directoryName}/${dbName}.txt`,
+                data: dbString,
+                directory: FilesystemDirectory.Documents,
+                encoding: FilesystemEncoding.UTF8
+            });
+            callback(null)
+        } catch (error) {
+            callback(error);
+        }
     } else if (navigator.userAgent.toLowerCase().match('iphone') || navigator.userAgent.toLowerCase().match('ipad')) {
-        file.writeFile(`${file.dataDirectory}`, 'Attendance Log', dbstring);
+        try {
+            await Filesystem.writeFile({
+                path: `${directoryName}/${dbName}.txt`,
+                data: dbString,
+                directory: FilesystemDirectory.Documents,
+                encoding: FilesystemEncoding.UTF8
+            });
+            callback(null)
+        } catch (error) {
+            callback(error);
+        }
     }
 
     callback(null);
@@ -47,12 +110,16 @@ IonicStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstr
  * @param {function} callback - the callback to handle the result
  * @memberof IonicStorageAdapter
  */
-IonicStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
-    storage.remove(dbname);
-    if (navigator.userAgent.toLowerCase().match('android')) {
-        file.removeFile(`${file.externalRootDirectory}`, 'Attendance Log');
-    } else if (navigator.userAgent.toLowerCase().match('iphone') || navigator.userAgent.toLowerCase().match('ipad')) {
-        file.removeFile(`${file.dataDirectory}`, 'Attendance Log');
+IonicStorageAdapter.prototype.deleteDatabase = async function deleteDatabase(dbName, callback) {
+    storage.remove(dbName);
+    try {
+        await Filesystem.deleteFile({
+            path: `${directoryName}/${dbName}.txt`,
+            directory: FilesystemDirectory.Documents
+        });
+        callback(null);
+    } catch (error) {
+        callback(error);
     }
 
     callback(null);

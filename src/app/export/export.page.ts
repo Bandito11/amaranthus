@@ -89,7 +89,6 @@ export class ExportPage {
     });
     const date = new Date();
     this.date = `${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}`;
-    this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
     }

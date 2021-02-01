@@ -25,7 +25,7 @@ export class StatsPage implements OnInit {
   years: number[] = [...YEARLABELS];
   selectOptions: string[];
   bought: boolean;
-  @ViewChild('filter', {static: true}) filterElement;
+  @ViewChild('filter', { static: true }) filterElement;
   event;
   studentIds: string[];
   htmlControls = {
@@ -334,7 +334,7 @@ export class StatsPage implements OnInit {
   async toExportPage() {
     const modal = await this.modalCtrl.create({
       component: ExportPage,
-      componentProps: { students: this.students }
+      componentProps: { students: this.students, event: this.event }
     });
     modal.present();
     modal.onDidDismiss().then(response => {
