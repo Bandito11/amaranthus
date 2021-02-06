@@ -85,7 +85,6 @@ IonicStorageAdapter.prototype.saveDatabase = async function saveDatabase(dbName,
                 directory: FilesystemDirectory.Documents,
                 encoding: FilesystemEncoding.UTF8
             });
-            callback(null)
         } catch (error) {
             callback(error);
         }
@@ -97,7 +96,6 @@ IonicStorageAdapter.prototype.saveDatabase = async function saveDatabase(dbName,
                 directory: FilesystemDirectory.Documents,
                 encoding: FilesystemEncoding.UTF8
             });
-            callback(null)
         } catch (error) {
             callback(error);
         }
@@ -122,7 +120,6 @@ IonicStorageAdapter.prototype.deleteDatabase = async function deleteDatabase(dbN
             path: `${directoryName}/${dbName}.txt`,
             directory: FilesystemDirectory.Documents
         });
-        callback(null);
     } catch (error) {
         callback(error);
     }
