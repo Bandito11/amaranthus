@@ -59,7 +59,8 @@ IonicStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callb
     } catch (error) {
         console.error(error);
     }
-    storage.get(dbname)
+    storage
+        .get(dbname)
         .then(value => {
             callback(value);
         });
@@ -73,7 +74,9 @@ IonicStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callb
  * @memberof IonicStorageAdapter
  */
 IonicStorageAdapter.prototype.saveDatabase = async function saveDatabase(dbName, dbString, callback) {
-    storage.set(dbName, dbString);
+    storage
+        .set(dbName, dbString)
+        .catch(error => console.error(error));
     if (navigator.userAgent.toLowerCase().match('android')) {
         try {
             await Filesystem.writeFile({
@@ -111,7 +114,9 @@ IonicStorageAdapter.prototype.saveDatabase = async function saveDatabase(dbName,
  * @memberof IonicStorageAdapter
  */
 IonicStorageAdapter.prototype.deleteDatabase = async function deleteDatabase(dbName, callback) {
-    storage.remove(dbName);
+    storage
+        .remove(dbName)
+        .catch(error => console.error(error));
     try {
         await Filesystem.deleteFile({
             path: `${directoryName}/${dbName}.txt`,
