@@ -179,11 +179,6 @@ export class HomePage implements OnInit {
             // await loading.dismiss();
             this.appStart = true;
             clearTimeout(studentTimeout);
-            //////////// Use for testing only!///////////
-            // for (let i = 0; i < 1000; i++) {
-            //   this.db.insertTest();
-            // }
-            /////////////////////////////////////////////
           }
           this.getStudents();
           this.filterOptions = this.getFilterOptions();

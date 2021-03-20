@@ -27,7 +27,7 @@ export class SettingsPage implements OnInit {
       },
       buy: '¡Comprar por solo ',
       restoreAndroid: 'Restaurar',
-      restoreiOS: 'Restaurar la llave Maestra',
+      restoreiOS: 'Restaurar',
       rate: {
         title: '¡Si te gusta la aplicación por favor considera calificarla con 5 estrellas!',
         rateiOS: 'Lanzar App Store',
@@ -52,8 +52,8 @@ export class SettingsPage implements OnInit {
         title: 'Settings'
       },
       buy: 'Buy now for only ',
-      restoreAndroid: 'Restore ',
-      restoreiOS: 'Restore The Master Key!',
+      restoreAndroid: 'Restore Purchases',
+      restoreiOS: 'Restore Purchases',
       rate: {
         title: 'If you like the app please consider rating it 5 stars!',
         iOS: 'Open App Store ',
@@ -115,27 +115,27 @@ export class SettingsPage implements OnInit {
   setTextArea() {
     if (this.language === 'spanish') {
       this.textArea = `
-      Hola,
       Para problemas:
-      [Escriba el modelo del teléfono]
-      Problema: [Escribe un resumen del problema!]
-      Para recomendaciones:
-      [Modelo del teléfono]
-      Idea: [¡Resumen de mi asombrosa idea!]
+      Escriba el modelo del teléfono:
+      Problema: 
 
-      Notes:
+
+      Para recomendaciones:
+      Modelo del teléfono:
+      Idea: 
+
       `;
     } else {
       this.textArea = `
-      Hi,
       For issues:
-      [Phone Model]
-      Issue: [Write a summary of my issue!]
-      For Feedback:
-      [Phone Model]
-      Idea: [Summary of my awesome idea!]
+      Phone Model: 
+      Issue: 
 
-      Notes:
+
+      For Feedback:
+      Phone Model:
+      Idea: 
+
       `;
     }
   }
