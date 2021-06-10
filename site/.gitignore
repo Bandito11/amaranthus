@@ -18,4 +18,4 @@ package-lock.json
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-.firebase/
+**.firebase**
