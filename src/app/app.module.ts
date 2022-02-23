@@ -14,7 +14,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { IonicStorageModule } from '@ionic/storage-angular';
+import { IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera/ngx';
 import { CreatePageModule } from './create/create.module';
 import { EditPage } from './edit/edit.page';
