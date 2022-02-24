@@ -12,33 +12,33 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../home/home.module#HomePageModule'
+            loadChildren: () => import('../home/home.module').then(m => m.HomePageModule)
           },
           {
             path: 'profile/:id',
-            loadChildren: '../profile/profile.module#ProfilePageModule'
+            loadChildren: () => import('../profile/profile.module').then(m => m.ProfilePageModule)
           },
           {
             path: 'events',
             children: [
               {
                 path: '',
-                loadChildren: '../events/events.module#EventsPageModule'
+                loadChildren: () => import('../events/events.module').then(m => m.EventsPageModule)
               },
               {
                 path: 'profile/:id',
                 children: [
                   {
                     path: '',
-                    loadChildren: '../eventprofile/eventprofile.module#EventProfilePageModule'
+                    loadChildren: () => import('../eventprofile/eventprofile.module').then(m => m.EventProfilePageModule)
                   },
                   {
                     path: 'calendar/:event/:ids',
-                    loadChildren: '../calendar/calendar.module#CalendarPageModule'
+                    loadChildren: () => import('../calendar/calendar.module').then(m => m.CalendarPageModule)
                   },
                   {
                     path: 'stats/:event/:ids',
-                    loadChildren: '../stats/stats.module#StatsPageModule'
+                    loadChildren: () => import('../stats/stats.module').then(m => m.StatsPageModule)
                   },
                 ]
               }
@@ -51,7 +51,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../calendar/calendar.module#CalendarPageModule'
+            loadChildren: () => import('../calendar/calendar.module').then(m => m.CalendarPageModule)
           }
         ]
       },
@@ -60,7 +60,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../stats/stats.module#StatsPageModule'
+            loadChildren: () => import('../stats/stats.module').then(m => m.StatsPageModule)
           }
         ]
       },
@@ -69,11 +69,11 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../student-list/student-list.module#StudentListPageModule'
+            loadChildren: () => import('../student-list/student-list.module').then(m => m.StudentListPageModule)
           },
           {
             path: 'profile/:id',
-            loadChildren: '../profile/profile.module#ProfilePageModule'
+            loadChildren: () => import('../profile/profile.module').then(m => m.ProfilePageModule)
           }
         ]
       },
@@ -82,7 +82,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../login/login.module#LoginPageModule'
+            loadChildren: () => import('../login/login.module').then(m => m.LoginPageModule)
           }
         ]
       },
@@ -91,7 +91,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../settings/settings.module#SettingsPageModule'
+            loadChildren: () => import('../settings/settings.module').then(m => m.SettingsPageModule)
           }
         ]
       },
