@@ -28,39 +28,31 @@ import { StatsPage } from './stats/stats.page';
 import { StatsPageModule } from './stats/stats.module';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [
-    CreatePage,
-    EditPage,
-    CreateEventPage,
-    ExportPage,
-    EditEventPage,
-    StatsPage
-  ],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot(),
-    AppRoutingModule,
-    CreatePageModule,
-    EditPageModule,
-    CreateEventPageModule,
-    ExportPageModule,
-    EditEventPageModule,
-    StatsPageModule,
-    IonicStorageModule.forRoot()
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    Camera,
-    FileOpener,
-    File,
-    InAppPurchase,
-    Market,
-    EmailComposer,
-    WebView,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        CreatePageModule,
+        EditPageModule,
+        CreateEventPageModule,
+        ExportPageModule,
+        EditEventPageModule,
+        StatsPageModule,
+        IonicStorageModule.forRoot()
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        Camera,
+        FileOpener,
+        File,
+        InAppPurchase,
+        Market,
+        EmailComposer,
+        WebView,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
