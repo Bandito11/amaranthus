@@ -5,11 +5,9 @@ import { IStudent, IRecord, IEvent, INote, IResponse, ICalendar } from 'src/app/
 import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
-import { CapacitorFileLokiAdapter } from './capacitor-file-loki-adapter';
 import { dateToISO } from 'src/app/common/utils';
 
 
-const adapter = new Loki.LokiPartitioningAdapter(new CapacitorFileLokiAdapter(), { paging: true });
 /**
  * Collections use on db
  */
@@ -17,16 +15,10 @@ let studentsColl: Collection<IStudent>;
 let recordsColl: Collection<IRecord>;
 let eventsColl: Collection<IEvent>;
 let notesColl: Collection<INote>;
-
-let studentsColl2: Collection<any>;
-let eventsColl2: Collection<any>;
 /**
  * Declaration of DB
  */
 let amaranthusDB: Loki;
-
-let localDB: Loki;
-
 
 let students: any[];
 let events: any[];
@@ -85,12 +77,6 @@ export class AmaranthusDBProvider {
     lokiOptions.adapter = ionicStorageAdapter;
     amaranthusDB = new Loki('amaranthus.db', lokiOptions);
 
-    localDB = new Loki('amaranthus2.db', {
-      autosave: true,
-      autoload: true,
-      adapter: adapter,
-      autoloadCallback: this._loadLocalDatabase2
-    });
   }
 
   deleteInvalidCharacters() {
@@ -138,109 +124,6 @@ export class AmaranthusDBProvider {
     records = recordsView.data({ removeMeta: true });
     notes = notesView.data({ removeMeta: true });
     events = eventsView.data({ removeMeta: true });
-  }
-
-  private _loadLocalDatabase2() {
-    studentsColl2 = localDB.getCollection('students');
-    eventsColl2 = localDB.getCollection('events');
-    if (!studentsColl2) {
-      studentsColl2 = localDB.addCollection('students');
-    }
-    if (!eventsColl2) {
-      eventsColl2 = localDB.addCollection('events');
-    }
-
-    if (students.length > 0) {
-      students.forEach(studentData => {
-        const newStudent = {
-          records: new Loki.Collection('records'),
-          notes: new Loki.Collection('notes'),
-          ...studentData
-        };
-        if (records.length > 0) {
-          records.forEach(recordData => {
-            try {
-              newStudent.records.insertOne({
-                attendance: recordData.attendance,
-                date: dateToISO(recordData.year, recordData.month, recordData.day),
-                event: recordData.event
-              })
-            } catch (error) {
-              console.error(error);
-              newStudent.records.update({
-                attendance: recordData.attendance,
-                date: dateToISO(recordData.year, recordData.month, recordData.day),
-                event: recordData.event
-              })
-            }
-          });
-        }
-        if (notes.length > 0) {
-          notes.forEach(note => {
-            try {
-              newStudent.notes.insertOne({
-                notes: note.notes,
-                event: note.event,
-                date: dateToISO(note.year, note.month, note.day)
-              })
-            } catch (error) {
-              console.error(error);
-              newStudent.notes.update({
-                notes: note.notes,
-                event: note.event,
-                date: dateToISO(note.year, note.month, note.day)
-              })
-            }
-
-          });
-        }
-        try {
-          const found = studentsColl2.findOne({ id: newStudent.id });
-          if (!found) {
-            studentsColl2.insert(newStudent);
-          } else {
-            studentsColl2.update({
-              ...found,
-              ...newStudent
-            });
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      });
-    }
-    try {
-      if (events.length > 0) {
-        events.forEach(event => {
-          const studentMembers = [] as IStudent[];
-          event.members.forEach(member => {
-            const newStudent = studentsColl2.findOne({ id: member.id });
-            studentMembers.push(newStudent);
-          });
-          const newEvent = {
-            picture: event.logo,
-            name: event.name,
-            startDate: new Date(event.startDate).valueOf(),
-            students: studentMembers
-          }
-          try {
-            const found = eventsColl2.findOne({ name: newEvent.name });
-            if (!found) {
-              eventsColl2.insertOne(newEvent);
-            } else {
-              eventsColl2.update({
-                ...found,
-                ...newEvent
-              });
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        })
-      }
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   checkIfUserExists(opts: { username: string; password }) {
