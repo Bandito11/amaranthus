@@ -1,8 +1,8 @@
 {
-  "name": "amaranthus2",
+  "name": "Attendance Log Tracker",
   "version": "0.8.7",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Esteban Morales",
+  "homepage": "https://attendancelogtracker.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
