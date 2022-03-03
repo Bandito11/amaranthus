@@ -18,8 +18,7 @@ declare const process;
   templateUrl: './create.page.html',
   styleUrls: ['./create.page.scss'],
 })
-export class CreatePage implements OnInit{
-
+export class CreatePage implements OnInit {
   gender: string;
   picture;
   phoneNumber: string;
@@ -31,8 +30,8 @@ export class CreatePage implements OnInit{
     toolbar: {
       title: '',
       buttons: {
-        create: ''
-      }
+        create: '',
+      },
     },
     change: '',
     reset: '',
@@ -54,8 +53,8 @@ export class CreatePage implements OnInit{
     name: '',
     emergency: {
       title: '',
-      relationship: ''
-    }
+      relationship: '',
+    },
   };
 
   LANGUAGE = {
@@ -63,8 +62,8 @@ export class CreatePage implements OnInit{
       toolbar: {
         title: 'Create Record',
         buttons: {
-          create: 'Create'
-        }
+          create: 'Create',
+        },
       },
       change: 'Change',
       reset: 'Reset',
@@ -86,15 +85,15 @@ export class CreatePage implements OnInit{
       name: 'Name',
       emergency: {
         title: 'Emergency Contact',
-        relationship: 'Relationship'
-      }
+        relationship: 'Relationship',
+      },
     },
     spanish: {
       toolbar: {
         title: 'Crear Record',
         buttons: {
-          create: 'Crear'
-        }
+          create: 'Crear',
+        },
       },
       change: 'Cambiar',
       reset: 'Reiniciar',
@@ -116,13 +115,15 @@ export class CreatePage implements OnInit{
       name: 'Nombre',
       emergency: {
         title: 'Contacto de Emergencia',
-        relationship: 'Relación'
-      }
-    }
+        relationship: 'Relación',
+      },
+    },
   };
 
   language;
   imgSrc;
+
+  student: IStudent;
 
   constructor(
     private modalCtrl: ModalController,
@@ -134,10 +135,10 @@ export class CreatePage implements OnInit{
     public platform: Platform,
     private storage: Storage,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
         this.htmlControls = this.LANGUAGE[value];
@@ -147,10 +148,12 @@ export class CreatePage implements OnInit{
       }
     });
     this.generateId();
-    this.gender = 'male';
     this.imgSrc = '/assets/profilePics/default.png';
-    this.picture = '/assets/profilePics/default.png';
-    this.phoneNumber = '';
+    this.student = {
+      gender: 'male',
+      picture: '/assets/profilePics/default.png',
+      phoneNumber: '',
+    } as IStudent;
   }
   /**
    * AutoGenerates ID
@@ -159,233 +162,75 @@ export class CreatePage implements OnInit{
     this.idInput = `XY${Math.ceil(Math.random() * 100000000)}`;
   }
 
-  getPicture() {
-    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
-    let directory = '';
-    if (navigator.userAgent.match('Mac')) {
-      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-    } else if (navigator.userAgent.match('Windows')) {
-      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
-    }
-    if (chosenPic.files.length !== 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fs.mkdir(directory, { recursive: true }, (err) => {
-          if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                }
-                this.showSimpleAlert(options);
-              } else {
-                this.picture = reader.result;
-              }
-            });
-          } else {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                }
-                this.showSimpleAlert(options);
-              } else {
-                this.picture = reader.result;
-              }
-            });
-          }
-        });
-      };
-      reader.readAsDataURL(chosenPic.files[0]);
-      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
-      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
-    }
-  }
+ 
 
-  /**
-   * Browse phone gallery
-   *
-   * @memberof EditPage
-   */
-  async browsePicture() {
-    let options: CameraOptions = {
-      quality: 100,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG,
-      targetWidth: 250,
-      targetHeight: 250
-    };
-    const alert = await this.alertCtrl.create({
-      header: 'Information!',
-      message: 'Get picture from photo album or camera.',
-      buttons: [{
-        text: 'Cancel',
-        role: 'cancel',
-        cssClass: 'secondary'
-      }, {
-        text: 'Browse Photo Album',
-        handler: () => {
-          options = {
-            ...options,
-            sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-          };
-          this.getPictureFromNativeCamera(options);
-        }
-      }, {
-        text: 'Take a picture!',
-        handler: () => {
-          options = {
-            ...options,
-            sourceType: this.camera.PictureSourceType.CAMERA,
-          };
-          this.getPictureFromNativeCamera(options);
-        }
-      }]
-    });
-    await alert.present();
-  }
 
-  getPictureFromNativeCamera(options: CameraOptions) {
-    this.camera.getPicture(options)
-      .then((imageData: string) => {
-        if (this.platform.is('android')) {
-          this.picture = this.webview.convertFileSrc(imageData);
-          this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-          return 0;
-        }
-        const array = imageData.split('/');
-        const fileName = array.pop();
-        const directory = array.slice(0, array.length).join('/');
-        const path = this.file.dataDirectory;
-        const outDirectory = 'images';
-        this.file.checkDir(path, outDirectory).then(() => {
-          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-            .then(image => {
-              this.picture = this.webview.convertFileSrc(image.nativeURL);
-              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-            })
-            .catch(e => {
-              if (e.code === 12) {
-                this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                return 0;
-              } const opts: ISimpleAlertOptions = {
-                header: 'Error!',
-                message: JSON.stringify(e)
-              };
-              this.showSimpleAlert(opts);
-            });
-        })
-          .catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-                .then(image => {
-                  this.picture = this.webview.convertFileSrc(image.nativeURL);
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                })
-                .catch(e => {
-                  if (e.code === 12) {
-                    this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
-                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                    return 0;
-                  } const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e)
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
-          });
-      },
-        error => handleError(error)
-      );
-  }
 
   /**
    *
-   * @param opts Student data
+   * @param student Student data
    * Creates a student in database
    */
-  async createStudent(opts: IStudent) {
+  async createStudent(student: IStudent) {
+
     let options: ISimpleAlertOptions = {
       header: '',
       message: '',
-      buttons: []
+      buttons: [],
     };
-    if (!opts.firstName || !opts.lastName || !opts.id) {
+    if (!student.firstName || !student.lastName || !student.id) {
       if (this.language === 'spanish') {
         options = {
           ...options,
           header: '¡Advertencia!',
           message: 'Algunos campos no contienen la información requerida.',
-          buttons: ['Si']
+          buttons: ['Si'],
         };
-
       } else {
         options = {
           ...options,
           header: 'Warning!',
-          message: 'Some fields doesn\'t have the required info',
-          buttons: ['Ok']
+          message: "Some fields doesn't have the required info",
+          buttons: ['Ok'],
         };
-
       }
       this.showSimpleAlert(options);
-    } else if (opts.id.includes('#') || opts.id.includes('/') || opts.id.includes('%')) {
+    } else if (
+      student.id.includes('#') ||
+      student.id.includes('/') ||
+      student.id.includes('%')
+    ) {
       if (this.language === 'spanish') {
         options = {
           ...options,
           header: '¡Advertencia!',
           message: 'El campo de ID no puede contener "#" o "/" o "%".',
-          buttons: ['Si']
+          buttons: ['Si'],
         };
-
       } else {
         options = {
           ...options,
           header: 'Warning!',
           message: 'The ID field can\'t contain "#" or "/" or "%"',
-          buttons: ['Ok']
+          buttons: ['Ok'],
         };
       }
       this.showSimpleAlert(options);
     } else {
-      const picture = this.validatePicture({ gender: this.gender, picture: this.picture });
-      const student: IStudent = {
-        ...trimText(opts),
+      const picture = this.validatePicture({
+        gender: this.gender,
+        picture: this.picture,
+      });
+      const studentTrimmed: IStudent = {
+        ...trimText(student),
         picture: picture,
         gender: this.gender,
-        isActive: true
+        isActive: true,
       };
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
           header: '¡Advertencia!',
-          message: `¿Estas seguro que quieres crear un récord para ${opts.firstName} ${opts.lastName}?`,
+          message: `¿Estas seguro que quieres crear un récord para ${student.firstName} ${student.lastName}?`,
           buttons: [
             { text: 'No' },
             {
@@ -395,38 +240,44 @@ export class CreatePage implements OnInit{
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
                 // TODO: add generateID method here
-                this.db.insertStudent(student)
+                this.db
+                  .insertStudent(studentTrimmed)
                   .then((response) => {
                     if (response.success === true) {
                       navTransition.then(() => {
                         const userCreatedMsg = {
                           header: '¡Éxito!',
-                          message: `${opts.firstName} ${opts.lastName} ha sido creado.`
+                          message: `${student.firstName} ${student.lastName} ha sido creado.`,
                         };
                         this.showAdvancedAlert(userCreatedMsg);
                       });
                     } else {
                       const errorMsg = {
                         header: 'Error',
-                        message: response.error
+                        message: response.error,
                       };
-                      navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                      navTransition.then(() =>
+                        this.showAdvancedAlert(errorMsg)
+                      );
                     }
                   })
-                  .catch(error => {
-                    this.showSimpleAlert({ header: 'Error', message: error.error });
+                  .catch((error) => {
+                    this.showSimpleAlert({
+                      header: 'Error',
+                      message: error.error,
+                    });
                     this.generateId();
                   });
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       } else {
         const alert = await this.alertCtrl.create({
           header: 'Warning!',
-          message: `Are you sure you want to create a new record for ${opts.firstName} ${opts.lastName}?`,
+          message: `Are you sure you want to create a new record for ${student.firstName} ${student.lastName}?`,
           buttons: [
             { text: 'No' },
             {
@@ -435,38 +286,42 @@ export class CreatePage implements OnInit{
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                this.db.insertStudent(student)
+                this.db
+                  .insertStudent(studentTrimmed)
                   .then((response) => {
                     if (response.success === true) {
                       navTransition.then(() => {
                         const userCreatedMsg = {
                           header: 'Success!',
-                          message: `${opts.firstName} ${opts.lastName} was created.`
+                          message: `${student.firstName} ${student.lastName} was created.`,
                         };
                         this.showAdvancedAlert(userCreatedMsg);
                       });
                     } else {
                       const errorMsg = {
                         header: 'Error',
-                        message: response.error
+                        message: response.error,
                       };
-                      navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                      navTransition.then(() =>
+                        this.showAdvancedAlert(errorMsg)
+                      );
                     }
                   })
-                  .catch(error => {
-                    this.showSimpleAlert({ header: 'Error', message: error.error });
+                  .catch((error) => {
+                    this.showSimpleAlert({
+                      header: 'Error',
+                      message: error.error,
+                    });
                     this.generateId();
                   });
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       }
-
     }
-
   }
 
   /**
@@ -484,14 +339,13 @@ export class CreatePage implements OnInit{
           handler: () => {
             // user has clicked the alert button
             // begin the alert's dismiss transition
-            alert.dismiss()
-              .then(() => {
-                this.modalCtrl.dismiss();
-              });
+            alert.dismiss().then(() => {
+              this.modalCtrl.dismiss();
+            });
             return false;
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     alert.present();
   }
@@ -501,7 +355,7 @@ export class CreatePage implements OnInit{
    * @param opts
    * Validates user's gender in order to choose a picture.
    */
-  private validatePicture(opts: { gender: string, picture: string }) {
+  private validatePicture(opts: { gender: string; picture: string }) {
     if (opts.gender === 'male' && opts.picture === '') {
       opts.picture = './assets/profilePics/defaultMale.png';
     } else if (opts.gender === 'female' && opts.picture === '') {
@@ -521,7 +375,7 @@ export class CreatePage implements OnInit{
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: options.buttons
+      buttons: options.buttons,
     });
     alert.present();
   }
