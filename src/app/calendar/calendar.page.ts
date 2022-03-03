@@ -15,12 +15,14 @@ import { Storage } from '@ionic/storage';
   styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage {
+  @ViewChild('notes', { static: true }) notesElement: ElementRef;
+
   currentDate: string;
   students: IRecord[];
+  homeURL = '/tabs/tabs/calendar';
   private unfilteredStudents: IRecord[];
   private date: ICalendar;
   timer;
-  @ViewChild('notes', {static: true}) notesElement: ElementRef;
 
   toggle: string;
   search: string;
@@ -32,45 +34,53 @@ export class CalendarPage {
     absence: '',
     present: ``,
     absent: '',
+    class: '',
+    phone: '',
     toolbar: {
-      title: ''
+      title: '',
     },
-    name: ''
+    name: '',
+    ofile: '',
   };
 
   LANGUAGE = {
     spanish: {
+      profile: 'Perfil',
       attended: 'Asistió',
       absence: 'Ausente',
       present: ` está presente hoy.`,
       absent: ' está ausente hoy.',
+      class: 'Clase: ',
+      phone: 'Teléfono: ',
       toolbar: {
-        title: 'Calendario'
+        title: 'Calendario',
       },
-      name: 'Nombre: '
+      name: 'Nombre: ',
     },
     english: {
+      profile: 'Profile',
       attended: 'Attended',
       absence: 'Absent',
       present: `'s is present today!`,
       absent: `'s is absent today`,
+      class: 'Class: ',
+      phone: 'Phone: ',
       toolbar: {
-        title: 'Calendar'
+        title: 'Calendar',
       },
-      name: 'Name: '
-    }
+      name: 'Name: ',
+    },
   };
 
   constructor(
     private route: ActivatedRoute,
-    private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
     private storage: Storage
-  ) { }
+  ) {}
 
   ionViewWillEnter() {
     this.timer = 0;
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
       } else {
@@ -90,45 +100,6 @@ export class CalendarPage {
     this.getStudentsRecords(this.date);
   }
 
-  showNotes(id) {
-    if (this.toggle) {
-      this.toggle = '';
-    } else {
-      this.toggle = id;
-      setTimeout(() => {
-        this.notesElement.nativeElement.focus();
-      }, 0);
-    }
-  }
-
-  addNotes(opts: { id: string; notes: string }) {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      const newNote = {
-        ...opts,
-        month: this.date.month,
-        day: this.date.day,
-        year: this.date.year,
-        event: this.event
-      };
-      this.db.insertNotes(newNote);
-      this.updateNotes(opts);
-    }, 1000);
-  }
-
-  updateNotes(opts: {
-    id: string;
-    notes: string
-  }) {
-    const index = this.students.findIndex(student => {
-      if (student.id === opts.id) {
-        return true;
-      }
-    });
-    this.students[index].notes = opts.notes;
-    this.unfilteredStudents[index].notes = opts.notes;
-  }
-
   /**
    *
    * @param {ICalendar} opts
@@ -137,20 +108,20 @@ export class CalendarPage {
   getStudentsRecords(opts: ICalendar) {
     const date = {
       ...opts,
-      month: opts.month + 1
+      month: opts.month + 1,
     };
     this.students = [];
     this.unfilteredStudents = [];
     try {
       const response = this.db.getStudentsRecordsByDate({
         date: date,
-        event: this.event
+        event: this.event,
       });
       if (response.success === true) {
         if (this.studentIds.length > 0) {
           let list = [];
           for (const id of this.studentIds) {
-            const found = response.data.find(student => id === student.id);
+            const found = response.data.find((student) => id === student.id);
             if (found) {
               list = [...list, found];
             }
@@ -190,91 +161,6 @@ export class CalendarPage {
     this.getStudentsRecords(date);
   }
 
-  addAttendance(opts: { id: string }) {
-    const response = this.db.addAttendance({
-      event: this.event,
-      date: this.date,
-      id: opts.id
-    });
-    if (response.success === true) {
-      this.updateStudentAttendance({
-        id: opts.id,
-        absence: false,
-        attendance: true
-      });
-      let options;
-      if (this.language === 'spanish') {
-        options = {
-          header: 'Éxito',
-          message: '¡El estudiante se marcó presente!',
-          buttons: ['Aprobar']
-        };
-      } else {
-        options = {
-          header: 'Success!',
-          message: 'Student was marked present!',
-          buttons: ['OK']
-        };
-      }
-      this.showSimpleAlert(options);
-    } else {
-      handleError(response.error);
-    }
-  }
-
-  addAbsence(opts: { id: string }) {
-    const response = this.db.addAbsence({
-      event: this.event,
-      date: this.date,
-      id: opts.id
-    });
-    if (response.success === true) {
-      this.updateStudentAttendance({
-        id: opts.id,
-        absence: true,
-        attendance: false
-      });
-      let options;
-      if (this.language === 'spanish') {
-        options = {
-          header: 'Éxito',
-          message: '¡El estudiante se marcó ausente!',
-          buttons: ['Aprobar']
-        };
-      } else {
-        options = {
-          header: 'Success!',
-          message: 'Student was marked absent!',
-          buttons: ['OK']
-        };
-      }
-      this.showSimpleAlert(options);
-    } else {
-      handleError(response.error);
-    }
-  }
-
-  private updateStudentAttendance(opts: { id: string; absence: boolean; attendance: boolean }) {
-    for (let i = 0; i < this.students.length; i++) {
-      if (this.students[i].id === opts.id) {
-        this.students[i].attendance = opts.attendance;
-        this.students[i].absence = opts.absence;
-        this.unfilteredStudents[i].attendance = opts.attendance;
-        this.unfilteredStudents[i].absence = opts.absence;
-
-      }
-    }
-  }
-
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons
-    });
-    await alert.present();
-  }
-
   searchStudent() {
     const query = this.search;
     query ? this.filterStudentsList(query) : this.initializeStudentsList();
@@ -286,7 +172,8 @@ export class CalendarPage {
 
   private filterStudentsList(query: string) {
     const students = <any>this.unfilteredStudents;
-    this.students = <any>filterStudentsList({ query: query, students: students });
+    this.students = <any>(
+      filterStudentsList({ query: query, students: students })
+    );
   }
-
 }

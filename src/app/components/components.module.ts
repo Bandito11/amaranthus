@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { CancelComponent } from './cancel/cancel.component';
 import { UserItemComponent } from './user-item/user-item.component';
+import { StudentFormComponent } from './student-form/student-form.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,8 +18,9 @@ import { UserItemComponent } from './user-item/user-item.component';
     CancelComponent,
     MenuButtonComponent,
     UserItemComponent,
+    StudentFormComponent,
   ],
-  imports: [IonicModule, CommonModule],
+  imports: [IonicModule, CommonModule, FormsModule],
   exports: [
     LoaderComponent,
     GobackComponent,
@@ -25,6 +28,7 @@ import { UserItemComponent } from './user-item/user-item.component';
     CancelComponent,
     MenuButtonComponent,
     UserItemComponent,
+    StudentFormComponent,
   ],
 })
 export class ComponentsModule {}

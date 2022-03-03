@@ -8,54 +8,30 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding class="calendar">
-  <calendar-component [language]="language" (getDate)="getDate($event)"></calendar-component>
+<ion-content padding id="calendar">
+  <calendar-component
+    [language]="language"
+    (getDate)="getDate($event)"
+  ></calendar-component>
   <h4>{{currentDate}}</h4>
-  <ion-searchbar [(ngModel)]="search" (ionInput)="searchStudent()" animated="true" type="search">
+  <ion-searchbar
+    [(ngModel)]="search"
+    (ionInput)="searchStudent()"
+    animated="true"
+    type="search"
+  >
   </ion-searchbar>
-  <ion-list *ngIf="students" lines="none">
-    <ion-virtual-scroll [items]="students" approxHeaderWidth="380px" approxHeaderHeight="44px" approxItemWidth="380px"
-      approxItemHeight="240px">
-      <!-- <ion-item-sliding *ngFor="let student of students" #slidingUser> -->
-      <div *virtualItem="let student" class="bottom">
-        <ion-item>
-          <ion-avatar slot="start">
-            <ion-img src="{{student.picture}}" alt="no image"></ion-img>
-          </ion-avatar>
-          <ion-label>
-            <p>
-              <span class="label name">{{htmlControls.name}}</span>
-              <span class="name">{{student.fullName}}</span>
-            </p>
-            <p>
-              <span class="label">ID: </span>{{student.id}}
-            </p>
-            <ion-buttons>
-              <ion-button fill="solid" color="primary" (click)="addAttendance({id: student.id})">
-                {{htmlControls.attended}}
-              </ion-button>
-              <ion-button fill="solid" color="secondary" (click)="addAbsence({id: student.id})">
-                {{htmlControls.absence}}
-              </ion-button>
-              <ion-button fill="solid" color="dark" (click)="showNotes(student.id)">
-                <ion-icon name="paper"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-            <ion-item *ngIf="toggle == student.id" class="top">
-            <textarea #notes (keyup)="addNotes({id: student.id, notes:notes.value})"
-              padding>{{student.notes}}</textarea>
-            </ion-item>
-            <div class="pad">
-              <p class="left attended" *ngIf="student.attendance">
-                {{student.firstName}}{{htmlControls.present}}
-              </p>
-              <p class="left attended" *ngIf="student.absence">
-                {{student.firstName}}{{htmlControls.absent}}
-              </p>
-            </div>
-          </ion-label>
-        </ion-item>
-      </div>
-    </ion-virtual-scroll>
-  </ion-list>
+  <cdk-virtual-scroll-viewport
+    itemSize="56"
+    minBufferPx="900"
+    maxBufferPx="1350"
+  >
+    <app-user-item
+      *cdkVirtualFor="let student of students"
+      [student]="student"
+      [htmlControls]="htmlControls"
+      [homeURL]="homeURL"
+      [date]="date"
+    ></app-user-item>
+  </cdk-virtual-scroll-viewport>
 </ion-content>

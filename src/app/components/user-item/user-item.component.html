@@ -1,3 +1,73 @@
-<ion-button>
-  <ion-icon slot="icon-only" name="add"></ion-icon>
-</ion-button>
+<ion-card id="user-item">
+  <ion-card-header>
+    <ion-card-title
+      >{{ student.firstName }}
+      <span *ngIf="student.initial">{{ student.initial[0] }}.</span>
+      {{ student.lastName }}
+    </ion-card-title>
+    <ion-card-subtitle>
+      <span class="label">ID: </span>{{ student.id }}
+    </ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item lines="none">
+      <ion-avatar slot="start">
+        <img
+          src="{{ student.picture }}"
+          alt="{{ student.firstName }}'s profile image"
+        />
+      </ion-avatar>
+      <div>
+        <ion-label class="ion-text-wrap">
+          <span class="label">{{ htmlControls.class }}</span
+          >{{ student.class }}
+        </ion-label>
+        <ion-label class="ion-text-wrap">
+          <span class="label">{{ htmlControls.phone }}</span
+          >{{ student.phoneNumber }}
+        </ion-label>
+      </div>
+    </ion-item>
+    <ion-buttons>
+      <ion-button
+        fill="solid"
+        color="primary"
+        (click)="addAttendance({ id: student.id })"
+      >
+        {{ htmlControls.attended }}
+      </ion-button>
+      <ion-button
+        fill="solid"
+        color="secondary"
+        (click)="addAbsence({ id: student.id })"
+      >
+        {{ htmlControls.absence }}
+      </ion-button>
+      <ion-button
+        fill="solid"
+        color="tertiary"
+        (click)="goToProfile(student.id)"
+      >
+        {{ htmlControls.profile }}
+      </ion-button>
+      <ion-button fill="solid" color="dark" (click)="showNotes(student.id)">
+        <ion-icon name="paper"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-item lines="none" *ngIf="toggle == student.id" class="top">
+      <textarea
+        #notes
+        (keyup)="addNotes({ id: student.id, notes: notes.value })"
+        >{{ student.notes }}</textarea
+      >
+    </ion-item>
+    <div lines="none" class="attended" *ngIf="student.attendance || student.absence">
+      <p *ngIf="student.attendance" class="ion-text-wrap">
+        {{ student.firstName }}{{ htmlControls.present }}
+      </p>
+      <p *ngIf="student.absence" class="ion-text-wrap">
+        {{ student.firstName }}{{ htmlControls.absent }}
+      </p>
+    </div>
+  </ion-card-content>
+</ion-card>

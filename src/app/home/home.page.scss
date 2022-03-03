@@ -12,17 +12,15 @@
     font-size: 60%;
     color: rgb(141, 162, 247);
   }
-  .attended {
-    color: rgb(230, 164, 164);
-  }
   textarea {
     width: 100%;
   }
   .top{
     padding-top:5px;
   }
-  .bottom{
-    padding-bottom: 1em;
+  cdk-virtual-scroll-viewport {
+    height: 100%;
+    width: 100%;
   }
 }
 
