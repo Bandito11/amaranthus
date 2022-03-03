@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { IStudent, ISimpleAlertOptions, IEvent } from '../common/models';
-import { NavController, Platform, ModalController, AlertController } from '@ionic/angular';
+import {
+  NavController,
+  Platform,
+  ModalController,
+  AlertController,
+} from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
@@ -20,7 +25,6 @@ declare const process;
   styleUrls: ['./create-event.page.scss'],
 })
 export class CreateEventPage implements OnInit {
-
   logo;
   students: IStudent[];
   STUDENTS: IStudent[];
@@ -37,8 +41,8 @@ export class CreateEventPage implements OnInit {
       title: '',
       buttons: {
         add: '',
-        create: ''
-      }
+        create: '',
+      },
     },
     picture: '',
     reset: '',
@@ -54,7 +58,7 @@ export class CreateEventPage implements OnInit {
     add: '',
     remove: '',
     added: '',
-    notAdded: ''
+    notAdded: '',
   };
 
   LANGUAGE = {
@@ -63,8 +67,8 @@ export class CreateEventPage implements OnInit {
         title: 'Create Event',
         buttons: {
           add: 'Add All',
-          create: 'Create'
-        }
+          create: 'Create',
+        },
       },
       picture: 'Add a Picture',
       reset: 'Reset',
@@ -80,15 +84,15 @@ export class CreateEventPage implements OnInit {
       add: 'Add',
       remove: 'Remove',
       added: ' was added to events list!',
-      notAdded: ` wasn't added to events list!`
+      notAdded: ` wasn't added to events list!`,
     },
     spanish: {
       toolbar: {
         title: 'Crear Evento',
         buttons: {
           add: 'Añadir todos',
-          create: 'Crear'
-        }
+          create: 'Crear',
+        },
       },
       picture: 'Añadir imagen',
       reset: 'Reiniciar',
@@ -104,12 +108,12 @@ export class CreateEventPage implements OnInit {
       add: 'Añadir',
       remove: 'Remover',
       added: ' fue añadido al evento.',
-      notAdded: ` no fue añadido al evento.`
-    }
+      notAdded: ` no fue añadido al evento.`,
+    },
   };
   language;
   imgSrc;
-
+  
   constructor(
     public navCtrl: NavController,
     public camera: Camera,
@@ -121,19 +125,21 @@ export class CreateEventPage implements OnInit {
     private storage: Storage,
     private webview: WebView,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.logo = '';
     this.studentIds = [];
     this.getStudents();
     const currentDate = new Date();
-    this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(currentDate.getMonth() + 1)}-${addZeroInFront(currentDate.getDate())}`;
+    this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
+      currentDate.getMonth() + 1
+    )}-${addZeroInFront(currentDate.getDate())}`;
     this.endDate = ``;
   }
 
   ionViewWillEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
         this.language = value;
@@ -159,27 +165,32 @@ export class CreateEventPage implements OnInit {
       reader.onload = () => {
         fs.mkdir(directory, { recursive: true }, (err) => {
           if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+            fs.writeFile(
+              `${directory}${chosenPic.files[0].name}`,
+              reader.result,
+              {},
+              (error) => {
+                if (error) {
+                  let options;
+                  if (this.language === 'spanish') {
+                    options = {
+                      header: '¡Información!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  } else {
+                    options = {
+                      header: 'Information!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  }
+                  this.showSimpleAlert(options);
                 } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+                  this.logo = reader.result;
                 }
-                this.showSimpleAlert(options);
-              } else {
-                this.logo = reader.result;
               }
-            });
+            );
           } else {
             this.getPicture();
           }
@@ -206,12 +217,12 @@ export class CreateEventPage implements OnInit {
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: '¡Tienes que escoger por lo menos un usario de la lista!'
+            message: '¡Tienes que escoger por lo menos un usario de la lista!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to choose at least one user from the list!'
+            message: 'Have to choose at least one user from the list!',
           };
         }
         this.showSimpleAlert(opts);
@@ -222,12 +233,12 @@ export class CreateEventPage implements OnInit {
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: 'Tienes que escoger una fecha de inicio!'
+            message: 'Tienes que escoger una fecha de inicio!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to choose a start date!'
+            message: 'Have to choose a start date!',
           };
         }
         this.showSimpleAlert(opts);
@@ -238,48 +249,51 @@ export class CreateEventPage implements OnInit {
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: '¡Tienes que escribir un nombre para el evento!'
+            message: '¡Tienes que escribir un nombre para el evento!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to write a name for the event!'
+            message: 'Have to write a name for the event!',
           };
         }
         this.showSimpleAlert(opts);
         return;
       }
-      if (this.eventName.includes('#') || this.eventName.includes('/') || this.eventName.includes('%')) {
+      if (
+        this.eventName.includes('#') ||
+        this.eventName.includes('/') ||
+        this.eventName.includes('%')
+      ) {
         let options: ISimpleAlertOptions = {
           header: '',
           message: '',
-          buttons: []
+          buttons: [],
         };
         if (this.language === 'spanish') {
           options = {
             ...options,
             header: '¡Advertencia!',
             message: 'El campo de ID no puede contener "#" o "/" o "%".',
-            buttons: ['Si']
+            buttons: ['Si'],
           };
-
         } else {
           options = {
             ...options,
             header: 'Warning!',
             message: 'The ID field can\'t contain "#" or "/" or "%"',
-            buttons: ['Ok']
+            buttons: ['Ok'],
           };
         }
         this.showSimpleAlert(options);
         return;
       }
-      const members = this.studentIds.map(studentId => {
+      const members = this.studentIds.map((studentId) => {
         return {
           id: studentId,
           attendance: false,
           absence: false,
-          record: []
+          record: [],
         };
       });
       let newEvent: IEvent = {
@@ -288,12 +302,12 @@ export class CreateEventPage implements OnInit {
         startDate: '',
         members: members,
         endDate: '',
-        infiniteDates: this.infiniteDates
+        infiniteDates: this.infiniteDates,
       };
       if (!newEvent.infiniteDates) {
         newEvent = {
           ...newEvent,
-          startDate: this.startDate
+          startDate: this.startDate,
         };
       }
       if (this.endDate && !newEvent.infiniteDates) {
@@ -302,19 +316,21 @@ export class CreateEventPage implements OnInit {
           if (this.language === 'spanish') {
             opts = {
               header: '¡Error!',
-              message: 'Si el evento tiene una fecha final entonces tambien debe de tener una fecha de inicio.'
+              message:
+                'Si el evento tiene una fecha final entonces tambien debe de tener una fecha de inicio.',
             };
           } else {
             opts = {
               header: 'Error!',
-              message: 'If the event had an end date it has to have a start date.'
+              message:
+                'If the event had an end date it has to have a start date.',
             };
           }
           this.showSimpleAlert(opts);
         } else {
           newEvent = {
             ...newEvent,
-            endDate: this.endDate
+            endDate: this.endDate,
           };
         }
       } else if (!this.hasEndDate) {
@@ -337,21 +353,21 @@ export class CreateEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: '¡Éxito!',
-                      message: `${this.eventName} fue creado.`
+                      message: `${this.eventName} fue creado.`,
                     };
                     this.showAdvancedAlert(options, false);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: 'Evento ya existe.'
+                    message: 'Evento ya existe.',
                   };
                   this.showAdvancedAlert(options, true);
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       } else {
@@ -371,29 +387,28 @@ export class CreateEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: 'Success!',
-                      message: `${this.eventName} was created.`
+                      message: `${this.eventName} was created.`,
                     };
                     this.showAdvancedAlert(options, false);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: 'Event already exits! '
+                    message: 'Event already exits! ',
                   };
                   this.showAdvancedAlert(options, true);
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       }
-
     } catch (error) {
       const opts: ISimpleAlertOptions = {
         header: 'Error',
-        message: error
+        message: error,
       };
       this.showSimpleAlert(opts);
     }
@@ -422,10 +437,14 @@ export class CreateEventPage implements OnInit {
   private filterStudentsList(query: string) {
     const students = [...this.STUDENTS];
     let fullName: string;
-    const newQuery = students.filter(student => {
+    const newQuery = students.filter((student) => {
       fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      if (student.id === query || student.firstName.toLowerCase().includes(query.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(query.toLowerCase()) || fullName === query.toLowerCase()) {
+      if (
+        student.id === query ||
+        student.firstName.toLowerCase().includes(query.toLowerCase()) ||
+        student.lastName.toLowerCase().includes(query.toLowerCase()) ||
+        fullName === query.toLowerCase()
+      ) {
         return student;
       }
     });
@@ -440,10 +459,10 @@ export class CreateEventPage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE,
       encodingType: this.camera.EncodingType.PNG,
       targetWidth: 250,
-      targetHeight: 250
+      targetHeight: 250,
     };
-    this.camera.getPicture(options)
-      .then((imageData: string) => {
+    this.camera.getPicture(options).then(
+      (imageData: string) => {
         if (this.platform.is('android')) {
           this.logo = this.webview.convertFileSrc(imageData);
           return 0;
@@ -453,80 +472,107 @@ export class CreateEventPage implements OnInit {
         const directory = array.slice(0, array.length).join('/');
         const path = this.file.dataDirectory;
         const outDirectory = 'images';
-        this.file.checkDir(path, outDirectory).then(() => {
-          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-            .then(image => {
-              this.logo = this.webview.convertFileSrc(image.nativeURL);
-              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(image.nativeURL));
-            })
-            .catch(e => {
-              if (e.code === 12) {
-                this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(path + outDirectory + fileName));
-                return 0;
-              }
-              const opts: ISimpleAlertOptions = {
-                header: 'Error!',
-                message: JSON.stringify(e)
-              };
-              this.showSimpleAlert(opts);
-            });
-        }).catch(() => {
-          this.file.createDir(path, outDirectory, true).then(() => {
-            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-              .then(image => {
+        this.file
+          .checkDir(path, outDirectory)
+          .then(() => {
+            this.file
+              .copyFile(directory, fileName, path + outDirectory, fileName)
+              .then((image) => {
                 this.logo = this.webview.convertFileSrc(image.nativeURL);
-                this.logo = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(image.nativeURL));
+                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                  this.webview.convertFileSrc(image.nativeURL)
+                );
               })
-              .catch(e => {
+              .catch((e) => {
                 if (e.code === 12) {
-                  this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.webview.convertFileSrc(path + outDirectory + fileName));
+                  this.logo = this.webview.convertFileSrc(
+                    path + outDirectory + fileName
+                  );
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                    this.webview.convertFileSrc(path + outDirectory + fileName)
+                  );
                   return 0;
                 }
                 const opts: ISimpleAlertOptions = {
-                  header: 'Error',
-                  message: JSON.stringify(e)
+                  header: 'Error!',
+                  message: JSON.stringify(e),
                 };
                 this.showSimpleAlert(opts);
               });
+          })
+          .catch(() => {
+            this.file.createDir(path, outDirectory, true).then(() => {
+              this.file
+                .copyFile(directory, fileName, path + outDirectory, fileName)
+                .then((image) => {
+                  this.logo = this.webview.convertFileSrc(image.nativeURL);
+                  this.logo = this.sanitizer.bypassSecurityTrustUrl(
+                    this.webview.convertFileSrc(image.nativeURL)
+                  );
+                })
+                .catch((e) => {
+                  if (e.code === 12) {
+                    this.logo = this.webview.convertFileSrc(
+                      path + outDirectory + fileName
+                    );
+                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                      this.webview.convertFileSrc(
+                        path + outDirectory + fileName
+                      )
+                    );
+                    return 0;
+                  }
+                  const opts: ISimpleAlertOptions = {
+                    header: 'Error',
+                    message: JSON.stringify(e),
+                  };
+                  this.showSimpleAlert(opts);
+                });
+            });
           });
-        });
       },
-        error => handleError(error)
-      );
+      (error) => handleError(error)
+    );
   }
 
   addToEvent(id) {
-    if (this.studentIds.indexOf(id) === -1) { this.studentIds = [...this.studentIds, id]; }
+    if (this.studentIds.indexOf(id) === -1) {
+      this.studentIds = [...this.studentIds, id];
+    }
   }
 
   removeFromEvent(id) {
-    const newStudentIds = [...this.studentIds.slice(0, this.studentIds.indexOf(id)),
-    ...this.studentIds.slice(this.studentIds.indexOf(id) + 1, this.studentIds.length)];
+    const newStudentIds = [
+      ...this.studentIds.slice(0, this.studentIds.indexOf(id)),
+      ...this.studentIds.slice(
+        this.studentIds.indexOf(id) + 1,
+        this.studentIds.length
+      ),
+    ];
     this.studentIds = [...newStudentIds];
   }
 
   async addStudent() {
     const modal = await this.modalCtrl.create({
-      component: CreatePage
+      component: CreatePage,
     });
     modal.present();
-    modal.onDidDismiss().then(_ => this.getStudents());
+    modal.onDidDismiss().then((_) => this.getStudents());
   }
 
   ifOnEventList(id) {
-    if (this.studentIds.indexOf(id) !== -1) { return true; }
+    if (this.studentIds.indexOf(id) !== -1) {
+      return true;
+    }
     return false;
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl
-      .create({
-        header: options.header,
-        message: options.message,
-        buttons: options.buttons
-      });
+    const alert = await this.alertCtrl.create({
+      header: options.header,
+      message: options.message,
+      buttons: options.buttons,
+    });
     alert.present();
   }
 
@@ -546,11 +592,10 @@ export class CreateEventPage implements OnInit {
               });
               return false;
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
     alert.present();
   }
-
 }
