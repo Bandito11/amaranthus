@@ -9,6 +9,12 @@
 
 <ion-content class="ion-padding" id="create">
   <form #studentForm="ngForm">
-<app-student-form (studentData)="createStudent($event)" [idInput]="idInput" [create]="true" [imgSrc]="imgSrc" [student]="student" [htmlControls]="htmlControls"></app-student-form>
-</form>
+    <app-student-form
+      (studentData)="createStudent($event)"
+      [create]="true"
+      [imgSrc]="imgSrc"
+      [student]="student"
+      [htmlControls]="htmlControls"
+    ></app-student-form>
+  </form>
 </ion-content>

@@ -25,6 +25,8 @@ export class EditPage implements OnInit {
   picture;
   gender: string;
   isActive: boolean;
+  language;
+  imgSrc;
 
   // HTML values
   student: IStudent = {
@@ -89,6 +91,7 @@ export class EditPage implements OnInit {
       },
       change: 'Change',
       reset: 'Reset',
+      submit: 'Submit',
       firstName: 'First Name',
       initial: 'Middle Name',
       lastName: 'Last Name',
@@ -120,6 +123,7 @@ export class EditPage implements OnInit {
       },
       change: 'Cambiar',
       reset: 'Reiniciar',
+      submit: 'Someter',
       firstName: 'Nombre',
       initial: 'Segundo Nombre',
       lastName: 'Apellidos',
@@ -144,8 +148,6 @@ export class EditPage implements OnInit {
     }
   };
 
-  language;
-  imgSrc;
 
   constructor(
     private db: AmaranthusDBProvider,
@@ -175,9 +177,6 @@ export class EditPage implements OnInit {
     } catch (error) {
       handleError(error);
     }
-  }
-
-  ionViewWillEnter() {
     this.storage.get('language').then(value => {
       if (value) {
         this.language = value;
@@ -187,175 +186,6 @@ export class EditPage implements OnInit {
         this.htmlControls = this.LANGUAGE['english'];
       }
     });
-  }
-
-  getPicture() {
-    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
-    let directory = '';
-    if (navigator.userAgent.match('Mac')) {
-      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-    } else if (navigator.userAgent.match('Windows')) {
-      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
-    }
-    if (chosenPic.files.length !== 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fs.mkdir(directory, { recursive: true }, (err) => {
-          if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                }
-                this.showSimpleAlert(options);
-              } else {
-                this.picture = reader.result;
-              }
-            });
-          } else {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
-                }
-                this.showSimpleAlert(options);
-              } else {
-                this.picture = reader.result;
-              }
-            });
-          }
-        });
-      };
-      reader.readAsDataURL(chosenPic.files[0]);
-      // const blob = window.URL.createObjectURL(chosenPic.files[0]);
-      // this.picture = this.sanitizer.bypassSecurityTrustUrl(blob);
-    }
-  }
-
-  /**
-   * Browse phone gallery
-   *
-   * @memberof EditPage
-   */
-  async browsePicture() {
-    let options: CameraOptions = {
-      quality: 100,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG,
-      targetWidth: 250,
-      targetHeight: 250
-    };
-    const alert = await this.alertCtrl.create({
-      header: 'Information!',
-      message: 'Get picture from photo album or camera.',
-      buttons: [{
-        text: 'Cancel',
-        role: 'cancel',
-        cssClass: 'secondary'
-      }, {
-        text: 'Browse Photo Album',
-        handler: () => {
-          options = {
-            ...options,
-            sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-          };
-          this.getPictureFromNativeCamera(options);
-        }
-      }, {
-        text: 'Take a picture!',
-        handler: () => {
-          options = {
-            ...options,
-            sourceType: this.camera.PictureSourceType.CAMERA,
-          };
-          this.getPictureFromNativeCamera(options);
-        }
-      }]
-    });
-    await alert.present();
-  }
-
-  getPictureFromNativeCamera(options: CameraOptions) {
-    this.camera.getPicture(options)
-      .then((imageData: string) => {
-        if (this.platform.is('android')) {
-          this.picture = this.webview.convertFileSrc(imageData);
-          this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-          return 0;
-        }
-        const array = imageData.split('/');
-        const fileName = array.pop();
-        const directory = array.slice(0, array.length).join('/');
-        const path = this.file.dataDirectory;
-        const outDirectory = 'images';
-        this.file.checkDir(path, outDirectory).then(() => {
-          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-            .then(image => {
-              this.picture = this.webview.convertFileSrc(image.nativeURL);
-              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-            })
-            .catch(e => {
-              if (e.code === 12) {
-                this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                return 0;
-              }
-              const opts: ISimpleAlertOptions = {
-                header: 'Error!',
-                message: JSON.stringify(e)
-              };
-              this.showSimpleAlert(opts);
-            });
-        })
-          .catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-                .then(image => {
-                  this.picture = this.webview.convertFileSrc(image.nativeURL);
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                })
-                .catch(e => {
-                  if (e.code === 12) {
-                    this.picture = this.webview.convertFileSrc(path + outDirectory + fileName);
-                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.picture);
-                    return 0;
-                  }
-                  const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e)
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
-          });
-      },
-        error => handleError(error)
-      );
   }
 
   getStudentFromDB(student: IStudent): IResponse<IStudent> {
@@ -478,7 +308,7 @@ export class EditPage implements OnInit {
     } else {
       opts = { ...opts, phoneNumber: opts.phoneNumber, emergencyContactPhoneNumber: opts.emergencyContactPhoneNumber };
       const picture = this.validatePicture({ gender: this.gender, picture: this.picture });
-      const student: IStudent = {
+      const studentTrimmed: IStudent = {
         ...trimText(opts),
         picture: picture,
         gender: this.gender,
@@ -499,7 +329,7 @@ export class EditPage implements OnInit {
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
                 const response = {
-                  ...this.db.updateStudent(student)
+                  ...this.db.updateStudent(studentTrimmed)
                 };
                 if (response.success === true) {
                   navTransition.then(() => {
@@ -537,7 +367,7 @@ export class EditPage implements OnInit {
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
                 const response = {
-                  ...this.db.updateStudent(student)
+                  ...this.db.updateStudent(studentTrimmed)
                 };
                 if (response.success === true) {
                   navTransition.then(() => {
@@ -563,7 +393,6 @@ export class EditPage implements OnInit {
       }
     }
   }
-
 
   private validatePicture(opts: { gender: string, picture: string }) {
     if (opts.gender === 'male' && opts.picture === '') {
