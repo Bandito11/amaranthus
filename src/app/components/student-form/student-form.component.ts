@@ -11,30 +11,23 @@ export class StudentFormComponent implements OnInit {
   @Input() htmlControls;
   @Input() student: IStudent;
   @Input() imgSrc;
-  @Input() idInput: string;
+  @Input() create: boolean;
 
   @Output() studentData = new EventEmitter<IStudent>();
 
-  picture;
-  gender: string;
-  isActive;
-  @Input() create: boolean;
-  
   constructor(public platform: Platform) {}
 
   ngOnInit() {
-    this.gender = this.student.gender;
-    this.student.id = this.idInput;
     if (this.create) {
-      this.isActive = true;
+      this.student.isActive = true;
+      this.student.gender = 'male';
     }
   }
 
   submit() {
     this.student = {
       ...this.student,
-      gender: this.gender,
-      isActive: this.isActive,
+      isActive: this.student.isActive,
     };
     //TODO:
     this.studentData.emit(this.student);
@@ -42,8 +35,16 @@ export class StudentFormComponent implements OnInit {
 
   reset() {
     this.student = {} as IStudent;
-    this.student.id = this.idInput;
-    this.gender = 'male';
   }
-  
+
+  resetPicture() {
+    this.imgSrc = './assets/profilePics/defaultMale.png';
+    const pictureInput = document.querySelector('#inputFile');
+    pictureInput['value'] = '';
+  }
+
+  deleteStudent(){
+    // TODO: add new service method to delete student
+    console.log('delete student method')
+  }
 }
