@@ -9,6 +9,7 @@ import { CancelComponent } from './cancel/cancel.component';
 import { UserItemComponent } from './user-item/user-item.component';
 import { StudentFormComponent } from './student-form/student-form.component';
 import { FormsModule } from '@angular/forms';
+import { EventFormComponent } from './event-form/event-form.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { FormsModule } from '@angular/forms';
     MenuButtonComponent,
     UserItemComponent,
     StudentFormComponent,
+    EventFormComponent,
   ],
   imports: [IonicModule, CommonModule, FormsModule],
   exports: [
@@ -29,6 +31,7 @@ import { FormsModule } from '@angular/forms';
     MenuButtonComponent,
     UserItemComponent,
     StudentFormComponent,
+    EventFormComponent,
   ],
 })
 export class ComponentsModule {}
