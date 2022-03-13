@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>{{htmlControls.toolbar.title}}</ion-title>
+    <ion-buttons slot="start">
+      <app-menu-button></app-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="goToEvents()"
         >{{htmlControls.toolbar.buttons.event}}</ion-button
@@ -16,6 +19,7 @@
   <ion-searchbar
     placeholder="{{htmlControls.search}}"
     (ionInput)="searchStudent($event)"
+    animated="true"
     type="search"
   >
   </ion-searchbar>
@@ -45,94 +49,17 @@
       >
     </ion-select>
   </ion-item>
-  <ion-virtual-scroll [items]="students">
-    <div class="bottom" *virtualItem="let student">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title
-            >{{student.firstName}}
-            <span *ngIf="student.initial">{{student.initial[0]}}.</span>
-            {{student.lastName}}
-          </ion-card-title>
-          <ion-card-subtitle>
-            <span class="label">ID: </span>{{student.id}}
-          </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-grid>
-            <ion-row>
-              <ion-col size="3">
-                <ion-thumbnail>
-                  <ion-img
-                    src="{{student.picture}}"
-                    alt="{{student.firstName}}'s profile image"
-                  ></ion-img>
-                </ion-thumbnail>
-              </ion-col>
-              <ion-col size="9">
-                <ion-item lines="none" *ngIf="student.class">
-                  <ion-label class="ion-text-wrap">
-                    <span class="label">{{htmlControls.class}}</span
-                    >{{student.class}}
-                  </ion-label>
-                </ion-item>
-                <ion-item lines="none" *ngIf="student.phoneNumber">
-                  <ion-label class="ion-text-wrap">
-                    <span class="label">{{htmlControls.phone}}</span
-                    >{{student.phoneNumber}}
-                  </ion-label>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-          <ion-buttons>
-            <ion-button
-              fill="solid"
-              color="primary"
-              (click)="addAttendance({id: student.id})"
-            >
-              {{htmlControls.attended}}
-            </ion-button>
-            <ion-button
-              fill="solid"
-              color="secondary"
-              (click)="addAbsence({id: student.id})"
-            >
-              {{htmlControls.absence}}
-            </ion-button>
-            <ion-button
-              fill="solid"
-              color="tertiary"
-              (click)="goToProfile(student.id)"
-            >
-              {{htmlControls.profile}}
-            </ion-button>
-            <ion-button
-              fill="solid"
-              color="dark"
-              (click)="showNotes(student.id)"
-            >
-              <ion-icon class="note" name="document-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-          <ion-item lines="none" *ngIf="toggle == student.id" class="top">
-            <textarea
-              #notes
-              (keyup)="addNotes({id: student.id, notes:notes.value})"
-            >
-{{student.notes}}</textarea
-            >
-          </ion-item>
-          <ion-item lines="none" class="attended">
-            <ion-label *ngIf="student.attendance" class="ion-text-wrap">
-              {{student.firstName}}{{htmlControls.present}}
-            </ion-label>
-            <ion-label *ngIf="student.absence" class="ion-text-wrap">
-              {{student.firstName}}{{htmlControls.absent}}
-            </ion-label>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
-    </div>
-  </ion-virtual-scroll>
+  <cdk-virtual-scroll-viewport
+    itemSize="56"
+    minBufferPx="900"
+    maxBufferPx="1350"
+  >
+    <app-user-item
+      *cdkVirtualFor="let student of students"
+      [student]="student"
+      [htmlControls]="htmlControls"
+      [homeURL]="homeURL"
+      [date]="date"
+    ></app-user-item>
+  </cdk-virtual-scroll-viewport>
 </ion-content>

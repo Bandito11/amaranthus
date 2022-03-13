@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>{{htmlControls.toolbar.title}}</ion-title>
+    <ion-buttons slot="start">
+      <app-menu-button></app-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -79,7 +82,7 @@
         <ion-label>
           {{language.controls}}
         </ion-label>
-        <ion-radio value="{{language.controls}}" (click)="setLanguage(language)"
+        <ion-radio value="{{language.controls}}" (ionSelect)="setLanguage(language)"
           checked="{{language.checked}}"></ion-radio>
       </ion-item>
     </ion-radio-group>
