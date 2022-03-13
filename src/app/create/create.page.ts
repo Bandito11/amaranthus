@@ -1,13 +1,8 @@
-import { DomSanitizer } from '@angular/platform-browser';
 import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
-import { handleError } from '../common/handleError';
 import { IStudent, ISimpleAlertOptions } from '../common/models';
 import { trimText } from '../common/format';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
 
 declare const fs;
@@ -19,13 +14,6 @@ declare const process;
   styleUrls: ['./create.page.scss'],
 })
 export class CreatePage implements OnInit {
-  gender: string;
-  picture;
-  phoneNumber: string;
-  idInput: string;
-
-  counter = 0;
-
   htmlControls = {
     toolbar: {
       title: '',
@@ -67,6 +55,7 @@ export class CreatePage implements OnInit {
       },
       change: 'Change',
       reset: 'Reset',
+      submit: 'Submit',
       firstName: 'First Name',
       initial: 'Middle Name',
       lastName: 'Last Name',
@@ -97,6 +86,7 @@ export class CreatePage implements OnInit {
       },
       change: 'Cambiar',
       reset: 'Reiniciar',
+      submit: 'Someter',
       firstName: 'Nombre',
       initial: 'Segundo Nombre',
       lastName: 'Apellidos',
@@ -129,12 +119,8 @@ export class CreatePage implements OnInit {
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private db: AmaranthusDBProvider,
-    private camera: Camera,
-    private webview: WebView,
-    private file: File,
     public platform: Platform,
-    private storage: Storage,
-    private sanitizer: DomSanitizer
+    private storage: Storage
   ) {}
 
   ngOnInit() {
@@ -147,9 +133,10 @@ export class CreatePage implements OnInit {
         this.htmlControls = this.LANGUAGE['english'];
       }
     });
-    this.generateId();
+
     this.imgSrc = '/assets/profilePics/default.png';
     this.student = {
+      id: this.generateId(),
       gender: 'male',
       picture: '/assets/profilePics/default.png',
       phoneNumber: '',
@@ -159,12 +146,8 @@ export class CreatePage implements OnInit {
    * AutoGenerates ID
    */
   generateId() {
-    this.idInput = `XY${Math.ceil(Math.random() * 100000000)}`;
+    return `XY${Math.ceil(Math.random() * 100000000)}`;
   }
-
- 
-
-
 
   /**
    *
@@ -172,7 +155,6 @@ export class CreatePage implements OnInit {
    * Creates a student in database
    */
   async createStudent(student: IStudent) {
-
     let options: ISimpleAlertOptions = {
       header: '',
       message: '',
@@ -218,13 +200,13 @@ export class CreatePage implements OnInit {
       this.showSimpleAlert(options);
     } else {
       const picture = this.validatePicture({
-        gender: this.gender,
-        picture: this.picture,
+        gender: student.gender,
+        picture: student.picture,
       });
       const studentTrimmed: IStudent = {
         ...trimText(student),
-        picture: picture,
-        gender: this.gender,
+        picture: student.picture,
+        gender: student.gender,
         isActive: true,
       };
       if (this.language === 'spanish') {
