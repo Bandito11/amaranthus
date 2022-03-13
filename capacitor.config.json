@@ -1,6 +1,6 @@
 {
   "appId": "xyz.attendancelog.amaranthus",
-  "appName": "amaranthus2",
+  "appName": "Attendance Log Tracker",
   "webDir": "www",
   "npmClient": "npm",
   "cordova": {
