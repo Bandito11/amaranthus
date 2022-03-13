@@ -18,38 +18,40 @@ export class SettingsPage implements OnInit {
   isIos: boolean;
   isAndroid: boolean;
   bought: boolean;
-  languages: { language: string, controls: string, checked: boolean }[];
+  languages: { language: string; controls: string; checked: boolean }[];
   language;
   LANGUAGE = {
     spanish: {
       toolbar: {
-        title: 'Configuración'
+        title: 'Configuración',
       },
       buy: '¡Comprar por solo ',
       restoreAndroid: 'Restaurar',
       restoreiOS: 'Restaurar',
       rate: {
-        title: '¡Si te gusta la aplicación por favor considera calificarla con 5 estrellas!',
+        title:
+          '¡Si te gusta la aplicación por favor considera calificarla con 5 estrellas!',
         rateiOS: 'Lanzar App Store',
-        rateAndroid: 'Lanzar Play Store'
+        rateAndroid: 'Lanzar Play Store',
       },
       feedback: {
         title: 'Comentarios',
         // tslint:disable-next-line: max-line-length
-        message: '¿Tienes algún problema o simplemente quieres darme algún comentario sobre cómo mejorar la aplicación? Envíame un correo electrónico y le responderé en unos días.',
-        button: '¡Mandar correo electronico!'
+        message:
+          '¿Tienes algún problema o simplemente quieres darme algún comentario sobre cómo mejorar la aplicación? Envíame un correo electrónico y le responderé en unos días.',
+        button: '¡Mandar correo electronico!',
       },
       masterKey: {
         title: '',
-        description: ''
+        description: '',
       },
       language: {
-        title: 'Lenguaje'
-      }
+        title: 'Lenguaje',
+      },
     },
     english: {
       toolbar: {
-        title: 'Settings'
+        title: 'Settings',
       },
       buy: 'Buy now for only ',
       restoreAndroid: 'Restore Purchases',
@@ -57,27 +59,28 @@ export class SettingsPage implements OnInit {
       rate: {
         title: 'If you like the app please consider rating it 5 stars!',
         iOS: 'Open App Store ',
-        android: 'Open Play Store '
+        android: 'Open Play Store ',
       },
       feedback: {
         title: 'Feedback',
         // tslint:disable-next-line: max-line-length
-        message: 'Have any issues or just want to give me some feedback on how to make the app better? Just sent me an email and I will answer accordingly!',
-        button: 'Send email!'
+        message:
+          'Have any issues or just want to give me some feedback on how to make the app better? Just sent me an email and I will answer accordingly!',
+        button: 'Send email!',
       },
       masterKey: {
         title: '',
-        description: ''
+        description: '',
       },
       language: {
-        title: 'Language'
-      }
-    }
+        title: 'Language',
+      },
+    },
   };
 
   htmlControls = {
     toolbar: {
-      title: ''
+      title: '',
     },
     buy: '',
     restoreAndroid: '',
@@ -85,20 +88,20 @@ export class SettingsPage implements OnInit {
     rate: {
       title: '',
       iOS: '',
-      android: ''
+      android: '',
     },
     feedback: {
       title: '',
       message: '',
-      button: ''
+      button: '',
     },
     masterKey: {
       title: '',
-      description: ''
+      description: '',
     },
     language: {
-      title: ''
-    }
+      title: '',
+    },
   };
   textArea: string;
 
@@ -109,8 +112,9 @@ export class SettingsPage implements OnInit {
     public platform: Platform,
     public iap: AppPurchaseProvider,
     public alertCtrl: AlertController,
+    public loadingController: LoadingController,
     public market: Market
-  ) { }
+  ) {}
 
   setTextArea() {
     if (this.language === 'spanish') {
@@ -141,18 +145,19 @@ export class SettingsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
+      console.log(value);
       this.languages = [
         {
           language: 'english',
           controls: 'English',
-          checked: true
+          checked: true,
         },
         {
           language: 'spanish',
           controls: 'Español',
-          checked: false
-        }
+          checked: false,
+        },
       ];
       if (value === 'spanish') {
         this.language = 'spanish';
@@ -167,8 +172,8 @@ export class SettingsPage implements OnInit {
           ...this.htmlControls,
           masterKey: {
             title: 'La Llave Maestra!',
-            description: 'Elimina el límite de 10 usuarios a la base de datos.'
-          }
+            description: 'Elimina el límite de 10 usuarios a la base de datos.',
+          },
         };
       } else {
         this.languages[0].checked = true;
@@ -176,8 +181,8 @@ export class SettingsPage implements OnInit {
           ...this.htmlControls,
           masterKey: {
             title: 'The Master Key!',
-            description: 'Unlock limit of 10 users to database.'
-          }
+            description: 'Unlock limit of 10 users to database.',
+          },
         };
       }
       this.setTextArea();
@@ -187,7 +192,7 @@ export class SettingsPage implements OnInit {
     } else if (this.platform.is('android')) {
       this.isAndroid = true;
     }
-    this.storage.get('boughtMasterKey').then(boughtMasterKey => {
+    this.storage.get('boughtMasterKey').then((boughtMasterKey) => {
       if (boughtMasterKey) {
         this.bought = true;
       } else {
@@ -199,8 +204,17 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  setLanguage(language: { checked, language, controls }) {
+  async setLanguage(language: { checked; language; controls }) {
     this.storage.set('language', language.language);
+    const loading = await this.loadingController.create({
+      translucent: true,
+      spinner: 'dots',
+    });
+    await loading.present();
+    location.reload();
+
+    await loading.onDidDismiss();
+
     if (language.language === 'spanish') {
       this.languages[0].checked = false;
       this.languages[1].checked = true;
@@ -222,8 +236,8 @@ export class SettingsPage implements OnInit {
         ...this.htmlControls,
         masterKey: {
           title: 'La Llave Maestra!',
-          description: 'Elimina el límite de 10 usuarios a la base de datos.'
-        }
+          description: 'Elimina el límite de 10 usuarios a la base de datos.',
+        },
       };
     } else {
       this.languages[0].checked = true;
@@ -231,8 +245,8 @@ export class SettingsPage implements OnInit {
         ...this.htmlControls,
         masterKey: {
           title: 'The Master Key!',
-          description: 'Unlock limit of 10 users to database.'
-        }
+          description: 'Unlock limit of 10 users to database.',
+        },
       };
     }
   }
@@ -251,19 +265,19 @@ export class SettingsPage implements OnInit {
       to: 'attendancelogtracker@gmail.com',
       subject: 'Attendance Log: Browser',
       body: body,
-      isHtml: false
+      isHtml: false,
     };
     if (this.platform.is('cordova')) {
       if (this.platform.is('android')) {
         email = {
           ...email,
-          subject: 'Attendance Log: Android'
+          subject: 'Attendance Log: Android',
         };
       }
       if (this.platform.is('ios')) {
         email = {
           ...email,
-          subject: 'Attendance Log: IPhone'
+          subject: 'Attendance Log: IPhone',
         };
       }
     }
@@ -271,69 +285,86 @@ export class SettingsPage implements OnInit {
   }
 
   getProducts() {
-    this.iap.getProducts().then(products => {
-      this.noProducts = false;
-      this.products = [...products];
-      this.storage.set('products', products);
-    })
-      .catch(err => {
+    this.iap
+      .getProducts()
+      .then((products) => {
+        this.noProducts = false;
+        this.products = [...products];
+        this.storage.set('products', products);
+      })
+      .catch((err) => {
         this.showSimpleAlert({
           buttons: ['OK'],
           header: 'Error!',
-          message: err
-        }).then(_ => this.noProducts = false);
+          message: err,
+        }).then((_) => (this.noProducts = false));
       });
   }
 
   async restorePurchases() {
     const loading = await this.loading.create({
-      message: 'Restoring Purchases!'
+      message: 'Restoring Purchases!',
     });
     loading.present();
     if (this.platform.is('android')) {
-      this.iap.restoreAndroidPurchase().then(products => {
-        products.forEach(product => {
-          const receipt = JSON.parse(product.receipt);
-          if (product.productId === 'master.key' && stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)) {
-            this.storage.set('boughtMasterKey', true);
-            this.bought = true;
-            const options: ISimpleAlertOptions = {
-              header: 'Information',
-              message: 'Restored the purchase!',
-              buttons: ['OK']
-            };
-            this.showSimpleAlert(options);
-          }
-        });
-        loading.dismiss();
-      })
-        .catch(_ => {
-          this.showSimpleAlert({ buttons: ['OK'], header: 'Error!', message: `No receipts available in the App Store!` });
+      this.iap
+        .restoreAndroidPurchase()
+        .then((products) => {
+          products.forEach((product) => {
+            const receipt = JSON.parse(product.receipt);
+            if (
+              product.productId === 'master.key' &&
+              stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)
+            ) {
+              this.storage.set('boughtMasterKey', true);
+              this.bought = true;
+              const options: ISimpleAlertOptions = {
+                header: 'Information',
+                message: 'Restored the purchase!',
+                buttons: ['OK'],
+              };
+              this.showSimpleAlert(options);
+            }
+          });
+          loading.dismiss();
+        })
+        .catch((_) => {
+          this.showSimpleAlert({
+            buttons: ['OK'],
+            header: 'Error!',
+            message: `No receipts available in the App Store!`,
+          });
           loading.dismiss();
         });
     } else if (this.platform.is('ios')) {
-      this.iap.restoreiOSPurchase().then(receipt => {
-        if (receipt) {
-          const options: ISimpleAlertOptions = {
-            header: 'Information',
-            message: 'Restored the purchase!',
-            buttons: ['OK']
-          };
-          this.storage.set('boughtMasterKey', true);
-          this.bought = true;
-          this.showSimpleAlert(options);
-        } else {
-          const options: ISimpleAlertOptions = {
-            header: 'Information',
-            message: `No receipts available in the App Store!`,
-            buttons: ['OK']
-          };
-          this.showSimpleAlert(options);
-        }
-        loading.dismiss();
-      })
-        .catch(_ => {
-          this.showSimpleAlert({ buttons: ['OK'], header: 'Error!', message: 'No receipts available in the App Store!' });
+      this.iap
+        .restoreiOSPurchase()
+        .then((receipt) => {
+          if (receipt) {
+            const options: ISimpleAlertOptions = {
+              header: 'Information',
+              message: 'Restored the purchase!',
+              buttons: ['OK'],
+            };
+            this.storage.set('boughtMasterKey', true);
+            this.bought = true;
+            this.showSimpleAlert(options);
+          } else {
+            const options: ISimpleAlertOptions = {
+              header: 'Information',
+              message: `No receipts available in the App Store!`,
+              buttons: ['OK'],
+            };
+            this.showSimpleAlert(options);
+          }
+          loading.dismiss();
+        })
+        .catch((_) => {
+          this.showSimpleAlert({
+            buttons: ['OK'],
+            header: 'Error!',
+            message: 'No receipts available in the App Store!',
+          });
           loading.dismiss();
         });
     }
@@ -341,24 +372,26 @@ export class SettingsPage implements OnInit {
 
   async buyProduct(opts: { productTitle: string; productId: string }) {
     const loading = await this.loading.create({
-      message: `Buying ${opts.productTitle}!`
+      message: `Buying ${opts.productTitle}!`,
     });
     loading.present();
-    this.iap.buy(opts.productId).then(product => {
-      this.showSimpleAlert({
-        buttons: ['OK'],
-        header: 'Success!',
-        message: `${product.transactionId} was successfully bought.`
-      });
-      this.storage.set('boughtMasterKey', true);
-      this.bought = true;
-      loading.dismiss();
-    })
-      .catch(err => {
+    this.iap
+      .buy(opts.productId)
+      .then((product) => {
+        this.showSimpleAlert({
+          buttons: ['OK'],
+          header: 'Success!',
+          message: `${product.transactionId} was successfully bought.`,
+        });
+        this.storage.set('boughtMasterKey', true);
+        this.bought = true;
+        loading.dismiss();
+      })
+      .catch((err) => {
         this.showSimpleAlert({
           buttons: ['OK'],
           header: 'Error!',
-          message: err
+          message: err,
         });
         loading.dismiss();
       });
@@ -368,7 +401,7 @@ export class SettingsPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: options.buttons
+      buttons: options.buttons,
     });
     alert.present();
   }
