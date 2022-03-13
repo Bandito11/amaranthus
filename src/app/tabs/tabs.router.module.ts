@@ -65,19 +65,6 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'roster',
-        children: [
-          {
-            path: '',
-            loadChildren: () => import('../student-list/student-list.module').then(m => m.StudentListPageModule)
-          },
-          {
-            path: 'profile/:id',
-            loadChildren: () => import('../profile/profile.module').then(m => m.ProfilePageModule)
-          }
-        ]
-      },
-      {
         path: 'login',
         children: [
           {

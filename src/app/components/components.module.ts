@@ -1,4 +1,3 @@
-import { MenuButtonComponent } from './menu-button/menu-button.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { LoaderComponent } from './loader/loader.component';
 import { NgModule } from '@angular/core';
@@ -12,26 +11,21 @@ import { FormsModule } from '@angular/forms';
 import { EventFormComponent } from './event-form/event-form.component';
 
 @NgModule({
-  declarations: [
-    LoaderComponent,
-    GobackComponent,
-    CalendarComponent,
-    CancelComponent,
-    MenuButtonComponent,
-    UserItemComponent,
-    StudentFormComponent,
-    EventFormComponent,
-  ],
-  imports: [IonicModule, CommonModule, FormsModule],
+    declarations: [
+        LoaderComponent,
+        GobackComponent,
+        CalendarComponent,
+        CancelComponent
+    ],
+    imports: [
+        IonicModule,
+        CommonModule,
+    ],
   exports: [
-    LoaderComponent,
-    GobackComponent,
-    CalendarComponent,
-    CancelComponent,
-    MenuButtonComponent,
-    UserItemComponent,
-    StudentFormComponent,
-    EventFormComponent,
-  ],
+        LoaderComponent,
+        GobackComponent,
+        CalendarComponent,
+        CancelComponent
+    ]
 })
 export class ComponentsModule {}
