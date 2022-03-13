@@ -1,14 +1,12 @@
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { CreateEventPageModule } from './create-event/create-event.module';
-import { CreateEventPage } from './create-event/create-event.page';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { EditPageModule } from './edit/edit.module';
-import { CreatePage } from './create/create.page';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { Market } from '@ionic-native/market/ngx';
-import { IonicModule, IonicRouteStrategy, NavParams } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
@@ -17,14 +15,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 import { Camera } from '@ionic-native/camera/ngx';
 import { CreatePageModule } from './create/create.module';
-import { EditPage } from './edit/edit.page';
-import { ExportPage } from './export/export.page';
 import { ExportPageModule } from './export/export.module';
 import { File } from '@ionic-native/file/ngx';
 import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
-import { EditEventPage } from './editevent/editevent.page';
 import { EditEventPageModule } from './editevent/editevent.module';
-import { StatsPage } from './stats/stats.page';
 import { StatsPageModule } from './stats/stats.module';
 
 @NgModule({
