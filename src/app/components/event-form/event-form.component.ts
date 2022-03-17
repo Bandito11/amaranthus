@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { IEvent } from '../../common/models';
+import { IEvent, IStudent } from '../../common/models';
 import { addZeroInFront } from '../../common/validation';
 
 @Component({
@@ -14,6 +14,9 @@ export class EventFormComponent implements OnInit {
   @Input() create: boolean;
   @Input() logo;
   @Input() language;
+  @Input() students: IStudent[];
+  @Input() studentIds: string[];
+
   @Output() eventData = new EventEmitter<IEvent>();
 
   eventName;
@@ -21,6 +24,7 @@ export class EventFormComponent implements OnInit {
   endDate;
   hasEndDate;
   infiniteDates: boolean;
+  monthNames;
 
   constructor(public platform: Platform) {}
 
@@ -32,10 +36,25 @@ export class EventFormComponent implements OnInit {
       )}-${addZeroInFront(currentDate.getDate())}`;
       this.endDate = ``;
     }
+    if (this.language === 'spanish') {
+      this.monthNames =
+        'Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre';
+    } else {
+      this.monthNames =
+        'January,February,March,April,May,June,July,August,September,October,November,December';
+    }
   }
 
   resetEndDate() {
     this.endDate = '';
+  }
+
+  getPicture() {}
+
+  addLogo() {}
+
+  assignStudentId(studentIds) {
+    this.studentIds = [...studentIds];
   }
 
   async submit() {
@@ -46,6 +65,8 @@ export class EventFormComponent implements OnInit {
       infiniteDates: this.infiniteDates,
       logo: '',
       members: [],
+      studentIds: this.studentIds,
+      hasEndDate: this.hasEndDate,
     };
     this.eventData.emit(temp);
   }

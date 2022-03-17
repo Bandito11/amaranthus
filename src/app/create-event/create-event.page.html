@@ -8,10 +8,19 @@
 </ion-header>
 
 <ion-content class="ion-padding" id="create-event">
- <app-event-form [htmlControls]="htmlControls" [imgSrc]="imgSrc" [create]="true" [logo]="logo" [language]="language"></app-event-form>
+  <app-event-form
+    [students]="students"
+    [studentIds]="studentIds"
+    [htmlControls]="htmlControls"
+    [imgSrc]="imgSrc"
+    [create]="true"
+    [logo]="logo"
+    [language]="language"
+    (eventData)="createNewEvent($event)"
+  ></app-event-form>
 </ion-content>
 
-<ion-footer>
+<!-- <ion-footer>
   <ion-toolbar color="primary">
     <ion-buttons slot="end">
       <ion-button (click)="addAll()"
@@ -22,4 +31,4 @@
       >
     </ion-buttons>
   </ion-toolbar>
-</ion-footer>
+</ion-footer> -->

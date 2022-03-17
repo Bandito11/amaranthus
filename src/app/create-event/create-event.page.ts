@@ -60,6 +60,8 @@ export class CreateEventPage implements OnInit {
     added: '',
     notAdded: '',
   };
+  language;
+  imgSrc;
 
   LANGUAGE = {
     english: {
@@ -111,8 +113,6 @@ export class CreateEventPage implements OnInit {
       notAdded: ` no fue añadido al evento.`,
     },
   };
-  language;
-  imgSrc;
   
   constructor(
     public navCtrl: NavController,
@@ -206,13 +206,13 @@ export class CreateEventPage implements OnInit {
 
   addAll() {
     for (const student of this.STUDENTS) {
-      this.addToEvent(student.id);
+      // this.addToEvent(student.id);
     }
   }
 
-  async createNewEvent() {
-    try {
-      if (this.studentIds.length < 1) {
+  async createNewEvent(eventData) {
+    try { 
+      if (eventData.studentIds.length < 1) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
@@ -228,7 +228,7 @@ export class CreateEventPage implements OnInit {
         this.showSimpleAlert(opts);
         return;
       }
-      if (!this.startDate && !this.infiniteDates) {
+      if (!eventData.startDate && !eventData.infiniteDates) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
@@ -244,7 +244,7 @@ export class CreateEventPage implements OnInit {
         this.showSimpleAlert(opts);
         return;
       }
-      if (!this.eventName) {
+      if (!eventData.name) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
@@ -261,9 +261,9 @@ export class CreateEventPage implements OnInit {
         return;
       }
       if (
-        this.eventName.includes('#') ||
-        this.eventName.includes('/') ||
-        this.eventName.includes('%')
+        eventData.name.includes('#') ||
+        eventData.name.includes('/') ||
+        eventData.name.includes('%')
       ) {
         let options: ISimpleAlertOptions = {
           header: '',
@@ -288,7 +288,7 @@ export class CreateEventPage implements OnInit {
         this.showSimpleAlert(options);
         return;
       }
-      const members = this.studentIds.map((studentId) => {
+      const members = eventData.studentIds.map((studentId) => {
         return {
           id: studentId,
           attendance: false,
@@ -297,21 +297,21 @@ export class CreateEventPage implements OnInit {
         };
       });
       let newEvent: IEvent = {
-        logo: this.logo,
-        name: this.eventName,
+        logo: eventData.logo,
+        name: eventData.name,
         startDate: '',
         members: members,
         endDate: '',
-        infiniteDates: this.infiniteDates,
+        infiniteDates: eventData.infiniteDates,
       };
       if (!newEvent.infiniteDates) {
         newEvent = {
           ...newEvent,
-          startDate: this.startDate,
+          startDate: eventData.startDate,
         };
       }
-      if (this.endDate && !newEvent.infiniteDates) {
-        if (!this.startDate) {
+      if (eventData.endDate && !newEvent.infiniteDates) {
+        if (!eventData.startDate) {
           let opts: ISimpleAlertOptions;
           if (this.language === 'spanish') {
             opts = {
@@ -330,16 +330,16 @@ export class CreateEventPage implements OnInit {
         } else {
           newEvent = {
             ...newEvent,
-            endDate: this.endDate,
+            endDate: eventData.endDate,
           };
         }
-      } else if (!this.hasEndDate) {
+      } else if (!eventData.hasEndDate) {
         this.resetEndDate();
       }
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
           header: '¡Advertencia!',
-          message: `¿Estás seguro que quieres crear un nuevo evento ${this.eventName}?`,
+          message: `¿Estás seguro que quieres crear un nuevo evento ${eventData.name}?`,
           buttons: [
             { text: 'No' },
             {
@@ -353,7 +353,7 @@ export class CreateEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: '¡Éxito!',
-                      message: `${this.eventName} fue creado.`,
+                      message: `${eventData.name} fue creado.`,
                     };
                     this.showAdvancedAlert(options, false);
                   });
@@ -373,7 +373,7 @@ export class CreateEventPage implements OnInit {
       } else {
         const alert = await this.alertCtrl.create({
           header: 'Warning!',
-          message: `Are you sure you want to create a new ${this.eventName}?`,
+          message: `Are you sure you want to create a new ${eventData.name}?`,
           buttons: [
             { text: 'No' },
             {
@@ -387,7 +387,7 @@ export class CreateEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: 'Success!',
-                      message: `${this.eventName} was created.`,
+                      message: `${eventData.name} was created.`,
                     };
                     this.showAdvancedAlert(options, false);
                   });
@@ -533,38 +533,6 @@ export class CreateEventPage implements OnInit {
       },
       (error) => handleError(error)
     );
-  }
-
-  addToEvent(id) {
-    if (this.studentIds.indexOf(id) === -1) {
-      this.studentIds = [...this.studentIds, id];
-    }
-  }
-
-  removeFromEvent(id) {
-    const newStudentIds = [
-      ...this.studentIds.slice(0, this.studentIds.indexOf(id)),
-      ...this.studentIds.slice(
-        this.studentIds.indexOf(id) + 1,
-        this.studentIds.length
-      ),
-    ];
-    this.studentIds = [...newStudentIds];
-  }
-
-  async addStudent() {
-    const modal = await this.modalCtrl.create({
-      component: CreatePage,
-    });
-    modal.present();
-    modal.onDidDismiss().then((_) => this.getStudents());
-  }
-
-  ifOnEventList(id) {
-    if (this.studentIds.indexOf(id) !== -1) {
-      return true;
-    }
-    return false;
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {

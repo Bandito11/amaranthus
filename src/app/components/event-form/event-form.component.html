@@ -11,43 +11,35 @@
           type="file"
           accept="image/*"
         />
-        {{htmlControls.picture}}
+        {{ htmlControls.picture }}
       </ion-button>
     </div>
     <ng-template #notDesktop>
-      <ion-button (click)="addLogo()" type="button" color="primary"
-        >{{htmlControls.picture}}</ion-button
-      >
+      <ion-button (click)="addLogo()" type="button" color="primary">{{
+        htmlControls.picture
+      }}</ion-button>
     </ng-template>
-    <ion-button (click)="logo = '' " type="button" color="secondary"
-      >{{htmlControls.reset}}</ion-button
-    >
+    <ion-button (click)="logo = ''" type="button" color="secondary">{{
+      htmlControls.reset
+    }}</ion-button>
   </div>
-  <p>({{htmlControls.optional}})</p>
+  <p>({{ htmlControls.optional }})</p>
 </div>
 <ion-item>
-  <ion-label stacked>{{htmlControls.eventName}}</ion-label>
+  <ion-label stacked>{{ htmlControls.eventName }}</ion-label>
   <ion-input
     type="text"
     #name
-    placeholder="{{htmlControls.placeholder}}"
+    placeholder="{{ htmlControls.placeholder }}"
     [(ngModel)]="eventName"
   ></ion-input>
   <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
 </ion-item>
-<div *ngIf="!infiniteDates else noStartDate">
+<div *ngIf="!infiniteDates; else noStartDate">
   <ion-item>
-    <ion-label>{{htmlControls.start}}</ion-label>
+    <ion-label>{{ htmlControls.start }}</ion-label>
     <ion-datetime
-      *ngIf="language == 'spanish'"
-      monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
-      displayFormat="MMMM DD YYYY"
-      pickerFormat="MMMM DD YYYY"
-      [(ngModel)]="startDate"
-    ></ion-datetime>
-    <ion-datetime
-      *ngIf="language == 'english'"
-      monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
+      monthNames="{{ monthNames }}"
       displayFormat="MMMM DD YYYY"
       pickerFormat="MMMM DD YYYY"
       [(ngModel)]="startDate"
@@ -56,27 +48,19 @@
 </div>
 <ng-template #noStartDate>
   <ion-item>
-    <ion-label fixed>{{htmlControls.start}}</ion-label>
+    <ion-label fixed>{{ htmlControls.start }}</ion-label>
     <ion-input disabled></ion-input>
   </ion-item>
 </ng-template>
 <ion-item>
-  <ion-label>{{htmlControls.hasEnd}}</ion-label>
+  <ion-label>{{ htmlControls.hasEnd }}</ion-label>
   <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
 </ion-item>
-<div *ngIf="!infiniteDates else noEndDate">
+<div *ngIf="!infiniteDates; else noEndDate">
   <ion-item *ngIf="hasEndDate">
-    <ion-label>{{htmlControls.end}}</ion-label>
+    <ion-label>{{ htmlControls.end }}</ion-label>
     <ion-datetime
-      *ngIf="language == 'spanish'"
-      monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
-      displayFormat="MMMM DD YYYY"
-      pickerFormat="MMMM DD YYYY"
-      [(ngModel)]="endDate"
-    ></ion-datetime>
-    <ion-datetime
-      *ngIf="language == 'english'"
-      monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
+      monthNames="{{ monthNames }}"
       displayFormat="MMMM DD YYYY"
       pickerFormat="MMMM DD YYYY"
       [(ngModel)]="endDate"
@@ -91,13 +75,13 @@
 <ng-template #noEndDate>
   <div>
     <ion-item>
-      <ion-label fixed>{{htmlControls.end}}</ion-label>
+      <ion-label fixed>{{ htmlControls.end }}</ion-label>
       <ion-input disabled></ion-input>
     </ion-item>
   </div>
 </ng-template>
 <ion-item>
-  <ion-label>{{htmlControls.run}}</ion-label>
+  <ion-label>{{ htmlControls.run }}</ion-label>
   <ion-checkbox
     [(ngModel)]="infiniteDates"
     color="primary"
@@ -105,4 +89,11 @@
   ></ion-checkbox>
 </ion-item>
 
-<ion-button (click)="submit">Submit</ion-button>
+<app-event-students-list
+  [htmlControls]="htmlControls"
+  [students]="students"
+  [studentIds]="studentIds"
+  (studentIdsData)="assignStudentId($event)"
+></app-event-students-list>
+
+<ion-button expand="full" (click)="submit()">Submit</ion-button>

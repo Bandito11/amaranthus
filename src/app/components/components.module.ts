@@ -10,6 +10,7 @@ import { UserItemComponent } from './user-item/user-item.component';
 import { StudentFormComponent } from './student-form/student-form.component';
 import { FormsModule } from '@angular/forms';
 import { EventFormComponent } from './event-form/event-form.component';
+import { EventStudentsListComponent } from './event-students-list/event-students-list.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { EventFormComponent } from './event-form/event-form.component';
     UserItemComponent,
     StudentFormComponent,
     EventFormComponent,
+    EventStudentsListComponent
   ],
   imports: [IonicModule, CommonModule, FormsModule],
   exports: [
@@ -32,6 +34,7 @@ import { EventFormComponent } from './event-form/event-form.component';
     UserItemComponent,
     StudentFormComponent,
     EventFormComponent,
+    EventStudentsListComponent
   ],
 })
 export class ComponentsModule {}
