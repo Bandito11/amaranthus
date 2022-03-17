@@ -1,4 +1,3 @@
-import { MenuButtonComponent } from './menu-button/menu-button.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { LoaderComponent } from './loader/loader.component';
 import { NgModule } from '@angular/core';
@@ -18,7 +17,6 @@ import { EventStudentsListComponent } from './event-students-list/event-students
     GobackComponent,
     CalendarComponent,
     CancelComponent,
-    MenuButtonComponent,
     UserItemComponent,
     StudentFormComponent,
     EventFormComponent,
@@ -30,7 +28,6 @@ import { EventStudentsListComponent } from './event-students-list/event-students
     GobackComponent,
     CalendarComponent,
     CancelComponent,
-    MenuButtonComponent,
     UserItemComponent,
     StudentFormComponent,
     EventFormComponent,

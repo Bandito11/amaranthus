@@ -1,9 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>{{htmlControls.toolbar.title}}</ion-title>
-    <ion-buttons slot="start">
-      <app-menu-button></app-menu-button>
-    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="goToEvents()"
         >{{htmlControls.toolbar.buttons.event}}</ion-button
@@ -19,7 +16,6 @@
   <ion-searchbar
     placeholder="{{htmlControls.search}}"
     (ionInput)="searchStudent($event)"
-    animated="true"
     type="search"
   >
   </ion-searchbar>

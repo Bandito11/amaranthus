@@ -1,5 +1,5 @@
 import { Platform } from '@ionic/angular';
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 declare const window: Window;
@@ -10,7 +10,7 @@ declare const window: Window;
   styleUrls: ['./tabs.page.scss'],
 })
 export class TabsPage implements DoCheck, OnInit {
-
+  @ViewChild('tabBar') tabBarElement;
 
   counter = 0;
   viewIsLarge: boolean;
@@ -24,7 +24,7 @@ export class TabsPage implements DoCheck, OnInit {
     stats: '',
     // roster: '', // Do not delete!
     settings: '',
-    login: ''
+    login: '',
   };
 
   LANGUAGE = {
@@ -35,7 +35,7 @@ export class TabsPage implements DoCheck, OnInit {
       stats: 'Stats',
       // roster: 'Roster', // Do not delete!
       settings: 'Settings',
-      login: 'Login'
+      login: 'Login',
     },
     spanish: {
       menu: 'Menú',
@@ -44,18 +44,14 @@ export class TabsPage implements DoCheck, OnInit {
       stats: 'Estadísticas',
       // roster: 'Registro', // Do not delete!
       settings: 'Configuración',
-      login: 'Sesión'
-
-    }
+      login: 'Sesión',
+    },
   };
 
-  constructor(
-    private platform: Platform,
-    private storage: Storage
-  ) { }
+  constructor(public platform: Platform, public storage: Storage) {}
 
   ngOnInit() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
       } else {
@@ -69,7 +65,7 @@ export class TabsPage implements DoCheck, OnInit {
           { text: 'Estadísticas', route: '/tabs/tabs/stats' },
           // { text: 'Registro', route: '/tabs/tabs/roster' }, // Do not delete!
           { text: 'Configuración', route: '/tabs/tabs/settings' },
-          { text: 'Sesión', route: '/tabs/tabs/login' }
+          { text: 'Sesión', route: '/tabs/tabs/login' },
         ];
       } else {
         this.pages = [
@@ -78,18 +74,21 @@ export class TabsPage implements DoCheck, OnInit {
           { text: 'Stats', route: '/tabs/tabs/stats' },
           // { text: 'Roster', route: '/tabs/tabs/roster' }, // Do not delete!
           { text: 'Settings', route: '/tabs/tabs/settings' },
-          { text: 'Login', route: '/tabs/tabs/login' }
+          { text: 'Login', route: '/tabs/tabs/login' },
         ];
       }
     });
   }
 
   ngDoCheck() {
-    if (this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')) {
+    if (
+      this.platform.is('tablet') ||
+      this.platform.is('ipad') ||
+      this.platform.is('desktop')
+    ) {
       this.viewIsLarge = window.matchMedia('(min-width: 992px)').matches;
     }
   }
-
 
   setSelectedTab(route: string) {
     this.selectedTab = route.toLowerCase();
