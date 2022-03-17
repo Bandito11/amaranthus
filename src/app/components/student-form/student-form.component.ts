@@ -14,6 +14,7 @@ export class StudentFormComponent implements OnInit {
   @Input() create: boolean;
 
   @Output() studentData = new EventEmitter<IStudent>();
+  @Output() deleteStudentData = new EventEmitter<IStudent>();
 
   constructor(public platform: Platform) {}
 
@@ -29,7 +30,6 @@ export class StudentFormComponent implements OnInit {
       ...this.student,
       isActive: this.student.isActive,
     };
-    //TODO:
     this.studentData.emit(this.student);
   }
 
@@ -43,8 +43,7 @@ export class StudentFormComponent implements OnInit {
     pictureInput['value'] = '';
   }
 
-  deleteStudent(){
-    // TODO: add new service method to delete student
-    console.log('delete student method')
+  deleteStudent() {
+    this.deleteStudentData.emit(this.student);
   }
 }

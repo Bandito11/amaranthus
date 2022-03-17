@@ -143,13 +143,13 @@
       ></ion-checkbox>
     </ion-item>
   </ion-item-group>
-  <ion-button (click)="submit()" expand="block">{{
+  <ion-button (click)="submit()" expand="full">{{
     htmlControls.submit
   }}</ion-button>
-  <ion-button (click)="reset()" color="secondary" expand="block">{{
+  <ion-button (click)="reset()" color="secondary" expand="full">{{
     htmlControls.reset
   }}</ion-button>
-  <ion-button *ngIf="!create" (click)="deleteStudent()" expand="block" color="tertiary">{{
+  <ion-button *ngIf="!create" (click)="deleteStudent()" expand="full" color="tertiary">{{
     htmlControls.delete
   }}</ion-button>
 </div>
