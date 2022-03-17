@@ -10,10 +10,11 @@
 <ion-content class="ion-padding" id="edit">
   <form #studentForm="ngForm">
     <app-student-form
-    (studentData)="editStudent($event)"
     [imgSrc]="imgSrc"
     [student]="student"
     [htmlControls]="htmlControls"
+    (studentData)="editStudent($event)"
+    (deleteStudentData)="deleteStudent($event)"
   ></app-student-form>
   </form>
 </ion-content>
