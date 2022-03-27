@@ -130,11 +130,11 @@ export class ExportPage {
               type: 'xlsx'
             });
             loading.dismiss();
-            if (fileResponse.success) {
-              this.modal.dismiss(fileResponse.data);
-            } else {
-              this.modal.dismiss(fileResponse.error);
-            }
+            // if (fileResponse.success) {
+            //   this.modal.dismiss(fileResponse.data);
+            // } else {
+            //   this.modal.dismiss(fileResponse.error);
+            // }
           } catch (error) { // If FileProvider err
             loading.dismiss();
             this.modal.dismiss(error);
@@ -192,11 +192,12 @@ export class ExportPage {
             type: 'txt'
           });
           loading.dismiss();
-          if (fileResponse.success) {
-            this.modal.dismiss(fileResponse.data);
-          } else {
-            this.modal.dismiss(fileResponse.error);
-          }
+          //TODO:
+          // if (fileResponse.success) {
+          //   this.modal.dismiss(fileResponse.data);
+          // } else {
+          //   this.modal.dismiss(fileResponse.error);
+          // }
         } catch (error) { // If FileProvider err
           loading.dismiss();
           this.modal.dismiss(error);
@@ -244,11 +245,12 @@ export class ExportPage {
             type: 'csv'
           });
           loading.dismiss();
-          if (fileResponse.success) {
-            this.modal.dismiss(fileResponse.data);
-          } else {
-            this.modal.dismiss(fileResponse.error);
-          }
+          //TODO:
+          // if (fileResponse.success) {
+          //   this.modal.dismiss(fileResponse.data);
+          // } else {
+          //   this.modal.dismiss(fileResponse.error);
+          // }
         } catch (error) { // If FileProvider err
           loading.dismiss();
           this.modal.dismiss(error);

@@ -19,6 +19,7 @@ import {
 } from 'src/app/common/search';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-home',

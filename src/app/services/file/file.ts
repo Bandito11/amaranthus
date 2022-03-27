@@ -11,53 +11,34 @@ declare const process;
   providedIn: 'root',
 })
 export class FileProvider {
-  constructor(
-    private fileOpener: FileOpener,
-    private platform: Platform
-  ) {}
+  constructor(private fileOpener: FileOpener, private platform: Platform) {}
 
   /**
-   *
    *
    * @param {{
    *     fileName: string,
    *     text: any,
    *     type: string
    *   }} opts
-   * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    */
-  async exportFile(opts: {
-    fileName: string;
-    data: any;
-    type: string;
-  }) {
-    if (this.platform.is('mobile')) {
-      await this.writeToLocal(opts)
+  async exportFile(opts: { fileName: string; data: any; type: string }) {
+    if (this.platform.is('capacitor')) {
+      await this.writeToMobile(opts);
     }
-    return new Promise((resolve, reject) => {
-      if (this.platform.is('desktop')) {
-        this.writeToDesktop(opts)
-          .then((response) => {
-            return resolve(response);
-          })
-          .catch((error) => reject(error));
-      }
-    });
+    if (this.platform.is('desktop')) {
+      await this.writeToDesktop(opts);
+    }
+    throw new Error(`Platform: ${this.platform.platforms()}`);
   }
 
   /**
    *
-   * @param {{ fileName: string, text: any, type: string }} opts
-   * @returns {Promise<IResponse<any>>}
+   * @param {{ fileName: string, text: any }} opts
    * @memberof FileProvider
-   *    */
-  writeToDesktop(opts: {
-    fileName: string;
-    data: any;
-    type: string;
-  }) {
-    return new Promise((resolve, reject) => {
+   */
+  writeToDesktop(opts: { fileName: string; data: any }) {
+    return new Promise((_, reject) => {
       let path = ``;
       if (navigator.userAgent.match('Macintosh')) {
         path = `${process.env.HOME}/Documents/${opts.fileName}`;
@@ -68,12 +49,6 @@ export class FileProvider {
         if (err) {
           reject(err);
         }
-        resolve({
-          success: true,
-          data: `The file has been saved on under Documents/${opts.fileName}`,
-          dateStamp: new Date().toString(),
-          error: null,
-        });
       });
     });
   }
@@ -81,11 +56,10 @@ export class FileProvider {
   /**
    *
    *
-   * @param {{ fileName: string, text: any, type: string }} opts
-   * @returns {Promise<void>}
+   * @param {{ fileName: string, data: any }} opts
    * @memberof FileProvider
    */
-  async writeToLocal(opts: { fileName: string; data: any; type: string }) {
+  async writeToMobile(opts: { fileName: string; data: any }) {
     await Filesystem.writeFile({
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
@@ -98,29 +72,24 @@ export class FileProvider {
   /**
    *
    *
-   * @param {{ fileName: string, text: any, type: string, path, directory }} opts
+   * @param {{ fileName: string, type: string }} opts
    * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    */
-  toFileOpener(opts: {
-    fileName: string;
-    text: any;
-    type: string;
-    path;
-    directory;
-  }) {
+  toFileOpener(opts: { fileName: string; type: string }) {
     return new Promise((resolve, reject) => {
       let response: IResponse<string> = {
         success: false,
         error: '',
         data: '',
       };
-      const path = `${opts.path}${opts.directory}/${opts.fileName}`;
+      const directory = `${Directory.Documents}/AttendanceLog/`;
+      const path = opts.fileName;
       if (opts.type === 'xlsx') {
         response = {
           ...response,
           success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`,
+          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
         };
         this.fileOpener
           .open(
@@ -130,7 +99,7 @@ export class FileProvider {
           .then(() => resolve(response))
           .catch((_) =>
             reject(
-              `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+              `${opts.fileName} was exported successfully to the folder ${directory} in your device
              but there was an error opening the file, please try again!`
             )
           );
@@ -139,14 +108,14 @@ export class FileProvider {
         response = {
           ...response,
           success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`,
+          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
         };
         this.fileOpener
           .open(path, 'text/plain')
           .then(() => resolve(response))
           .catch((_) =>
             reject(
-              `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+              `${opts.fileName} was exported successfully to the folder ${directory} in your device
              but there was an error opening the file, please try again!`
             )
           );
@@ -155,14 +124,14 @@ export class FileProvider {
         response = {
           ...response,
           success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device!`,
+          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
         };
         this.fileOpener
           .open(path, 'text/csv')
           .then(() => resolve(response))
           .catch((_) =>
             reject(
-              `${opts.fileName} was exported successfully to the folder ${opts.path}${opts.directory} in your device
+              `${opts.fileName} was exported successfully to the folder ${directory} in your device
              but there was an error opening the file, please try again!`
             )
           );
