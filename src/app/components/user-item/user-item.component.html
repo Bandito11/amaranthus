@@ -61,7 +61,11 @@
         >{{ student.notes }}</textarea
       >
     </ion-item>
-    <div lines="none" class="attended" *ngIf="student.attendance || student.absence">
+    <div
+      lines="none"
+      class="attended"
+      *ngIf="student.attendance || student.absence"
+    >
       <p *ngIf="student.attendance" class="ion-text-wrap">
         {{ student.firstName }}{{ htmlControls.present }}
       </p>

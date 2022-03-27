@@ -445,73 +445,30 @@ export class AmaranthusDBProvider {
     }
   }
 
-  insertStudentIntoDB(student: IStudent): IResponse<null> {
-    let response: IResponse<null> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
+  insertStudentIntoDB(student: IStudent) {
     const value = this.checkIfStudentExists({ id: student.id });
-    try {
-      if (value === false) {
-        const formattedStudent = trimText(student);
-        studentsColl.insert(formattedStudent);
-        response = {
-          ...response,
-          success: true,
-        };
-      } else {
-        response = {
-          ...response,
-          error: 'User already exists in the database',
-        };
-      }
-      return response;
-    } catch (error) {
-      response = {
-        ...response,
-        error: error,
-      };
-      return response;
+    if (value === false) {
+      const formattedStudent = trimText(student);
+      studentsColl.insert(formattedStudent);
+    } else {
+      throw new Error('User already exists in the database');
     }
   }
 
-  insertStudent(student: IStudent): Promise<IResponse<null>> {
-    let response: IResponse<null> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
-    return new Promise((resolve, reject) => {
+  insertStudent(student: IStudent) {
+    new Promise(() => {
       if (studentsColl.data.length > 9) {
         this.storage.get('boughtMasterKey').then((boughtMasterKey) => {
           if (boughtMasterKey === true) {
-            response = {
-              ...response,
-              ...this.insertStudentIntoDB(student),
-            };
-            if (response.success) {
-              resolve(response);
-            }
-            reject(response);
+            this.insertStudentIntoDB(student);
           } else {
-            response = {
-              success: false,
-              error: `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`,
-              data: null,
-            };
-            resolve(response);
+            throw new Error(
+              `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`
+            );
           }
         });
       } else {
-        response = {
-          ...response,
-          ...this.insertStudentIntoDB(student),
-        };
-        if (response.success) {
-          resolve(response);
-        }
-        reject(response);
+        this.insertStudentIntoDB(student);
       }
     });
   }

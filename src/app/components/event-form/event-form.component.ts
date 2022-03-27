@@ -16,14 +16,14 @@ export class EventFormComponent implements OnInit {
   @Input() language;
   @Input() students: IStudent[];
   @Input() studentIds: string[];
+  @Input() eventName;
+  @Input() startDate;
+  @Input() endDate;
+  @Input() infiniteDates: boolean;
 
   @Output() eventData = new EventEmitter<IEvent>();
 
-  eventName;
-  startDate;
-  endDate;
   hasEndDate;
-  infiniteDates: boolean;
   monthNames;
 
   constructor(public platform: Platform) {}
@@ -35,6 +35,10 @@ export class EventFormComponent implements OnInit {
         currentDate.getMonth() + 1
       )}-${addZeroInFront(currentDate.getDate())}`;
       this.endDate = ``;
+    } else { 
+      if(this.endDate){
+        this.hasEndDate = true;
+      }
     }
     if (this.language === 'spanish') {
       this.monthNames =

@@ -1,9 +1,9 @@
 import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { IStudent, ISimpleAlertOptions } from '../common/models';
 import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 declare const fs;
 declare const process;
@@ -118,7 +118,7 @@ export class CreatePage implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     public platform: Platform,
     private storage: Storage
   ) {}
@@ -180,7 +180,8 @@ export class CreatePage implements OnInit {
     } else if (
       student.id.includes('#') ||
       student.id.includes('/') ||
-      student.id.includes('%')
+      student.id.includes('%') ||
+      student.id.includes(';')
     ) {
       if (this.language === 'spanish') {
         options = {
@@ -217,39 +218,27 @@ export class CreatePage implements OnInit {
             { text: 'No' },
             {
               text: 'Si',
-              handler: () => {
+              handler: async () => {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                // TODO: add generateID method here
-                this.db
-                  .insertStudent(studentTrimmed)
-                  .then((response) => {
-                    if (response.success === true) {
-                      navTransition.then(() => {
-                        const userCreatedMsg = {
-                          header: '¡Éxito!',
-                          message: `${student.firstName} ${student.lastName} ha sido creado.`,
-                        };
-                        this.showAdvancedAlert(userCreatedMsg);
-                      });
-                    } else {
-                      const errorMsg = {
-                        header: 'Error',
-                        message: response.error,
-                      };
-                      navTransition.then(() =>
-                        this.showAdvancedAlert(errorMsg)
-                      );
-                    }
-                  })
-                  .catch((error) => {
-                    this.showSimpleAlert({
-                      header: 'Error',
-                      message: error.error,
-                    });
-                    this.generateId();
+                try {
+                  await this.dbService.insertStudent(studentTrimmed);
+                  navTransition.then(() => {
+                    const userCreatedMsg = {
+                      header: '¡Éxito!',
+                      message: `${student.firstName} ${student.lastName} ha sido creado.`,
+                    };
+                    this.showAdvancedAlert(userCreatedMsg);
                   });
+                } catch (error) {
+                  const errorMsg = {
+                    header: 'Error',
+                    message: error,
+                  };
+                  navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                  this.generateId();
+                }
                 return false;
               },
             },
@@ -264,38 +253,29 @@ export class CreatePage implements OnInit {
             { text: 'No' },
             {
               text: 'Yes',
-              handler: () => {
+              handler: async () => {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
-                this.db
-                  .insertStudent(studentTrimmed)
-                  .then((response) => {
-                    if (response.success === true) {
-                      navTransition.then(() => {
-                        const userCreatedMsg = {
-                          header: 'Success!',
-                          message: `${student.firstName} ${student.lastName} was created.`,
-                        };
-                        this.showAdvancedAlert(userCreatedMsg);
-                      });
-                    } else {
-                      const errorMsg = {
-                        header: 'Error',
-                        message: response.error,
-                      };
-                      navTransition.then(() =>
-                        this.showAdvancedAlert(errorMsg)
-                      );
-                    }
-                  })
-                  .catch((error) => {
-                    this.showSimpleAlert({
-                      header: 'Error',
-                      message: error.error,
-                    });
-                    this.generateId();
-                  });
+                try {
+                  Promise.race([
+                    await alert.dismiss(),
+                    await this.dbService.insertStudent(studentTrimmed),
+                  ]);
+                  const userCreatedMsg = {
+                    header: 'Success!',
+                    message: `${student.firstName} ${student.lastName} was created.`,
+                  };
+
+                  this.showAdvancedAlert(userCreatedMsg);
+                } catch (error) {
+                  const errorMsg = {
+                    header: 'Error',
+                    message: error,
+                  };
+                  await alert.dismiss();
+                  this.showAdvancedAlert(errorMsg);
+                  this.generateId();
+                }
                 return false;
               },
             },
@@ -329,7 +309,7 @@ export class CreatePage implements OnInit {
         },
       ],
     });
-    alert.present();
+    await alert.present();
   }
 
   /**

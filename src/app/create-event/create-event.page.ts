@@ -9,7 +9,6 @@ import {
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
-import { CreatePage } from '../create/create.page';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
@@ -35,6 +34,8 @@ export class CreateEventPage implements OnInit {
   hasEndDate;
   infiniteDates: boolean;
   currentDate = new Date();
+  language;
+  imgSrc;
 
   htmlControls = {
     toolbar: {
@@ -60,8 +61,6 @@ export class CreateEventPage implements OnInit {
     added: '',
     notAdded: '',
   };
-  language;
-  imgSrc;
 
   LANGUAGE = {
     english: {

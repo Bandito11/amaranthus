@@ -53,11 +53,17 @@
       <ion-input disabled></ion-input>
     </ion-item>
   </ng-template>
-  <ion-item>
+  <ion-item *ngIf="!infiniteDates; else checkDisabled">
     <ion-label>{{ htmlControls.hasEnd }}</ion-label>
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
   </ion-item>
-  <div *ngIf="!infiniteDates; else noEndDate">
+  <ng-template #checkDisabled>
+    <ion-item>
+      <ion-label>{{ htmlControls.hasEnd }}</ion-label>
+      <ion-checkbox disabled="true"></ion-checkbox>
+    </ion-item>
+  </ng-template>
+  <div *ngIf="!infiniteDates">
     <ion-item *ngIf="hasEndDate">
       <ion-label>{{ htmlControls.end }}</ion-label>
       <ion-datetime
@@ -73,14 +79,6 @@
       ></ion-icon>
     </ion-item>
   </div>
-  <ng-template #noEndDate>
-    <div>
-      <ion-item>
-        <ion-label fixed>{{ htmlControls.end }}</ion-label>
-        <ion-input disabled></ion-input>
-      </ion-item>
-    </div>
-  </ng-template>
   <ion-item>
     <ion-label>{{ htmlControls.run }}</ion-label>
     <ion-checkbox

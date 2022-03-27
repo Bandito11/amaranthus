@@ -26,6 +26,7 @@ export class StudentFormComponent implements OnInit {
   }
 
   submit() {
+    //TODO: Set imgSrc to student.picture
     this.student = {
       ...this.student,
       isActive: this.student.isActive,
@@ -35,12 +36,16 @@ export class StudentFormComponent implements OnInit {
 
   reset() {
     this.student = {} as IStudent;
+    this.resetPicture();
   }
 
   resetPicture() {
     this.imgSrc = './assets/profilePics/defaultMale.png';
-    const pictureInput = document.querySelector('#inputFile');
-    pictureInput['value'] = '';
+    if (this.platform.is('desktop')) {
+      const pictureInput = document.querySelector('#inputFile');
+      pictureInput['value'] = '';
+    }
+    this.student.picture = this.imgSrc;
   }
 
   deleteStudent() {

@@ -1,23 +1,4 @@
 #home {
-  .label {
-    font-weight: bolder;
-  }
-  .name {
-    font-size: 120%;
-  }
-  .left {
-    float: left;
-  }
-  .right {
-    font-size: 60%;
-    color: rgb(141, 162, 247);
-  }
-  textarea {
-    width: 100%;
-  }
-  .top {
-    padding-top: 5px;
-  }
   cdk-virtual-scroll-viewport {
     height: 100%;
     width: 100%;

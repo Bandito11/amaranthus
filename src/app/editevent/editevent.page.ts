@@ -3,7 +3,13 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Component, OnInit } from '@angular/core';
 import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
-import { NavController, NavParams, Platform, ModalController, AlertController } from '@ionic/angular';
+import {
+  NavController,
+  NavParams,
+  Platform,
+  ModalController,
+  AlertController,
+} from '@ionic/angular';
 import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
@@ -19,7 +25,6 @@ declare const process;
   styleUrls: ['./editevent.page.scss'],
 })
 export class EditEventPage implements OnInit {
-
   id;
   logo;
   students: IStudent[];
@@ -31,14 +36,16 @@ export class EditEventPage implements OnInit {
   hasEndDate;
   event: IEvent;
   infiniteDates: boolean;
+  language;
+  imgSrc;
 
   htmlControls = {
     toolbar: {
       title: '',
       buttons: {
         add: '',
-        edit: ''
-      }
+        edit: '',
+      },
     },
     picture: '',
     reset: '',
@@ -55,7 +62,7 @@ export class EditEventPage implements OnInit {
     remove: '',
     added: '',
     notAdded: '',
-    delete: ''
+    delete: '',
   };
 
   LANGUAGE = {
@@ -64,8 +71,8 @@ export class EditEventPage implements OnInit {
         title: 'Edit Event',
         buttons: {
           add: 'Add All',
-          edit: 'Save'
-        }
+          edit: 'Save',
+        },
       },
       picture: 'Add a Picture',
       reset: 'Reset',
@@ -82,15 +89,15 @@ export class EditEventPage implements OnInit {
       remove: 'Remove',
       added: ' was added to events list!',
       notAdded: ` wasn't added to events list!`,
-      delete: 'Delete'
+      delete: 'Delete',
     },
     spanish: {
       toolbar: {
         title: 'Editar Evento',
         buttons: {
           add: 'Añadir todos',
-          edit: 'Editar'
-        }
+          edit: 'Editar',
+        },
       },
       picture: 'Añadir imagen',
       reset: 'Reiniciar',
@@ -107,11 +114,9 @@ export class EditEventPage implements OnInit {
       remove: 'Remover',
       added: ' fue añadido al evento.',
       notAdded: ` no fue añadido al evento.`,
-      delete: 'Borrar'
-    }
+      delete: 'Borrar',
+    },
   };
-  language;
-  imgSrc;
 
   constructor(
     private navCtrl: NavController,
@@ -125,7 +130,7 @@ export class EditEventPage implements OnInit {
     private storage: Storage,
     private webview: WebView,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.getStudents();
@@ -134,7 +139,7 @@ export class EditEventPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
         this.language = value;
@@ -162,8 +167,7 @@ export class EditEventPage implements OnInit {
       this.eventName = response.data.name;
       this.startDate = response.data.startDate;
       this.endDate = response.data.endDate;
-      // this.students = members;
-      this.studentIds = response.data.members.map(member => member.id);
+      this.studentIds = response.data.members.map((member) => member.id);
     } else {
       handleError(response.error);
     }
@@ -173,120 +177,123 @@ export class EditEventPage implements OnInit {
     this.endDate = '';
   }
 
-  async editEvent() {
+  async editEvent(eventData) {
     try {
-      if (this.studentIds.length < 1) {
+      if (eventData.studentIds.length < 1) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: '¡Tienes que escoger por lo menos un usario de la lista!'
+            message: '¡Tienes que escoger por lo menos un usario de la lista!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to choose at least one user from the list!'
+            message: 'Have to choose at least one user from the list!',
           };
         }
         this.showSimpleAlert(opts);
         return;
       }
-      if (!this.startDate && !this.infiniteDates) {
+      if (!eventData.startDate && !eventData.infiniteDates) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: 'Tienes que escoger una fecha de inicio!'
+            message: 'Tienes que escoger una fecha de inicio!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to choose a start date!'
+            message: 'Have to choose a start date!',
           };
         }
         this.showSimpleAlert(opts);
         return;
       }
-      if (!this.eventName) {
+      if (!eventData.name) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           opts = {
             header: 'Error',
-            message: '¡Tienes que escribir un nombre para el evento!'
+            message: '¡Tienes que escribir un nombre para el evento!',
           };
         } else {
           opts = {
             header: 'Error',
-            message: 'Have to write a name for the event!'
+            message: 'Have to write a name for the event!',
           };
         }
         this.showSimpleAlert(opts);
         return;
       }
-      if (this.eventName.includes('#') || this.eventName.includes('/') || this.eventName.includes('%')) {
+      if (
+        eventData.name.includes('#') ||
+        eventData.name.includes('/') ||
+        eventData.name.includes('%')
+      ) {
         let options: ISimpleAlertOptions = {
           header: '',
           message: '',
-          buttons: []
+          buttons: [],
         };
         if (this.language === 'spanish') {
           options = {
             ...options,
             header: '¡Advertencia!',
             message: 'El campo de ID no puede contener "#" o "/" o "%".',
-            buttons: ['Si']
+            buttons: ['Si'],
           };
-
         } else {
           options = {
             ...options,
             header: 'Warning!',
             message: 'The ID field can\'t contain "#" or "/" or "%"',
-            buttons: ['Ok']
+            buttons: ['Ok'],
           };
         }
         this.showSimpleAlert(options);
         return;
       }
-      const members = this.studentIds.map(studentId => {
-        const member = this.event.members.find(data => studentId === data.id);
+      const members = eventData.studentIds.map((studentId) => {
+        const member = this.event.members.find((data) => studentId === data.id);
         if (member) {
           return member;
         } else {
           return {
             id: studentId,
             attendance: false,
-            absence: false
+            absence: false,
           };
         }
       });
       this.event = {
         ...this.event,
-        logo: this.logo,
-        name: this.eventName,
+        logo: eventData.logo,
+        name: eventData.name,
         startDate: '',
         members: [...members],
         endDate: '',
-        infiniteDates: this.infiniteDates
+        infiniteDates: this.infiniteDates,
       };
       if (!this.event.infiniteDates) {
         this.event = {
           ...this.event,
-          startDate: this.startDate
+          startDate: eventData.startDate,
         };
       }
-      if (this.endDate && !this.event.infiniteDates) {
+      if (eventData.endDate && !this.event.infiniteDates) {
         this.event = {
           ...this.event,
-          endDate: this.endDate
+          endDate: eventData.endDate,
         };
-      } else if (!this.hasEndDate) {
+      } else if (!eventData.hasEndDate) {
         this.resetEndDate();
       }
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
           header: '¡Advertencia!',
-          message: `¿Estás seguro que quieres editar el evento ${this.eventName}?`,
+          message: `¿Estás seguro que quieres editar el evento ${eventData.name}?`,
           buttons: [
             { text: 'No' },
             {
@@ -300,27 +307,28 @@ export class EditEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: '¡Éxito!',
-                      message: `${this.eventName} fue editado exitosamente.`
+                      message: `${eventData.name} fue editado exitosamente.`,
                     };
                     this.showAdvancedAlert(options);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: 'Usuario no se pudo editar. Por favor trate de nuevo.'
+                    message:
+                      'Usuario no se pudo editar. Por favor trate de nuevo.',
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       } else {
         const alert = await this.alertCtrl.create({
           header: 'Warning!',
-          message: `Are you sure you want to edit ${this.eventName} event?`,
+          message: `Are you sure you want to edit ${eventData.name} event?`,
           buttons: [
             { text: 'No' },
             {
@@ -334,28 +342,28 @@ export class EditEventPage implements OnInit {
                   navTransition.then(() => {
                     const options = {
                       header: 'Success!',
-                      message: `${this.eventName} was edited successfully.`
+                      message: `${eventData.name} was edited successfully.`,
                     };
                     this.showAdvancedAlert(options);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: 'User couldn\'t be edited. Please try again!'
+                    message: "User couldn't be edited. Please try again!",
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       }
     } catch (error) {
       const opts: ISimpleAlertOptions = {
         header: 'Error',
-        message: error
+        message: error,
       };
       this.showSimpleAlert(opts);
     }
@@ -384,9 +392,10 @@ export class EditEventPage implements OnInit {
   private filterStudentsList(query: string) {
     const students = [...this.STUDENTS];
     let fullName: string;
-    const newQuery = students.filter(student => {
+    const newQuery = students.filter((student) => {
       fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      if (student.id === query ||
+      if (
+        student.id === query ||
         student.firstName.toLowerCase().includes(query.toLowerCase()) ||
         student.lastName.toLowerCase().includes(query.toLowerCase()) ||
         fullName === query.toLowerCase()
@@ -412,49 +421,59 @@ export class EditEventPage implements OnInit {
       reader.onload = () => {
         fs.mkdir(directory, { recursive: true }, (err) => {
           if (err) {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+            fs.writeFile(
+              `${directory}${chosenPic.files[0].name}`,
+              reader.result,
+              {},
+              (error) => {
+                if (error) {
+                  let options;
+                  if (this.language === 'spanish') {
+                    options = {
+                      header: '¡Información!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  } else {
+                    options = {
+                      header: 'Information!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  }
+                  this.showSimpleAlert(options);
                 } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+                  this.logo = reader.result;
                 }
-                this.showSimpleAlert(options);
-              } else {
-                this.logo = reader.result;
               }
-            });
+            );
           } else {
-            fs.writeFile(`${directory}${chosenPic.files[0].name}`, reader.result, {}, error => {
-              if (error) {
-                let options;
-                if (this.language === 'spanish') {
-                  options = {
-                    header: '¡Información!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+            fs.writeFile(
+              `${directory}${chosenPic.files[0].name}`,
+              reader.result,
+              {},
+              (error) => {
+                if (error) {
+                  let options;
+                  if (this.language === 'spanish') {
+                    options = {
+                      header: '¡Información!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  } else {
+                    options = {
+                      header: 'Information!',
+                      message: error,
+                      buttons: ['OK'],
+                    };
+                  }
+                  this.showSimpleAlert(options);
                 } else {
-                  options = {
-                    header: 'Information!',
-                    message: error,
-                    buttons: ['OK']
-                  };
+                  this.logo = reader.result;
                 }
-                this.showSimpleAlert(options);
-              } else {
-                this.logo = reader.result;
               }
-            });
+            );
           }
         });
       };
@@ -470,10 +489,10 @@ export class EditEventPage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE,
       encodingType: this.camera.EncodingType.PNG,
       targetWidth: 250,
-      targetHeight: 250
+      targetHeight: 250,
     };
-    this.camera.getPicture(options)
-      .then((imageData: string) => {
+    this.camera.getPicture(options).then(
+      (imageData: string) => {
         if (this.platform.is('android')) {
           this.logo = this.webview.convertFileSrc(imageData);
           this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
@@ -484,73 +503,94 @@ export class EditEventPage implements OnInit {
         const directory = array.slice(0, array.length).join('/');
         const path = this.file.dataDirectory;
         const outDirectory = 'images';
-        this.file.checkDir(path, outDirectory).then(() => {
-          this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-            .then(image => {
-              this.logo = this.webview.convertFileSrc(image.nativeURL);
-              this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
-            })
-            .catch(e => {
-              if (e.code === 12) {
-                this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
-                return 0;
-              }
-              const opts: ISimpleAlertOptions = {
-                header: 'Error!',
-                message: JSON.stringify(e)
-              };
-              this.showSimpleAlert(opts);
-            });
-        }).catch(() => {
-          this.file.createDir(path, outDirectory, true).then(() => {
-            this.file.copyFile(directory, fileName, path + outDirectory, fileName)
-              .then(image => {
+        this.file
+          .checkDir(path, outDirectory)
+          .then(() => {
+            this.file
+              .copyFile(directory, fileName, path + outDirectory, fileName)
+              .then((image) => {
                 this.logo = this.webview.convertFileSrc(image.nativeURL);
                 this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
               })
-              .catch(e => {
+              .catch((e) => {
                 if (e.code === 12) {
-                  this.logo = this.webview.convertFileSrc(path + outDirectory + fileName);
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+                  this.logo = this.webview.convertFileSrc(
+                    path + outDirectory + fileName
+                  );
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                    this.logo
+                  );
                   return 0;
                 }
                 const opts: ISimpleAlertOptions = {
-                  header: 'Error',
-                  message: JSON.stringify(e)
+                  header: 'Error!',
+                  message: JSON.stringify(e),
                 };
                 this.showSimpleAlert(opts);
               });
+          })
+          .catch(() => {
+            this.file.createDir(path, outDirectory, true).then(() => {
+              this.file
+                .copyFile(directory, fileName, path + outDirectory, fileName)
+                .then((image) => {
+                  this.logo = this.webview.convertFileSrc(image.nativeURL);
+                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                    this.logo
+                  );
+                })
+                .catch((e) => {
+                  if (e.code === 12) {
+                    this.logo = this.webview.convertFileSrc(
+                      path + outDirectory + fileName
+                    );
+                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
+                      this.logo
+                    );
+                    return 0;
+                  }
+                  const opts: ISimpleAlertOptions = {
+                    header: 'Error',
+                    message: JSON.stringify(e),
+                  };
+                  this.showSimpleAlert(opts);
+                });
+            });
           });
-        });
       },
-        error => handleError(error)
-      );
+      (error) => handleError(error)
+    );
   }
 
   addToEvent(id) {
-    if (this.studentIds.indexOf(id) === -1) { this.studentIds = [...this.studentIds, id]; }
+    if (this.studentIds.indexOf(id) === -1) {
+      this.studentIds = [...this.studentIds, id];
+    }
   }
 
   removeFromEvent(id) {
     const newStudentIds = [
       ...this.studentIds.slice(0, this.studentIds.indexOf(id)),
-      ...this.studentIds.slice(this.studentIds.indexOf(id) + 1,
-        this.studentIds.length)
+      ...this.studentIds.slice(
+        this.studentIds.indexOf(id) + 1,
+        this.studentIds.length
+      ),
     ];
     this.studentIds = [...newStudentIds];
   }
 
   async addStudent() {
     const modal = await this.modalCtrl.create({
-      component: CreatePage
+      component: CreatePage,
     });
     modal.present();
-    modal.onDidDismiss().then(_ => this.getStudents());
+    modal.onDidDismiss().then((_) => this.getStudents());
   }
 
   ifOnEventList(id) {
-    if (this.studentIds.indexOf(id) !== -1) { return true; }
+    if (this.studentIds.indexOf(id) !== -1) {
+      return true;
+    }
     return false;
   }
 
@@ -563,7 +603,7 @@ export class EditEventPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: options.buttons
+      buttons: options.buttons,
     });
     alert.present();
   }
@@ -572,22 +612,25 @@ export class EditEventPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: [{
-        text: 'OK',
-        handler: () => {
-          // user has clicked the alert button
-          // begin the alert's dismiss transition
-          alert.dismiss()
-            .then(() => {
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            // user has clicked the alert button
+            // begin the alert's dismiss transition
+            alert.dismiss().then(() => {
               if (options['event'] === 'delete') {
-                this.navCtrl.navigateRoot('/tabs/tabs/home/events').then(() => this.modalCtrl.dismiss());
+                this.navCtrl
+                  .navigateRoot('/tabs/tabs/home/events')
+                  .then(() => this.modalCtrl.dismiss());
               } else {
                 this.modalCtrl.dismiss(this.id);
               }
             });
-          return false;
-        }
-      }]
+            return false;
+          },
+        },
+      ],
     });
     alert.present();
   }
@@ -613,21 +656,21 @@ export class EditEventPage implements OnInit {
                     const opts = {
                       header: '¡éxisto!',
                       message: '¡El evento se borro exitosamente!',
-                      event: 'delete'
+                      event: 'delete',
                     };
                     this.showAdvancedAlert(opts);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: response.error
+                    message: response.error,
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       } else {
@@ -649,28 +692,26 @@ export class EditEventPage implements OnInit {
                     const opts = {
                       header: 'Success!',
                       message: 'Event was removed successfully!',
-                      event: 'delete'
+                      event: 'delete',
                     };
                     this.showAdvancedAlert(opts);
                   });
                 } else {
                   const options = {
                     header: 'Error',
-                    message: response.error
+                    message: response.error,
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       }
-
     } catch (error) {
       handleError(error);
     }
   }
-
 }

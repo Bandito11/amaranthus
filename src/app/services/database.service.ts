@@ -26,4 +26,8 @@ export class DatabaseService {
   addNotes(note: INote) {
     this.db.insertNotes(note);
   }
+
+  async insertStudent(student: IStudent) {
+    await this.db.insertStudent(student);
+  }
 }

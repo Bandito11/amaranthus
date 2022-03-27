@@ -4,191 +4,22 @@
     <ion-buttons slot="start">
       <app-cancel></app-cancel>
     </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="editEvent()">
-        {{htmlControls.toolbar.buttons.edit}}
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="imgSrc" class="logo-image">
-    <img [src]="imgSrc" alt="A picture for the logo for the event" />
-  </div>
-  <div id="logo">
-    <div id="input">
-      <div *ngIf="platform.is('desktop'); else notDesktop">
-        <ion-button>
-          <input
-            id="inputFile"
-            (change)="getPicture()"
-            type="file"
-            accept="image/*"
-          />
-          {{htmlControls.picture}}
-        </ion-button>
-      </div>
-      <ng-template #notDesktop>
-        <ion-button (click)="addLogo()" type="button" color="primary"
-          >{{htmlControls.picture}}</ion-button
-        >
-      </ng-template>
-      <ion-button (click)="logo = '' " type="button" color="secondary"
-        >{{htmlControls.reset}}</ion-button
-      >
-    </div>
-    <p>({{htmlControls.optional}})</p>
-  </div>
-  <ion-item>
-    <ion-label stacked>{{htmlControls.eventName}}</ion-label>
-    <ion-input
-      type="text"
-      #name
-      placeholder="Write your Event Name"
-      [(ngModel)]="eventName"
-    ></ion-input>
-    <ion-icon
-      id="form-icon"
-      item-right
-      name="warning"
-      *ngIf="!name.value"
-    ></ion-icon>
-  </ion-item>
-  <div *ngIf="!infiniteDates; else: noStartDate">
-    <ion-item>
-      <ion-label>{{htmlControls.start}}</ion-label>
-      <ion-datetime
-        *ngIf="language == 'spanish'"
-        monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
-        displayFormat="MMMM DD YYYY"
-        pickerFormat="MMMM DD YYYY"
-        [(ngModel)]="startDate"
-      ></ion-datetime>
-      <ion-datetime
-        *ngIf="language == 'english'"
-        monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
-        displayFormat="MMMM DD YYYY"
-        pickerFormat="MMMM DD YYYY"
-        [(ngModel)]="startDate"
-      ></ion-datetime>
-    </ion-item>
-  </div>
-  <ng-template #noStartDate>
-    <ion-item>
-      <ion-label fixed>{{htmlControls.start}}</ion-label>
-      <ion-input disabled></ion-input>
-    </ion-item>
-  </ng-template>
-  <ion-item>
-    <ion-label>{{htmlControls.hasEnd}}</ion-label>
-    <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
-  </ion-item>
-  <div *ngIf="!infiniteDates; else: noEndDate">
-    <ion-item *ngIf="hasEndDate" (ionChange)="resetEndDate()">
-      <ion-label>{{htmlControls.end}}</ion-label>
-      <ion-datetime
-        displayFormat="MMMM DD YYYY"
-        pickerFormat="MMMM DD YYYY"
-        [(ngModel)]="endDate"
-      ></ion-datetime>
-      <ion-icon
-        id="form-icon"
-        name="warning"
-        *ngIf="!this.endDate && hasEndDate"
-      ></ion-icon>
-    </ion-item>
-  </div>
-  <ng-template #noEndDate>
-    <div *ngIf="hasEndDate">
-      <ion-item>
-        <ion-label fixed>{{htmlControls.end}}</ion-label>
-        <ion-input disabled></ion-input>
-      </ion-item>
-    </div>
-  </ng-template>
-  <ion-item>
-    <ion-label>{{htmlControls.run}}</ion-label>
-    <ion-checkbox
-      [(ngModel)]="infiniteDates"
-      color="primary"
-      checked="false"
-    ></ion-checkbox>
-  </ion-item>
-  
-  <ion-list lines="none">
-    <ion-searchbar
-      placeholder="{{htmlControls.search}}"
-      (ionInput)="search($event)"
-    ></ion-searchbar>
-    <ion-grid>
-      <ion-row *ngFor="let student of students">
-        <ion-col size="2">
-          <ion-avatar>
-            <ion-img
-              src="{{student.picture}}"
-              alt="{{student.firstName}}'s profile image"
-            ></ion-img>
-          </ion-avatar>
-        </ion-col>
-        <ion-col size="10">
-          <ion-item>
-            <ion-label text-wrap>
-              <span class="label name">{{htmlControls.studentName}}</span>
-              <span class="name"
-                >{{student.firstName}}
-                <span *ngIf="student.initial">{{student.initial}}</span>
-                {{student.lastName}}</span
-              >
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>
-              <span class="label">ID: </span>{{student.id}}
-            </ion-label>
-          </ion-item>
-        </ion-col>
-        <ion-buttons>
-          <ion-button
-            fill="solid"
-            color="primary"
-            (click)="addToEvent(student.id)"
-          >
-            {{htmlControls.add}}
-          </ion-button>
-          <ion-button
-            fill="solid"
-            color="secondary"
-            (click)="removeFromEvent(student.id)"
-          >
-            {{htmlControls.remove}}
-          </ion-button>
-        </ion-buttons>
-        <ion-item>
-          <ion-label class="left attended" *ngIf="ifOnEventList(student.id)">
-            {{student.firstName}}{{htmlControls.added}}
-          </ion-label>
-          <ion-label class="left attended" *ngIf="!ifOnEventList(student.id)">
-            {{student.firstName}}{{htmlControls.notAdded}}
-          </ion-label>
-        </ion-item>
-      </ion-row>
-    </ion-grid>
-  </ion-list>
+  <app-event-form
+  [students]="students"
+  [studentIds]="studentIds"
+  [htmlControls]="htmlControls"
+  [imgSrc]="imgSrc"
+  [logo]="logo"
+  [language]="language"
+  [eventName]="eventName"
+  [startDate]="startDate"
+  [endDate]="endDate"
+  [infiniteDates]="infiniteDates"
+  (eventData)="editEvent($event)"
+></app-event-form>
 </ion-content>
 
-<ion-footer>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="end">
-      <ion-button color="danger" (click)="removeEvent()">
-        {{htmlControls.delete}}
-      </ion-button>
-      <ion-button (click)="addAll()">
-        {{htmlControls.toolbar.buttons.add}}
-      </ion-button>
-      <ion-button (click)="editEvent()">
-        {{htmlControls.toolbar.buttons.edit}}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>
