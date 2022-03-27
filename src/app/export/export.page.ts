@@ -126,7 +126,7 @@ export class ExportPage {
           try {
             const fileResponse = await this.file.exportFile({
               fileName: fileName,
-              text: xlsxResponse.data,
+              data: xlsxResponse.data,
               type: 'xlsx'
             });
             loading.dismiss();
@@ -188,7 +188,7 @@ export class ExportPage {
         try {
           const fileResponse = await this.file.exportFile({
             fileName: fileName,
-            text: textTabResponse.data,
+            data: textTabResponse.data,
             type: 'txt'
           });
           loading.dismiss();
@@ -240,7 +240,7 @@ export class ExportPage {
         try {
           const fileResponse = await this.file.exportFile({
             fileName: fileName,
-            text: csvResponse.data,
+            data: csvResponse.data,
             type: 'csv'
           });
           loading.dismiss();
