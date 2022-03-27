@@ -31,7 +31,7 @@ export class FileProvider {
     fileName: string;
     data: any;
     type: string;
-  }): Promise<IResponse<any>> {
+  }) {
     if (this.platform.is('mobile')) {
       await this.writeToLocal(opts)
     }
@@ -56,7 +56,7 @@ export class FileProvider {
     fileName: string;
     data: any;
     type: string;
-  }): Promise<IResponse<string>> {
+  }) {
     return new Promise((resolve, reject) => {
       let path = ``;
       if (navigator.userAgent.match('Macintosh')) {
@@ -108,7 +108,7 @@ export class FileProvider {
     type: string;
     path;
     directory;
-  }): Promise<IResponse<any>> {
+  }) {
     return new Promise((resolve, reject) => {
       let response: IResponse<string> = {
         success: false,
