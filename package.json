@@ -12,7 +12,8 @@
     "e2e": "ng e2e",
     "electron-serve": "ionic build --configuration production && cordova run electron --nobuild",
     "electron-build": "ionic build --configuration production && cordova build electron --release",
-    "electron-store": "ionic build --configuration production && cordova build electron --store"
+    "electron-store": "ionic build --configuration production && cordova build electron --store",
+    "postinstall": "jetifier"
   },
   "private": true,
   "dependencies": {
@@ -77,8 +78,10 @@
     "@types/lokijs": "^1.5.7",
     "@types/node": "^12.20.46",
     "codelyzer": "^5.1.2",
+    "cordova-res": "^0.15.4",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
+    "jetifier": "^2.0.0",
     "karma": "~6.3.16",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",

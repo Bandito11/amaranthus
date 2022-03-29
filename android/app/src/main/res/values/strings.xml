@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Attendance Log Tracker</string>
+    <string name="title_activity_main">Attendance Log Tracker</string>
+    <string name="package_name">xyz.attendancelog.amaranthus</string>
+    <string name="custom_url_scheme">xyz.attendancelog.amaranthus</string>
+</resources>
