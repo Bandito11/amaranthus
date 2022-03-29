@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IStudent } from '../common/models';
 import {  ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { EditPage } from '../edit/edit.page';

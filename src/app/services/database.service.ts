@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ICalendar, INote, IRecord, IStudent } from '../common/models';
-import { AmaranthusDBProvider } from './amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 
 @Injectable({
   providedIn: 'root',

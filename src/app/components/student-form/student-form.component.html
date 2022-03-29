@@ -17,8 +17,8 @@
         </ion-button>
       </div>
       <ng-template #notDesktop>
-        <ion-button (click)="browsePicture()" color="primary">
-          {{ htmlControls.change }}
+        <ion-button (click)="getPictureFromMobile()" color="primary">
+          <ion-icon name="camera-outline"></ion-icon>
         </ion-button>
       </ng-template>
       <ion-button (click)="resetPicture()" color="secondary">{{

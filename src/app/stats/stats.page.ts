@@ -4,7 +4,7 @@ import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
-import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { AlertController, ModalController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';

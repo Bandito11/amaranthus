@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IStudent } from 'src/app/common/models';
 import { Platform } from '@ionic/angular';
+import { CameraToolsService } from 'src/app/services/camera-tools.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-student-form',
@@ -16,7 +18,7 @@ export class StudentFormComponent implements OnInit {
   @Output() studentData = new EventEmitter<IStudent>();
   @Output() deleteStudentData = new EventEmitter<IStudent>();
 
-  constructor(public platform: Platform) {}
+  constructor(public sanitizer: DomSanitizer, public platform: Platform, public cameraTools: CameraToolsService) {}
 
   ngOnInit() {
     if (this.create) {
@@ -50,5 +52,10 @@ export class StudentFormComponent implements OnInit {
 
   deleteStudent() {
     this.deleteStudentData.emit(this.student);
+  }
+
+  async getPictureFromMobile(){
+   const image = await this.cameraTools.takePicture();
+   this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
   }
 }

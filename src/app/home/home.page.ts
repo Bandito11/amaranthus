@@ -1,4 +1,4 @@
-import { AppPurchaseProvider } from './../services/app-purchase/app-purchase';
+import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   ModalController,

@@ -10,7 +10,7 @@ import {
   ModalController,
   AlertController,
 } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Storage } from '@ionic/storage';

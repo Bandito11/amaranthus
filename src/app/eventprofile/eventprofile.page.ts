@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IEvent, ISimpleAlertOptions, IEventControls } from '../common/models';
 import { NavController, AlertController, ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { formatDate } from '../common/format';
 import { handleError } from '../common/handleError';

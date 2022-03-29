@@ -2,7 +2,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CreateEventPage } from './../create-event/create-event.page';
 import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { formatDate } from '../common/format';
 import { Storage } from '@ionic/storage';
 

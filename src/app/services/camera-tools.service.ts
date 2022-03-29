@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { takePicture } from '../providers/camera-tools';
 
 @Injectable({
   providedIn: 'root'
@@ -6,4 +7,8 @@ import { Injectable } from '@angular/core';
 export class CameraToolsService {
 
   constructor() { }
+
+  takePicture(){
+    return takePicture()
+  }
 }

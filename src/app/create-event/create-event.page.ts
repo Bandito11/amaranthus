@@ -6,7 +6,7 @@ import {
   ModalController,
   AlertController,
 } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';

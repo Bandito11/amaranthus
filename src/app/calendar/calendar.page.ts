@@ -5,7 +5,7 @@ import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { filterStudentsList } from 'src/app/common/search';
 import { AlertController } from '@ionic/angular';
-import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 
