@@ -1,14 +1,17 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { OnInit, Component } from '@angular/core';
-import { IStudent, IResponse, ISimpleAlertOptions } from '../common/models';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
-import { AlertController, NavController, NavParams, Platform, ModalController } from '@ionic/angular';
+import { IStudent, ISimpleAlertOptions } from '../common/models';
+import {
+  AlertController,
+  NavController,
+  NavParams,
+  Platform,
+  ModalController,
+} from '@ionic/angular';
 import { handleError } from '../common/handleError';
 import { trimText } from '../common/format';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { File } from '@ionic-native/file/ngx';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 declare const fs;
 declare const process;
@@ -19,8 +22,6 @@ declare const process;
   styleUrls: ['./edit.page.scss'],
 })
 export class EditPage implements OnInit {
-
-
   // HTML controls
   picture;
   gender: string;
@@ -46,15 +47,15 @@ export class EditPage implements OnInit {
     emergencyRelationship: '',
     picture: '',
     gender: '',
-    isActive: false
+    isActive: false,
   };
 
   htmlControls = {
     toolbar: {
       title: '',
       buttons: {
-        save: ''
-      }
+        save: '',
+      },
     },
     change: '',
     reset: '',
@@ -76,9 +77,9 @@ export class EditPage implements OnInit {
     name: '',
     emergency: {
       title: '',
-      relationship: ''
+      relationship: '',
     },
-    delete: ''
+    delete: '',
   };
 
   LANGUAGE = {
@@ -86,8 +87,8 @@ export class EditPage implements OnInit {
       toolbar: {
         title: 'Edit Record',
         buttons: {
-          save: 'Save'
-        }
+          save: 'Save',
+        },
       },
       change: 'Change',
       reset: 'Reset',
@@ -110,16 +111,16 @@ export class EditPage implements OnInit {
       name: 'Name',
       emergency: {
         title: 'Emergency Contact',
-        relationship: 'Relationship'
+        relationship: 'Relationship',
       },
-      delete: 'Delete'
+      delete: 'Delete',
     },
     spanish: {
       toolbar: {
         title: 'Editar Record',
         buttons: {
-          save: 'Grabar'
-        }
+          save: 'Grabar',
+        },
       },
       change: 'Cambiar',
       reset: 'Reiniciar',
@@ -142,42 +143,38 @@ export class EditPage implements OnInit {
       name: 'Nombre',
       emergency: {
         title: 'Contacto de Emergencia',
-        relationship: 'Relación'
+        relationship: 'Relación',
       },
-      delete: 'Borrar'
-    }
+      delete: 'Borrar',
+    },
   };
 
-
   constructor(
-    private db: AmaranthusDBProvider,
-    private alertCtrl: AlertController,
-    private navCtrl: NavController,
-    private navParams: NavParams,
-    private camera: Camera,
-    private modalCtrl: ModalController,
-    private webview: WebView,
-    private file: File,
+    public dbService: DatabaseService,
+    public alertCtrl: AlertController,
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public modalCtrl: ModalController,
     public platform: Platform,
-    private storage: Storage,
-    private sanitizer: DomSanitizer
-  ) { }
+    public storage: Storage,
+    public sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.student = { ...this.student, id: this.navParams.get('id') };
     try {
-      const response = this.getStudentFromDB(this.student);
-      if (response.success) {
-        this.isActive = response.data.isActive;
-        this.gender = response.data.gender;
-        this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(response.data.picture);
-        this.picture = response.data.picture;
-        this.student = { ...response.data };
+      const student = this.getStudentFromDB(this.student);
+      if (student) {
+        this.isActive = student.isActive;
+        this.gender = student.gender;
+        this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(student.picture);
+        this.picture = student.picture;
+        this.student = { ...student };
       }
     } catch (error) {
       handleError(error);
     }
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
         this.htmlControls = this.LANGUAGE[value];
@@ -188,10 +185,9 @@ export class EditPage implements OnInit {
     });
   }
 
-  getStudentFromDB(student: IStudent): IResponse<IStudent> {
+  getStudentFromDB(student: IStudent): IStudent {
     try {
-      const response = this.db.getStudentById(student);
-      return response;
+      return this.dbService.getStudentById(student.id);
     } catch (error) {
       handleError(error);
     }
@@ -204,84 +200,84 @@ export class EditPage implements OnInit {
         message: '¿Estas seguro que quieres borrar este récord?',
         buttons: [
           {
-            text: 'No'
+            text: 'No',
           },
           {
             text: 'Si',
             handler: () => {
               let options: ISimpleAlertOptions = {
                 header: '¡Éxito!',
-                message: 'El estudiante fue borrado.'
+                message: 'El estudiante fue borrado.',
               };
               // user has clicked the alert button
               // begin the alert's dismiss transition
               const navTransition = alert.dismiss();
               const response = {
-                ...this.db.removeStudent(opts)
+                ...this.dbService.removeStudent(opts),
               };
               if (response.success === true) {
                 options = {
                   ...options,
-                  event: 'delete'
+                  event: 'delete',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               } else {
                 handleError(response.error);
                 options = {
                   header: 'Error',
-                  message: 'Hubo un error tratando de borrar este récord. Por favor trate de nuevo.'
+                  message:
+                    'Hubo un error tratando de borrar este récord. Por favor trate de nuevo.',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               }
               return false;
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       alert.present();
-
     } else {
       const alert = await this.alertCtrl.create({
         header: 'Warning!',
         message: 'Are you sure you want to delete this record?',
         buttons: [
           {
-            text: 'No'
+            text: 'No',
           },
           {
             text: 'Yes',
             handler: () => {
               let options: ISimpleAlertOptions = {
                 header: 'Success!',
-                message: 'Student was deleted.'
+                message: 'Student was deleted.',
               };
               // user has clicked the alert button
               // begin the alert's dismiss transition
               const navTransition = alert.dismiss();
               const response = {
-                ...this.db.removeStudent(opts)
+                ...this.dbService.removeStudent(opts),
               };
               if (response.success === true) {
                 options = {
                   ...options,
-                  event: 'delete'
+                  event: 'delete',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               } else {
                 handleError(response.error);
                 options = {
                   header: 'Error',
-                  message: 'There was an error trying to delete the record. Please try again.'
+                  message:
+                    'There was an error trying to delete the record. Please try again.',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
               }
               return false;
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       alert.present();
-
     }
   }
 
@@ -293,26 +289,32 @@ export class EditPage implements OnInit {
           ...options,
           header: '¡Advertencia!',
           message: 'Algunos campos no están llenos.',
-          buttons: ['Si']
+          buttons: ['Si'],
         };
-
       } else {
         options = {
-          ...options, header: 'Warning!',
-          message: 'Some fields doesn\'t have the required info',
-          buttons: ['Ok']
+          ...options,
+          header: 'Warning!',
+          message: "Some fields doesn't have the required info",
+          buttons: ['Ok'],
         };
-
       }
       this.showSimpleAlert(options);
     } else {
-      opts = { ...opts, phoneNumber: opts.phoneNumber, emergencyContactPhoneNumber: opts.emergencyContactPhoneNumber };
-      const picture = this.validatePicture({ gender: this.gender, picture: this.picture });
+      opts = {
+        ...opts,
+        phoneNumber: opts.phoneNumber,
+        emergencyContactPhoneNumber: opts.emergencyContactPhoneNumber,
+      };
+      const picture = this.validatePicture({
+        gender: this.gender,
+        picture: this.picture,
+      });
       const studentTrimmed: IStudent = {
         ...trimText(opts),
         picture: picture,
         gender: this.gender,
-        isActive: this.isActive
+        isActive: this.isActive,
       };
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
@@ -320,7 +322,7 @@ export class EditPage implements OnInit {
           message: `¿Estas seguro que quieres editar el récord de ${opts.firstName} ${opts.lastName}?`,
           buttons: [
             {
-              text: 'No'
+              text: 'No',
             },
             {
               text: 'Yes',
@@ -329,27 +331,27 @@ export class EditPage implements OnInit {
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
                 const response = {
-                  ...this.db.updateStudent(studentTrimmed)
+                  ...this.dbService.updateStudent(studentTrimmed),
                 };
                 if (response.success === true) {
                   navTransition.then(() => {
                     options = {
                       header: '¡Éxito!',
-                      message: `${opts.firstName} ${opts.lastName} ha sido editado.`
+                      message: `${opts.firstName} ${opts.lastName} ha sido editado.`,
                     };
                     this.showAdvancedAlert(options);
                   });
                 } else {
                   options = {
                     header: 'Error',
-                    message: `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`
+                    message: `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`,
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       } else {
@@ -358,7 +360,7 @@ export class EditPage implements OnInit {
           message: `Are you sure you want to edit ${opts.firstName} ${opts.lastName}'s record?`,
           buttons: [
             {
-              text: 'No'
+              text: 'No',
             },
             {
               text: 'Yes',
@@ -367,34 +369,34 @@ export class EditPage implements OnInit {
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
                 const response = {
-                  ...this.db.updateStudent(studentTrimmed)
+                  ...this.dbService.updateStudent(studentTrimmed),
                 };
                 if (response.success === true) {
                   navTransition.then(() => {
                     options = {
                       header: 'Success!',
-                      message: `${opts.firstName} ${opts.lastName} record was edited.`
+                      message: `${opts.firstName} ${opts.lastName} record was edited.`,
                     };
                     this.showAdvancedAlert(options);
                   });
                 } else {
                   options = {
                     header: 'Error',
-                    message: `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`
+                    message: `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`,
                   };
                   navTransition.then(() => this.showAdvancedAlert(options));
                 }
                 return false;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
         alert.present();
       }
     }
   }
 
-  private validatePicture(opts: { gender: string, picture: string }) {
+  public validatePicture(opts: { gender: string; picture: string }) {
     if (opts.gender === 'male' && opts.picture === '') {
       opts.picture = './assets/profilePics/defaultMale.png';
     } else if (opts.gender === 'female' && opts.picture === '') {
@@ -405,11 +407,11 @@ export class EditPage implements OnInit {
     return opts.picture;
   }
 
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
+  public async showSimpleAlert(options: ISimpleAlertOptions) {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: options.buttons
+      buttons: options.buttons,
     });
     alert.present();
   }
@@ -418,24 +420,24 @@ export class EditPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header: options.header,
       message: options.message,
-      buttons: [{
-        text: 'OK',
-        handler: () => {
-          // user has clicked the alert button
-          // begin the alert's dismiss transition
-          alert.dismiss()
-            .then(() => {
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            // user has clicked the alert button
+            // begin the alert's dismiss transition
+            alert.dismiss().then(() => {
               if (options['event'] === 'delete') {
                 this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
               } else {
                 this.modalCtrl.dismiss();
               }
             });
-          return false;
-        }
-      }]
+            return false;
+          },
+        },
+      ],
     });
     alert.present();
   }
-
 }

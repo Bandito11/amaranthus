@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IStudent } from '../common/models';
-import {  ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { handleError } from '../common/handleError';
@@ -15,7 +15,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-
   picture;
   gender = 'male';
   isActive = false;
@@ -25,7 +24,7 @@ export class ProfilePage implements OnInit {
   htmlControls = {
     title: '',
     buttons: {
-      edit: ''
+      edit: '',
     },
     name: '',
     address: '',
@@ -38,21 +37,21 @@ export class ProfilePage implements OnInit {
     mother: '',
     emergency: {
       title: '',
-      relationship: ''
+      relationship: '',
     },
     active: '',
     inactive: '',
     notes: {
       title: '',
       date: '',
-      notes: ''
-    }
+      notes: '',
+    },
   };
   LANGUAGE = {
     english: {
       title: `'s Profile`,
       buttons: {
-        edit: 'Edit'
+        edit: 'Edit',
       },
       name: 'Name: ',
       address: 'Address: ',
@@ -65,20 +64,20 @@ export class ProfilePage implements OnInit {
       mother: `Mother's Name: `,
       emergency: {
         title: 'Emergency Contact',
-        relationship: 'Relationship: '
+        relationship: 'Relationship: ',
       },
       active: '*Student is currently active on the roster.*',
       inactive: '*Student is currently inactive on the roster.*',
       notes: {
         title: 'Notes: ',
         date: 'Date: ',
-        notes: 'Notes: '
-      }
+        notes: 'Notes: ',
+      },
     },
     spanish: {
       title: `Perfil de `,
       buttons: {
-        edit: 'Editar'
+        edit: 'Editar',
       },
       name: 'Nombre: ',
       address: 'Dirección: ',
@@ -91,16 +90,16 @@ export class ProfilePage implements OnInit {
       mother: `Nombre de la madre: `,
       emergency: {
         title: 'Contacto de Emergencia',
-        relationship: 'Relación: '
+        relationship: 'Relación: ',
       },
       active: '*Estudiante esta activo en el registro*',
       inactive: '*Estudiante esta inactivo en el registro*',
       notes: {
         title: 'Notas: ',
         date: 'Fecha: ',
-        notes: 'Notas: '
-      }
-    }
+        notes: 'Notas: ',
+      },
+    },
   };
   language;
 
@@ -110,13 +109,12 @@ export class ProfilePage implements OnInit {
     private db: AmaranthusDBProvider,
     private storage: Storage,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.student = { ...this.student, id: this.route.snapshot.paramMap.get('id') };
-    this.getStudentFromDB(this.student);
+    this.getStudentFromDB(this.route.snapshot.paramMap.get('id'));
     this.getNotesFromDB(this.student.id);
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
         this.htmlControls = this.LANGUAGE[value];
@@ -128,15 +126,15 @@ export class ProfilePage implements OnInit {
   }
 
   /**
- *
- * @param id
- */
+   *
+   * @param id
+   */
   async goToEdit(id: string) {
     const modal = await this.modalCtrl.create({
       component: EditPage,
-      componentProps: { id: id }
+      componentProps: { id: id },
     });
-    modal.onWillDismiss().then(() => this.getStudentFromDB(this.student));
+    modal.onWillDismiss().then(() => this.getStudentFromDB(id));
     modal.present();
   }
 
@@ -150,7 +148,7 @@ export class ProfilePage implements OnInit {
           date = `${MONTHSLABELS[data.month]}, ${data.day} ${data.year}`;
           note = {
             note: data.notes,
-            date: date
+            date: date,
           };
           this.notes = [...this.notes, note];
         }
@@ -160,17 +158,18 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getStudentFromDB(student: IStudent) {
+  getStudentFromDB(id: string) {
     try {
-      const response = this.db.getStudentById(student);
-      if (response.success) {
-        this.isActive = response.data.isActive;
-        this.gender = response.data.gender;
-        this.picture = this.sanitizer.bypassSecurityTrustUrl(response.data.picture);
+      const student = this.db.getStudentById(id);
+      if (student) {
+        this.isActive = student.isActive;
+        this.gender = student.gender;
+        this.picture = this.sanitizer.bypassSecurityTrustUrl(student.picture);
         this.student = {
-          ...response.data,
-          gender: response.data.gender[0].toUpperCase() +
-            response.data.gender.slice(1, response.data.gender.length)
+          ...student,
+          gender:
+            student.gender[0].toUpperCase() +
+            student.gender.slice(1, student.gender.length),
         };
       }
     } catch (error) {
@@ -178,4 +177,3 @@ export class ProfilePage implements OnInit {
     }
   }
 }
-

@@ -10,11 +10,11 @@ import {
   ModalController,
   AlertController,
 } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
+import { DatabaseService } from '../services/database.service';
 
 declare const fs;
 declare const process;
@@ -124,7 +124,7 @@ export class EditEventPage implements OnInit {
     private camera: Camera,
     public platform: Platform,
     private modalCtrl: ModalController,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     private alertCtrl: AlertController,
     private file: File,
     private storage: Storage,
@@ -158,18 +158,17 @@ export class EditEventPage implements OnInit {
 
   getEventProfile(id) {
     this.studentIds = [];
-    const response = this.db.getEvent(id);
-    if (response.success) {
-      this.event = { ...response.data };
+    try {
+      this.event = this.dbService.getEvent(id);
       this.infiniteDates = this.event.infiniteDates;
-      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(response.data.logo);
-      this.logo = response.data.logo;
-      this.eventName = response.data.name;
-      this.startDate = response.data.startDate;
-      this.endDate = response.data.endDate;
-      this.studentIds = response.data.members.map((member) => member.id);
-    } else {
-      handleError(response.error);
+      this.logo = this.event.logo;
+      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+      this.eventName = this.event.name;
+      this.startDate = this.event.startDate;
+      this.endDate = this.event.endDate;
+      this.studentIds = this.event.members.map((member) => member.id);
+    } catch (error) {
+      handleError(error);
     }
   }
 
@@ -301,9 +300,9 @@ export class EditEventPage implements OnInit {
               handler: () => {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
-                const response = this.db.updateEvent(this.event);
-                if (response.success === true) {
+                try {
+                  const navTransition = alert.dismiss();
+                  this.dbService.updateEvent(this.event);
                   navTransition.then(() => {
                     const options = {
                       header: '¡Éxito!',
@@ -311,13 +310,13 @@ export class EditEventPage implements OnInit {
                     };
                     this.showAdvancedAlert(options);
                   });
-                } else {
+                } catch (error) {
                   const options = {
                     header: 'Error',
                     message:
                       'Usuario no se pudo editar. Por favor trate de nuevo.',
                   };
-                  navTransition.then(() => this.showAdvancedAlert(options));
+                  this.showAdvancedAlert(options);
                 }
                 return false;
               },
@@ -337,8 +336,8 @@ export class EditEventPage implements OnInit {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                const response = this.db.updateEvent(this.event);
-                if (response.success === true) {
+                try {
+                  this.dbService.updateEvent(this.event);
                   navTransition.then(() => {
                     const options = {
                       header: 'Success!',
@@ -346,12 +345,12 @@ export class EditEventPage implements OnInit {
                     };
                     this.showAdvancedAlert(options);
                   });
-                } else {
+                } catch (error) {
                   const options = {
                     header: 'Error',
-                    message: "User couldn't be edited. Please try again!",
+                    message: `User couldn't be edited. Please try again!`,
                   };
-                  navTransition.then(() => this.showAdvancedAlert(options));
+                  this.showAdvancedAlert(options);
                 }
                 return false;
               },
@@ -370,11 +369,11 @@ export class EditEventPage implements OnInit {
   }
 
   getStudents() {
-    const response = this.db.getAllStudents(true);
-    if (response.success) {
-      this.students = response.data;
-      this.STUDENTS = response.data;
-    } else {
+    try {
+      const students = this.dbService.getAllStudents(true);
+      this.students = students;
+      this.STUDENTS = students;
+    } catch (error) {
       this.students = [];
       this.STUDENTS = [];
     }
@@ -636,82 +635,78 @@ export class EditEventPage implements OnInit {
   }
 
   async removeEvent() {
-    try {
-      if (this.language === 'spanish') {
-        const alert = await this.alertCtrl.create({
-          header: '¡Advertencia!',
-          message: `¿Estás seguro que quieres borrar el evento ${this.eventName}?`,
-          buttons: [
-            { text: 'No' },
-            {
-              text: 'Si',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
-                const response = this.db.removeEvent(this.event);
-                if (response.success === true) {
-                  this.id = undefined;
-                  navTransition.then(() => {
-                    const opts = {
-                      header: '¡éxisto!',
-                      message: '¡El evento se borro exitosamente!',
-                      event: 'delete',
-                    };
-                    this.showAdvancedAlert(opts);
-                  });
-                } else {
-                  const options = {
-                    header: 'Error',
-                    message: response.error,
+    if (this.language === 'spanish') {
+      const alert = await this.alertCtrl.create({
+        header: '¡Advertencia!',
+        message: `¿Estás seguro que quieres borrar el evento ${this.eventName}?`,
+        buttons: [
+          { text: 'No' },
+          {
+            text: 'Si',
+            handler: () => {
+              // user has clicked the alert button
+              // begin the alert's dismiss transition
+              const navTransition = alert.dismiss();
+              try {
+                this.dbService.removeEvent(this.event);
+                this.id = undefined;
+                navTransition.then(() => {
+                  const opts = {
+                    header: '¡éxisto!',
+                    message: '¡El evento se borro exitosamente!',
+                    event: 'delete',
                   };
-                  navTransition.then(() => this.showAdvancedAlert(options));
-                }
-                return false;
-              },
+                  this.showAdvancedAlert(opts);
+                });
+              } catch (error) {
+                const options = {
+                  header: 'Error',
+                  message: error,
+                };
+                navTransition.then(() => this.showAdvancedAlert(options));
+              }
+              return false;
             },
-          ],
-        });
-        alert.present();
-      } else {
-        const alert = await this.alertCtrl.create({
-          header: 'Warning!',
-          message: `Are you sure you want to delete ${this.eventName} event?`,
-          buttons: [
-            { text: 'No' },
-            {
-              text: 'Yes',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
-                const response = this.db.removeEvent(this.event);
-                if (response.success === true) {
-                  this.id = undefined;
-                  navTransition.then(() => {
-                    const opts = {
-                      header: 'Success!',
-                      message: 'Event was removed successfully!',
-                      event: 'delete',
-                    };
-                    this.showAdvancedAlert(opts);
-                  });
-                } else {
-                  const options = {
-                    header: 'Error',
-                    message: response.error,
+          },
+        ],
+      });
+      alert.present();
+    } else {
+      const alert = await this.alertCtrl.create({
+        header: 'Warning!',
+        message: `Are you sure you want to delete ${this.eventName} event?`,
+        buttons: [
+          { text: 'No' },
+          {
+            text: 'Yes',
+            handler: () => {
+              // user has clicked the alert button
+              // begin the alert's dismiss transition
+              const navTransition = alert.dismiss();
+              try {
+                this.dbService.removeEvent(this.event);
+                this.id = undefined;
+                navTransition.then(() => {
+                  const opts = {
+                    header: 'Success!',
+                    message: 'Event was removed successfully!',
+                    event: 'delete',
                   };
-                  navTransition.then(() => this.showAdvancedAlert(options));
-                }
-                return false;
-              },
+                  this.showAdvancedAlert(opts);
+                });
+              } catch (error) {
+                const options = {
+                  header: 'Error',
+                  message: error,
+                };
+                navTransition.then(() => this.showAdvancedAlert(options));
+              }
+              return false;
             },
-          ],
-        });
-        alert.present();
-      }
-    } catch (error) {
-      handleError(error);
+          },
+        ],
+      });
+      alert.present();
     }
   }
 }

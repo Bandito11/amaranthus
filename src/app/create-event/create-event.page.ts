@@ -6,7 +6,6 @@ import {
   ModalController,
   AlertController,
 } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { addZeroInFront } from '../common/validation';
 import { handleError } from '../common/handleError';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
@@ -14,6 +13,7 @@ import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DatabaseService } from '../services/database.service';
 
 declare const fs;
 declare const process;
@@ -118,7 +118,7 @@ export class CreateEventPage implements OnInit {
     public camera: Camera,
     public platform: Platform,
     public modalCtrl: ModalController,
-    public db: AmaranthusDBProvider,
+    public dbService: DatabaseService,
     public alertCtrl: AlertController,
     private file: File,
     private storage: Storage,
@@ -347,8 +347,8 @@ export class CreateEventPage implements OnInit {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                const response = this.db.insertEvent(newEvent);
-                if (response.success === true) {
+                try {
+                  this.dbService.insertEvent(newEvent);
                   navTransition.then(() => {
                     const options = {
                       header: '¡Éxito!',
@@ -356,7 +356,7 @@ export class CreateEventPage implements OnInit {
                     };
                     this.showAdvancedAlert(options, false);
                   });
-                } else {
+                } catch (error) {
                   const options = {
                     header: 'Error',
                     message: 'Evento ya existe.',
@@ -381,8 +381,8 @@ export class CreateEventPage implements OnInit {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                const response = this.db.insertEvent(newEvent);
-                if (response.success === true) {
+                try {
+                  this.dbService.insertEvent(newEvent);
                   navTransition.then(() => {
                     const options = {
                       header: 'Success!',
@@ -390,7 +390,7 @@ export class CreateEventPage implements OnInit {
                     };
                     this.showAdvancedAlert(options, false);
                   });
-                } else {
+                } catch (error) {
                   const options = {
                     header: 'Error',
                     message: 'Event already exits! ',
@@ -414,11 +414,11 @@ export class CreateEventPage implements OnInit {
   }
 
   getStudents() {
-    const response = this.db.getAllStudents(true);
-    if (response.success) {
-      this.students = response.data;
-      this.STUDENTS = response.data;
-    } else {
+    try {
+      const students = this.dbService.getAllStudents(true);
+      this.students = students;
+      this.STUDENTS = students;
+    } catch (error) {
       this.students = [];
       this.STUDENTS = [];
     }

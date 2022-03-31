@@ -234,7 +234,7 @@ export class CreatePage implements OnInit {
                 } catch (error) {
                   const errorMsg = {
                     header: 'Error',
-                    message: error,
+                    message: `Se alcanzó el límite de 10 personas en la base de datos. Si desea deshacerse de este límite, ¡considere comprar la aplicación!`,
                   };
                   navTransition.then(() => this.showAdvancedAlert(errorMsg));
                   this.generateId();
@@ -270,7 +270,7 @@ export class CreatePage implements OnInit {
                 } catch (error) {
                   const errorMsg = {
                     header: 'Error',
-                    message: error,
+                    message: `Reached the limit of 10 persons in database. If you want to get rid of this limit, please consider buying the app!`,
                   };
                   await alert.dismiss();
                   this.showAdvancedAlert(errorMsg);

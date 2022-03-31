@@ -1,13 +1,12 @@
 import { MESESLABELS, DIASHEADER } from './../common/constants';
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
+import { IRecord, ICalendar } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { filterStudentsList } from 'src/app/common/search';
-import { AlertController } from '@ionic/angular';
-import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-calendar',
@@ -74,8 +73,8 @@ export class CalendarPage {
 
   constructor(
     private route: ActivatedRoute,
-    private db: AmaranthusDBProvider,
-    private storage: Storage
+    private storage: Storage,
+    private db: DatabaseService
   ) {}
 
   ionViewWillEnter() {
@@ -113,27 +112,23 @@ export class CalendarPage {
     this.students = [];
     this.unfilteredStudents = [];
     try {
-      const response = this.db.getStudentsRecordsByDate({
+      const records = this.db.getStudentsRecordsByDate({
         date: date,
         event: this.event,
       });
-      if (response.success === true) {
-        if (this.studentIds.length > 0) {
-          let list = [];
-          for (const id of this.studentIds) {
-            const found = response.data.find((student) => id === student.id);
-            if (found) {
-              list = [...list, found];
-            }
+      if (this.studentIds.length > 0) {
+        let list = [];
+        for (const id of this.studentIds) {
+          const found = records.find((student) => id === student.id);
+          if (found) {
+            list = [...list, found];
           }
-          this.students = list;
-          this.unfilteredStudents = list;
-        } else {
-          this.students = response.data;
-          this.unfilteredStudents = response.data;
         }
+        this.students = list;
+        this.unfilteredStudents = list;
       } else {
-        handleError(response.error);
+        this.students = records;
+        this.unfilteredStudents = records;
       }
     } catch (error) {
       handleError(error);

@@ -303,58 +303,29 @@ export class AmaranthusDBProvider {
   }
 
   insertEvent(event: IEvent) {
-    let response: IResponse<null> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
-    try {
-      const formattedEvent = trimEvent(event);
-      const exists = eventsColl.findOne({
-        name: event.name,
-      });
-      if (!exists) {
-        eventsColl.insert(formattedEvent);
-        response = { ...response, success: true };
-      }
-      return response;
-    } catch (error) {
-      response = { ...response, error: error };
-      return response;
+    const formattedEvent = trimEvent(event);
+    const exists = eventsColl.findOne({
+      name: event.name,
+    });
+    if (!exists) {
+      eventsColl.insert(formattedEvent);
     }
   }
 
   updateEvent(event) {
-    const response = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
     try {
-      const results: any = eventsColl.get(event.$loki);
+      const results = eventsColl.get(event.$loki);
       if (results) {
         eventsColl.update(event);
-        return {
-          ...response,
-          success: true,
-        };
       } else {
-        throw new Error("User doesn't exist on Database");
+        throw new Error(`User doesn't exist on Database`);
       }
     } catch (error) {
-      return {
-        ...response,
-        error: error,
-      };
+      throw new Error(error);
     }
   }
 
   removeEvent(event: IEvent) {
-    const response: IResponse<null> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
     try {
       const results = eventsColl.get(event['$loki']);
       eventsColl.remove(results);
@@ -362,9 +333,8 @@ export class AmaranthusDBProvider {
         event: results.name,
       });
       records.forEach((record) => recordsColl.remove(record));
-      return { ...response, success: true };
     } catch (error) {
-      return { ...response, error: error };
+      throw new Error(error);
     }
   }
 
@@ -398,32 +368,8 @@ export class AmaranthusDBProvider {
   }
 
   getEvent(id) {
-    let response: IResponse<IEvent> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
-    try {
-      const results = eventsColl.get(id);
-      if (results) {
-        response = {
-          ...response,
-          success: true,
-          data: results,
-        };
-      } else {
-        throw new Error(
-          `Couldn't find any members participating in this event.`
-        );
-      }
-      return response;
-    } catch (error) {
-      response = {
-        ...response,
-        error: error,
-      };
-      return response;
-    }
+    const results = eventsColl.get(id);
+    return results;
   }
 
   checkIfStudentExists(opts: { id: string }) {
@@ -455,22 +401,19 @@ export class AmaranthusDBProvider {
     }
   }
 
-  insertStudent(student: IStudent) {
-    new Promise(() => {
-      if (studentsColl.data.length > 9) {
-        this.storage.get('boughtMasterKey').then((boughtMasterKey) => {
-          if (boughtMasterKey === true) {
-            this.insertStudentIntoDB(student);
-          } else {
-            throw new Error(
-              `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`
-            );
-          }
-        });
-      } else {
+  async insertStudent(student: IStudent) {
+    if (studentsColl.data.length > 9) {
+      const boughtMasterKey = await this.storage.get('boughtMasterKey');
+      if (boughtMasterKey === true) {
         this.insertStudentIntoDB(student);
+      } else {
+        throw new Error(
+          `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`
+        );
       }
-    });
+    } else {
+      this.insertStudentIntoDB(student);
+    }
   }
 
   updateStudent(student: IStudent): IResponse<null> {
@@ -690,39 +633,13 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getStudentById(student: IStudent): IResponse<IStudent> {
-    let response: IResponse<IStudent> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
-    try {
-      const results = studentsColl.findOne({
-        id: {
-          $eq: student.id,
-        },
-      });
-      if (results) {
-        response = {
-          ...response,
-          success: true,
-          error: null,
-          data: results,
-          // data: studentFound
-        };
-      }
-      return response;
-    } catch (error) {
-      // tslint:disable-next-line: no-shadowed-variable
-      const response = {
-        success: false,
-        error: error,
-        data: undefined,
-      };
-      if (studentsColl) {
-        return response;
-      }
-    }
+  getStudentById(id: string): IStudent {
+    const results = studentsColl.findOne({
+      id: {
+        $eq: id,
+      },
+    });
+    return results;
   }
 
   getQueriedRecords(opts: {
@@ -757,136 +674,110 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getStudentsRecordsByDate(opts: {
-    date: ICalendar;
-    event?: string;
-  }): IResponse<IRecord[]> {
-    let response = {
-      success: true,
-      error: null,
-      data: [],
-      event: null,
-    };
-    try {
-      const students = studentsColl.find({
-        isActive: {
-          $eq: true,
-        },
-      });
+  getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
+    const students = studentsColl.find({
+      isActive: {
+        $eq: true,
+      },
+    });
+    const records: IRecord[] = students.map((student: IStudent) => {
       let studentRecord;
       let record;
-      students.map((student: IStudent) => {
-        studentRecord = null;
-        record = null;
-        if (opts['event']) {
-          record = recordsColl.findOne({
-            id: {
-              $eq: student.id,
-            },
-            year: {
-              $eq: opts.date.year,
-            },
-            month: {
-              $eq: opts.date.month,
-            },
-            day: {
-              $eq: opts.date.day,
-            },
-            event: {
-              $eq: opts.event,
-            },
-          });
-        } else if (opts.hasOwnProperty('event')) {
-          record = recordsColl.findOne({
-            id: {
-              $eq: student.id,
-            },
-            year: {
-              $eq: opts.date.year,
-            },
-            month: {
-              $eq: opts.date.month,
-            },
-            day: {
-              $eq: opts.date.day,
-            },
-            event: {
-              $eq: '',
-            },
-          });
-        } else {
-          record = recordsColl.findOne({
-            id: {
-              $eq: student.id,
-            },
-            year: {
-              $eq: opts.date.year,
-            },
-            month: {
-              $eq: opts.date.month,
-            },
-            day: {
-              $eq: opts.date.day,
-            },
-          });
-        }
-        const noteDate = {
-          ...opts.date,
-          month: opts.date.month - 1,
-        };
-        const noteResponse = this.getNoteByDate({
-          id: student.id,
-          date: noteDate,
-          event: opts.event,
+      if (opts['event']) {
+        record = recordsColl.findOne({
+          id: {
+            $eq: student.id,
+          },
+          year: {
+            $eq: opts.date.year,
+          },
+          month: {
+            $eq: opts.date.month,
+          },
+          day: {
+            $eq: opts.date.day,
+          },
+          event: {
+            $eq: opts.event,
+          },
         });
-        if (noteResponse.success) {
-          studentRecord = { notes: noteResponse.data.notes };
-        } else {
-          studentRecord = { notes: '' };
-        }
-        if (record) {
-          if (student.id === record.id) {
-            studentRecord = {
-              ...studentRecord,
-              firstName: student.firstName,
-              lastName: student.lastName,
-              fullName: `${student.firstName} ${student.lastName}`,
-              picture: student.picture,
-              attendance: record.attendance,
-              absence: record.absence,
-              id: student.id,
-            };
-            response = {
-              ...response,
-              data: [...response.data, studentRecord],
-            };
-          }
-        } else {
+      } else if (opts.hasOwnProperty('event')) {
+        record = recordsColl.findOne({
+          id: {
+            $eq: student.id,
+          },
+          year: {
+            $eq: opts.date.year,
+          },
+          month: {
+            $eq: opts.date.month,
+          },
+          day: {
+            $eq: opts.date.day,
+          },
+          event: {
+            $eq: '',
+          },
+        });
+      } else {
+        record = recordsColl.findOne({
+          id: {
+            $eq: student.id,
+          },
+          year: {
+            $eq: opts.date.year,
+          },
+          month: {
+            $eq: opts.date.month,
+          },
+          day: {
+            $eq: opts.date.day,
+          },
+        });
+      }
+      const noteDate = {
+        ...opts.date,
+        month: opts.date.month - 1,
+      };
+      const noteResponse = this.getNoteByDate({
+        id: student.id,
+        date: noteDate,
+        event: opts.event,
+      });
+      if (noteResponse.success) {
+        studentRecord = { notes: noteResponse.data.notes };
+      } else {
+        studentRecord = { notes: '' };
+      }
+      if (record) {
+        if (student.id === record.id) {
           studentRecord = {
             ...studentRecord,
             firstName: student.firstName,
             lastName: student.lastName,
             fullName: `${student.firstName} ${student.lastName}`,
             picture: student.picture,
-            attendance: false,
-            absence: false,
+            attendance: record.attendance,
+            absence: record.absence,
             id: student.id,
           };
-          response = {
-            ...response,
-            data: [...response.data, studentRecord],
-          };
+          return studentRecord;
         }
-      });
-      return response;
-    } catch (error) {
-      if (studentsColl) {
-        return error;
+      } else {
+        studentRecord = {
+          ...studentRecord,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          fullName: `${student.firstName} ${student.lastName}`,
+          picture: student.picture,
+          attendance: false,
+          absence: false,
+          id: student.id,
+        };
+        return studentRecord;
       }
-      if (recordsColl) {
-        return error;
-      }
-    }
+    });
+    return records;
   }
 
   getAllStudentsRecords(opts: {
@@ -1078,35 +969,18 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getAllStudents(event?: boolean): IResponse<IStudent[]> {
-    let response: IResponse<IStudent[]> = {
-      success: false,
-      error: null,
-      data: [],
-    };
-    try {
-      let students;
-      if (event) {
-        students = studentsColl.find({
-          isActive: {
-            $eq: true,
-          },
-        });
-      } else {
-        students = studentsColl.data;
-      }
-      response = {
-        ...response,
-        success: true,
-        data: [...students],
-      };
-      return response;
-    } catch (error) {
-      if (!studentsColl) {
-        response.error = error;
-        return response;
-      }
+  getAllStudents(event?: boolean): IStudent[] {
+    let students;
+    if (event) {
+      students = studentsColl.find({
+        isActive: {
+          $eq: true,
+        },
+      });
+    } else {
+      students = studentsColl.data;
     }
+    return students;
   }
 
   getQueriedRecordsByDate(opts: {
@@ -1183,72 +1057,59 @@ export class AmaranthusDBProvider {
     year: number;
     month: number;
   }): IRecord {
-    let response: IRecord;
-    try {
-      let recordQuery;
-      if (opts['event']) {
-        recordQuery = recordsColl.findOne({
-          id: {
-            $eq: opts.studentId,
-          },
-          year: {
-            $eq: opts.year,
-          },
-          day: {
-            $eq: opts.day,
-          },
-          month: {
-            $eq: opts.month,
-          },
-          event: {
-            $eq: opts.event,
-          },
-        });
-      } else if (opts.hasOwnProperty('event')) {
-        recordQuery = recordsColl.findOne({
-          id: {
-            $eq: opts.studentId,
-          },
-          year: {
-            $eq: opts.year,
-          },
-          day: {
-            $eq: opts.day,
-          },
-          month: {
-            $eq: opts.month,
-          },
-          event: {
-            $eq: '',
-          },
-        });
-      } else {
-        recordQuery = recordsColl.findOne({
-          id: {
-            $eq: opts.studentId,
-          },
-          year: {
-            $eq: opts.year,
-          },
-          day: {
-            $eq: opts.day,
-          },
-          month: {
-            $eq: opts.month,
-          },
-        });
-      }
-      if (recordQuery) {
-        response = recordQuery;
-        return response;
-      }
-      return null;
-    } catch (error) {
-      if (recordsColl) {
-        setTimeout(() => this.getQueriedRecordsByCurrentDate(opts), 5000);
-      } else {
-        return null;
-      }
+    let recordQuery;
+    if (opts['event']) {
+      recordQuery = recordsColl.findOne({
+        id: {
+          $eq: opts.studentId,
+        },
+        year: {
+          $eq: opts.year,
+        },
+        day: {
+          $eq: opts.day,
+        },
+        month: {
+          $eq: opts.month,
+        },
+        event: {
+          $eq: opts.event,
+        },
+      });
+    } else if (opts.hasOwnProperty('event')) {
+      recordQuery = recordsColl.findOne({
+        id: {
+          $eq: opts.studentId,
+        },
+        year: {
+          $eq: opts.year,
+        },
+        day: {
+          $eq: opts.day,
+        },
+        month: {
+          $eq: opts.month,
+        },
+        event: {
+          $eq: '',
+        },
+      });
+    } else {
+      recordQuery = recordsColl.findOne({
+        id: {
+          $eq: opts.studentId,
+        },
+        year: {
+          $eq: opts.year,
+        },
+        day: {
+          $eq: opts.day,
+        },
+        month: {
+          $eq: opts.month,
+        },
+      });
     }
+    return recordQuery;
   }
 }
