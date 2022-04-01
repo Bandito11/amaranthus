@@ -12,7 +12,6 @@ import {
 import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
-import { dateToISO } from 'src/app/common/utils';
 
 /**
  * Collections use on db
