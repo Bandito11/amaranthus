@@ -233,6 +233,7 @@ export class StatsPage implements OnInit {
       });
       if (records['length']) {
         this.students = [...records];
+        this.monthQuery = this.months[date.month - 1];
       }
     } catch (error) {
       handleError(error);
