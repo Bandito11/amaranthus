@@ -1,0 +1,24 @@
+#user-item {
+  .attended {
+    color: rgb(230, 164, 164);
+    margin-top: 15px;
+  }
+  ion-buttons {
+    margin-top: 15px;
+  }
+
+  .note {
+    padding: 15px;
+  }
+
+  .label {
+    font-weight: bolder;
+  }
+
+  textarea {
+    width: 100%;
+  }
+  .top {
+    padding-top: 5px;
+  }
+}

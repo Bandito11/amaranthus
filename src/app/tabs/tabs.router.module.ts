@@ -12,94 +12,116 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: () => import('../home/home.module').then(m => m.HomePageModule)
+            loadChildren: () =>
+              import('../home/home.module').then((m) => m.HomePageModule),
           },
           {
             path: 'profile/:id',
-            loadChildren: () => import('../profile/profile.module').then(m => m.ProfilePageModule)
+            loadChildren: () =>
+              import('../profile/profile.module').then(
+                (m) => m.ProfilePageModule
+              ),
           },
           {
             path: 'events',
             children: [
               {
                 path: '',
-                loadChildren: () => import('../events/events.module').then(m => m.EventsPageModule)
+                loadChildren: () =>
+                  import('../events/events.module').then(
+                    (m) => m.EventsPageModule
+                  ),
               },
               {
                 path: 'profile/:id',
                 children: [
                   {
                     path: '',
-                    loadChildren: () => import('../eventprofile/eventprofile.module').then(m => m.EventProfilePageModule)
+                    loadChildren: () =>
+                      import('../eventprofile/eventprofile.module').then(
+                        (m) => m.EventProfilePageModule
+                      ),
                   },
                   {
                     path: 'calendar/:event/:ids',
-                    loadChildren: () => import('../calendar/calendar.module').then(m => m.CalendarPageModule)
+                    loadChildren: () =>
+                      import('../calendar/calendar.module').then(
+                        (m) => m.CalendarPageModule
+                      ),
                   },
                   {
                     path: 'stats/:event/:ids',
-                    loadChildren: () => import('../stats/stats.module').then(m => m.StatsPageModule)
+                    loadChildren: () =>
+                      import('../stats/stats.module').then(
+                        (m) => m.StatsPageModule
+                      ),
                   },
-                ]
-              }
-            ]
-          }
-        ]
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         path: 'calendar',
         children: [
           {
             path: '',
-            loadChildren: () => import('../calendar/calendar.module').then(m => m.CalendarPageModule)
-          }
-        ]
+            loadChildren: () =>
+              import('../calendar/calendar.module').then(
+                (m) => m.CalendarPageModule
+              ),
+          },
+        ],
       },
       {
         path: 'stats',
         children: [
           {
             path: '',
-            loadChildren: () => import('../stats/stats.module').then(m => m.StatsPageModule)
-          }
-        ]
+            loadChildren: () =>
+              import('../stats/stats.module').then((m) => m.StatsPageModule),
+          },
+        ],
       },
       {
         path: 'login',
         children: [
           {
             path: '',
-            loadChildren: () => import('../login/login.module').then(m => m.LoginPageModule)
-          }
-        ]
+            loadChildren: () =>
+              import('../login/login.module').then((m) => m.LoginPageModule),
+          },
+        ],
       },
       {
         path: 'settings',
         children: [
           {
             path: '',
-            loadChildren: () => import('../settings/settings.module').then(m => m.SettingsPageModule)
-          }
-        ]
+            loadChildren: () =>
+              import('../settings/settings.module').then(
+                (m) => m.SettingsPageModule
+              ),
+          },
+        ],
       },
       {
         path: '',
         redirectTo: 'tabs/home',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+    ],
   },
   {
     path: '',
     redirectTo: 'tabs/home',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TabsPageRoutingModule { }
+export class TabsPageRoutingModule {}

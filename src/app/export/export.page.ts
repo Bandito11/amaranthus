@@ -1,10 +1,10 @@
-import { AmaranthusDBProvider } from './../services/amaranthus-db/amaranthus-db';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
 import { LoadingController, ModalController, Platform } from '@ionic/angular';
-import { CSVProvider } from '../services/csv/csv';
-import { TextTabDelimitedProvider } from '../services/text-tab-delimited/text-tab-delimited';
-import { FileProvider } from '../services/file/file';
-import { XLSXProvider } from '../services/xslx/xslx';
+import { CSVProvider } from '../providers/csv/csv';
+import { TextTabDelimitedProvider } from '../providers/text-tab-delimited/text-tab-delimited';
+import { FileProvider } from '../providers/file/file';
+import { XLSXProvider } from '../providers/xslx/xslx';
 import { recordType } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { ActivatedRoute } from '@angular/router';
@@ -18,11 +18,10 @@ import { Storage } from '@ionic/storage';
   styleUrls: ['./export.page.scss'],
 })
 export class ExportPage {
-
   language;
   htmlControls = {
     toolbar: {
-      title: ''
+      title: '',
     },
     header: '',
     month: '',
@@ -30,12 +29,12 @@ export class ExportPage {
     date: '',
     texttab: '',
     csv: '',
-    xlsx: ''
+    xlsx: '',
   };
   LANGUAGE = {
     spanish: {
       toolbar: {
-        title: 'Exportar'
+        title: 'Exportar',
       },
       header: 'Escoje la fecha',
       month: 'Por mes: ',
@@ -43,11 +42,11 @@ export class ExportPage {
       date: 'Fecha: ',
       texttab: 'Exportar como texto delimitado',
       csv: 'Exportar como CSV',
-      xlsx: 'Exportar como XLSX'
+      xlsx: 'Exportar como XLSX',
     },
     english: {
       toolbar: {
-        title: 'Export'
+        title: 'Export',
       },
       header: 'Choose date',
       month: 'By month: ',
@@ -55,8 +54,8 @@ export class ExportPage {
       date: 'Date',
       texttab: 'Export as Text Tab Delimited',
       csv: 'Export as CSV',
-      xlsx: 'Export as XLSX'
-    }
+      xlsx: 'Export as XLSX',
+    },
   };
   students = [];
   event;
@@ -75,10 +74,10 @@ export class ExportPage {
     private route: ActivatedRoute,
     private storage: Storage,
     private platform: Platform
-  ) { }
+  ) {}
 
   ionViewWillEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
         this.language = value;
@@ -88,17 +87,19 @@ export class ExportPage {
       }
     });
     const date = new Date();
-    this.date = `${date.getFullYear()}-${addZeroInFront(date.getMonth() + 1)}-${addZeroInFront(date.getDate())}`;
+    this.date = `${date.getFullYear()}-${addZeroInFront(
+      date.getMonth() + 1
+    )}-${addZeroInFront(date.getDate())}`;
     if (!this.event) {
       this.event = '';
     }
   }
 
   /**
- *
- *
- * @memberof ExportPage
- */
+   *
+   *
+   * @memberof ExportPage
+   */
   async exportAsXLSX() {
     let xlsxResponse;
     let message = 'Creating the File...';
@@ -111,31 +112,40 @@ export class ExportPage {
       message = 'Creando el archivo...';
     }
     const loading = await this.loading.create({
-      message: message
+      message: message,
     });
     loading.present();
     try {
       if (this.month) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.month, records: this.students, fileName: fileName });
+        xlsxResponse = this.xlsx.exportXLSXToFile({
+          type: recordType.month,
+          records: this.students,
+          fileName: fileName,
+        });
       }
       if (this.day) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({ type: recordType.day, records: this.students, fileName: fileName });
+        xlsxResponse = this.xlsx.exportXLSXToFile({
+          type: recordType.day,
+          records: this.students,
+          fileName: fileName,
+        });
       }
       if (xlsxResponse.success) {
         if (!this.platform.is('desktop')) {
           try {
             const fileResponse = await this.file.exportFile({
               fileName: fileName,
-              text: xlsxResponse.data,
-              type: 'xlsx'
+              data: xlsxResponse.data,
+              type: 'xlsx',
             });
             loading.dismiss();
-            if (fileResponse.success) {
-              this.modal.dismiss(fileResponse.data);
-            } else {
-              this.modal.dismiss(fileResponse.error);
-            }
-          } catch (error) { // If FileProvider err
+            // if (fileResponse.success) {
+            //   this.modal.dismiss(fileResponse.data);
+            // } else {
+            //   this.modal.dismiss(fileResponse.error);
+            // }
+          } catch (error) {
+            // If FileProvider err
             loading.dismiss();
             this.modal.dismiss(error);
           }
@@ -147,21 +157,26 @@ export class ExportPage {
         loading.dismiss();
         this.modal.dismiss(xlsxResponse.error);
       }
-    } catch (error) { // If XLSX Provider err
+    } catch (error) {
+      // If XLSX Provider err
       loading.dismiss();
       if (this.language === 'spanish') {
-        this.modal.dismiss('Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!');
+        this.modal.dismiss(
+          'Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!'
+        );
       } else {
-        this.modal.dismiss('There was an error while creating the file. Please try again later!');
+        this.modal.dismiss(
+          'There was an error while creating the file. Please try again later!'
+        );
       }
     }
   }
 
   /**
- *
- *
- * @memberof ExportPage
- */
+   *
+   *
+   * @memberof ExportPage
+   */
   async exportAsText() {
     let textTabResponse;
     if (this.month) {
@@ -174,36 +189,40 @@ export class ExportPage {
       message = 'Creando el archivo...';
     }
     const loading = await this.loading.create({
-      message: message
+      message: message,
     });
     loading.present();
     try {
       if (this.month) {
-        textTabResponse = await this.textTab.exportTextTabDelimited({ type: recordType.month, records: this.students });
+        textTabResponse = await this.textTab.exportTextTabDelimited({
+          type: recordType.month,
+          records: this.students,
+        });
       }
       if (this.day) {
-        textTabResponse = await this.textTab.exportTextTabDelimited({ type: recordType.day, records: this.students });
+        textTabResponse = await this.textTab.exportTextTabDelimited({
+          type: recordType.day,
+          records: this.students,
+        });
       }
       if (textTabResponse.success) {
         try {
-          const fileResponse = await this.file.exportFile({
+          await this.file.exportFile({
             fileName: fileName,
-            text: textTabResponse.data,
-            type: 'txt'
+            data: textTabResponse.data,
+            type: 'txt',
           });
           loading.dismiss();
-          if (fileResponse.success) {
-            this.modal.dismiss(fileResponse.data);
-          } else {
-            this.modal.dismiss(fileResponse.error);
-          }
-        } catch (error) { // If FileProvider err
+          //TODO: Implement a message when it fails
+          this.modal.dismiss('');
+        } catch (error) {
+          // If FileProvider err
           loading.dismiss();
           this.modal.dismiss(error);
         }
-
       }
-    } catch (error) { // If TextTabDelimited Provider err
+    } catch (error) {
+      // If TextTabDelimited Provider err
       loading.dismiss();
       this.modal.dismiss(error.error);
     }
@@ -226,49 +245,52 @@ export class ExportPage {
       message = 'Creando el archivo...';
     }
     const loading = await this.loading.create({
-      message: message
+      message: message,
     });
     loading.present();
     try {
       if (this.month) {
-        csvResponse = await this.csv.exportCSV({ type: recordType.month, records: this.students });
+        csvResponse = await this.csv.exportCSV({
+          type: recordType.month,
+          records: this.students,
+        });
       }
       if (this.day) {
-        csvResponse = await this.csv.exportCSV({ type: recordType.day, records: this.students });
+        csvResponse = await this.csv.exportCSV({
+          type: recordType.day,
+          records: this.students,
+        });
       }
       if (csvResponse.success) {
         try {
-          const fileResponse = await this.file.exportFile({
+          await this.file.exportFile({
             fileName: fileName,
-            text: csvResponse.data,
-            type: 'csv'
+            data: csvResponse.data,
+            type: 'csv',
           });
-          loading.dismiss();
-          if (fileResponse.success) {
-            this.modal.dismiss(fileResponse.data);
-          } else {
-            this.modal.dismiss(fileResponse.error);
-          }
-        } catch (error) { // If FileProvider err
+          await loading.dismiss();
+          //TODO: Dismiss the modal once the file finishes saving
+          this.modal.dismiss('');
+        } catch (error) {
+          // If FileProvider err
           loading.dismiss();
           this.modal.dismiss(error);
         }
-
       }
-    } catch (error) { // If CSV Provider err
+    } catch (error) {
+      // If CSV Provider err
       loading.dismiss();
       this.modal.dismiss(error.error);
     }
   }
 
-
   /**
-*
-*
-* @memberof StatsPage
-* Query can have values of Date
-*/
-  getRecordsByDate(opts: { query: string, date: string }) {
+   *
+   *
+   * @memberof StatsPage
+   * Query can have values of Date
+   */
+  getRecordsByDate(opts: { query: string; date: string }) {
     try {
       const dateVal = opts.date.split('-');
       let date: ICalendar;
@@ -276,26 +298,29 @@ export class ExportPage {
         date = {
           year: parseInt(dateVal[0]),
           month: parseInt(dateVal[1]),
-          day: null
+          day: null,
         };
       } else {
         date = {
           year: parseInt(dateVal[0]),
           month: parseInt(dateVal[1]),
-          day: parseInt(dateVal[2])
+          day: parseInt(dateVal[2]),
         };
       }
-      const response = this.db.getQueriedRecords({ event: this.event, query: opts.query, date: date });
-      if (response.success === true) {
-        this.students = [...response.data];
+      const records = this.db.getQueriedRecords({
+        event: this.event,
+        query: opts.query,
+        date: date,
+      });
+      if (records['length']) {
+        this.students = [...records];
       } else {
         // TODO:  implement an alert message if it fails message should say no students
         // can be retrieved.
-        handleError(response.error);
+        handleError(`No records were found`);
       }
     } catch (error) {
       handleError(error);
     }
   }
-
 }

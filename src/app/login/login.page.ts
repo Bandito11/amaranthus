@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { AlertController, NavController, ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../services/amaranthus-db/amaranthus-db';
 import { ISimpleAlertOptions } from '../common/models';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-login',
@@ -55,7 +55,7 @@ export class LoginPage {
 
   constructor(
     private alertCtrl: AlertController,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     public navCtrl: NavController,
     private modalCtrl: ModalController,
     private storage: Storage
@@ -164,20 +164,20 @@ export class LoginPage {
       this.showSimpleAlert(options);
       return;
     }
-    const response = this.db.checkIfUserExists(opts);
-    if (response.success) {
+    try {
+      const user = this.dbService.checkIfUserExists(opts);
       if (this.language === 'spanish') {
         options = {
           header: '¡Éxito!',
-          message: `¡${response.data} esta presente hoy!`
+          message: `¡${user} esta presente hoy!`
         };
       } else {
         options = {
           header: 'Success!',
-          message: `${response.data} is present today!`
+          message: `${user} is present today!`
         };
       }
-    } else {
+    } catch (error) {
       if (this.language === 'spanish') {
         options = {
           header: '¡Error!',

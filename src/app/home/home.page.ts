@@ -1,13 +1,24 @@
-import { AppPurchaseProvider } from './../services/app-purchase/app-purchase';
+import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AlertController, ModalController, NavController, LoadingController, Platform } from '@ionic/angular';
+import {
+  ModalController,
+  NavController,
+  Platform,
+} from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
-import { IStudent, ICalendar, ISimpleAlertOptions, IRecord } from 'src/app/common/models';
-import { AmaranthusDBProvider } from 'src/app/services/amaranthus-db/amaranthus-db';
+import {
+  IStudent,
+  ICalendar,
+  IRecord,
+} from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
-import { sortStudentsbyId, sortStudentsName, filterStudentsList } from 'src/app/common/search';
+import {
+  sortStudentsbyId,
+  sortStudentsName,
+  filterStudentsList,
+} from 'src/app/common/search';
 import { Storage } from '@ionic/storage';
-import { stateAndroid } from '../common/constants';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-home',
@@ -15,22 +26,23 @@ import { stateAndroid } from '../common/constants';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  students: (IStudent & { attendance, absence })[];
+  @ViewChild('sort', { static: true }) sortElement;
+  @ViewChild('filter', { static: true }) filterElement;
+
+  students: (IStudent & IRecord)[];
   private unfilteredStudents: (IStudent & IRecord)[];
   selectOptions;
   filterOptions: string[];
   date: ICalendar;
   toggle;
-  timer;
   homeURL = '/tabs/tabs/home';
-  appStart: boolean;
   htmlControls = {
     toolbar: {
       title: '',
       buttons: {
         event: '',
-        add: ''
-      }
+        add: '',
+      },
     },
     sort: '',
     filter: '',
@@ -39,9 +51,9 @@ export class HomePage implements OnInit {
     attended: '',
     absence: '',
     profile: '',
-    present: ``,
-    absent: ``,
-    search: ''
+    present: '',
+    absent: '',
+    search: '',
   };
 
   language = '';
@@ -52,8 +64,8 @@ export class HomePage implements OnInit {
         title: 'Daily Attendance',
         buttons: {
           event: 'Events',
-          add: 'Add'
-        }
+          add: 'Add',
+        },
       },
       sort: 'Sort by: ',
       filter: 'Filter by: ',
@@ -64,15 +76,15 @@ export class HomePage implements OnInit {
       profile: 'Profile',
       present: `'s present today!`,
       absent: `'s absent today!`,
-      search: 'Search by ID or Name'
+      search: 'Search by ID or Name',
     },
     spanish: {
       toolbar: {
         title: 'Asistencia Diaria',
         buttons: {
           event: 'Evento',
-          add: 'Crear'
-        }
+          add: 'Crear',
+        },
       },
       sort: 'Ordenar por: ',
       filter: 'Filtrar por: ',
@@ -83,60 +95,39 @@ export class HomePage implements OnInit {
       profile: 'Perfil',
       present: ` está presente hoy.`,
       absent: ` está ausente hoy.`,
-      search: 'Buscar por ID o Nombre'
-    }
+      search: 'Buscar por ID o Nombre',
+    },
   };
-  @ViewChild('notes', {static: true}) notesElement;
-  @ViewChild('sort', {static: true}) sortElement;
-  @ViewChild('filter', {static: true}) filterElement;
 
   constructor(
-    private alertCtrl: AlertController,
-    private db: AmaranthusDBProvider,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
-    // private loadingController: LoadingController,
     private storage: Storage,
     private platform: Platform,
-    private iap: AppPurchaseProvider
-  ) { }
+    private dbService: DatabaseService
+  ) {}
 
-  ngOnInit() {
-    const bought = 'boughtMasterKey';
-    this.storage.set(bought, false);
-    if (this.platform.is('android')) {
-      this.iap.restoreAndroidPurchase().then(products => {
-        products.forEach(product => {
-          const receipt = JSON.parse(product.receipt);
-          if (product.productId === 'master.key' && stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)) {
-            this.storage.set(bought, true);
-            const options: ISimpleAlertOptions = {
-              header: 'Information',
-              message: 'Restored the purchase!',
-              buttons: ['OK']
-            };
-            this.showSimpleAlert(options);
-          }
-        });
-      });
+  async ngOnInit() {
+    //TODO: Create a way to restore purchases for mobile
+    if (
+      this.platform.is('desktop') &&
+      navigator.userAgent.match('Windows')
+    ) {
+      this.storage.set('boughtMasterKey', true);
     }
     const currentDate = new Date();
     this.date = {
       month: currentDate.getMonth(),
       day: currentDate.getDate(),
-      year: currentDate.getFullYear()
+      year: currentDate.getFullYear(),
     };
     this.students = [];
     this.unfilteredStudents = [];
     this.getStudents();
-    if (this.platform.is('desktop') && navigator.userAgent.match('Windows')) {
-      this.storage.set('boughtMasterKey', true);
-    }
   }
 
   ionViewWillEnter() {
-    this.timer = 0;
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
       } else {
@@ -160,75 +151,19 @@ export class HomePage implements OnInit {
   private async getStudents() {
     const date = {
       ...this.date,
-      month: this.date.month + 1
+      month: this.date.month + 1,
     };
     try {
-      const studentResponse = this.db.getAllActiveStudents(date);
-      if (studentResponse.success === true && studentResponse.data) {
-        this.students = studentResponse.data.filter(student => {
-          if (student.isActive) {
-            return student;
-          }
-        });
-        this.unfilteredStudents = studentResponse.data;
-      } else {
-        // const loading = await this.loadingController.create();
-        // await loading.present();
-        const studentTimeout = setTimeout(() => {
-          if (this.students.length > 0) {
-            // await loading.dismiss();
-            this.appStart = true;
-            clearTimeout(studentTimeout);
-          }
-          this.getStudents();
-          this.filterOptions = this.getFilterOptions();
-        }, 3000);
-      }
-    } catch (error) { 
+      this.students = await this.dbService.getAllActiveStudents(date);
+      this.filterOptions = this.getFilterOptions();
+    } catch (error) {
       handleError(error);
     }
   }
 
-  showNotes(id) {
-    if (this.toggle) {
-      this.toggle = '';
-    } else {
-      this.toggle = id;
-      setTimeout(() => {
-        this.notesElement.nativeElement.focus();
-      }, 0);
-    }
-  }
-
-  addNotes(opts: { id: string; notes: string }) {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      const currentDate = new Date();
-      const newNote = {
-        ...opts,
-        event: '',
-        month: currentDate.getMonth(),
-        day: currentDate.getDate(),
-        year: currentDate.getFullYear()
-      };
-      this.db.insertNotes(newNote);
-      this.updateNotes(opts);
-    }, 1000);
-  }
-
-  updateNotes(opts: { id: string; notes: string }) {
-    const index = this.students.findIndex(student => {
-      if (student.id === opts.id) {
-        return true;
-      }
-    });
-    this.students[index].notes = opts.notes;
-    this.unfilteredStudents[index].notes = opts.notes;
-  }
-
   getFilterOptions() {
     let options = [];
-    const checkIfHaveClass = this.students.filter(student => {
+    const checkIfHaveClass = this.students.filter((student) => {
       if (student.class) {
         return true;
       }
@@ -239,9 +174,25 @@ export class HomePage implements OnInit {
       }
     }
     if (this.language === 'spanish') {
-      options = [...options, 'Activo', 'Inactivo', 'Masculino', 'Femenino', 'No revelado', 'Todos'];
+      options = [
+        ...options,
+        'Activo',
+        'Inactivo',
+        'Masculino',
+        'Femenino',
+        'No revelado',
+        'Todos',
+      ];
     } else {
-      options = [...options, 'Active', 'Not Active', 'Male', 'Female', 'Undisclosed', 'All'];
+      options = [
+        ...options,
+        'Active',
+        'Not Active',
+        'Male',
+        'Female',
+        'Undisclosed',
+        'All',
+      ];
     }
     return options;
   }
@@ -253,7 +204,7 @@ export class HomePage implements OnInit {
       case 'Female':
       case 'Undisclosed':
         const gender = option.toLowerCase();
-        newQuery = this.unfilteredStudents.filter(student => {
+        newQuery = this.unfilteredStudents.filter((student) => {
           if (student.gender === gender) {
             return student;
           }
@@ -282,7 +233,7 @@ export class HomePage implements OnInit {
         this.filterByClass('Not Active');
         break;
       case 'Active':
-        newQuery = this.unfilteredStudents.filter(student => {
+        newQuery = this.unfilteredStudents.filter((student) => {
           if (student.isActive) {
             return student;
           }
@@ -290,7 +241,7 @@ export class HomePage implements OnInit {
         this.students = [...newQuery];
         break;
       case 'Not Active':
-        newQuery = this.unfilteredStudents.filter(student => {
+        newQuery = this.unfilteredStudents.filter((student) => {
           if (!student.isActive) {
             return student;
           }
@@ -301,7 +252,7 @@ export class HomePage implements OnInit {
         this.initializeStudentsList();
         break;
       default:
-        newQuery = this.unfilteredStudents.filter(student => {
+        newQuery = this.unfilteredStudents.filter((student) => {
           if (student.class === option) {
             return student;
           }
@@ -342,113 +293,20 @@ export class HomePage implements OnInit {
   }
 
   private filterStudentsList(query: string) {
-    this.students = <any>filterStudentsList({ query: query, students: this.unfilteredStudents });
-  }
-
-  addAttendance(opts: { id: string }) {
-    const response = this.db.addAttendance({ date: this.date, id: opts.id });
-    if (response.success === true) {
-      this.updateStudentAttendance({
-        id: opts.id,
-        absence: false,
-        attendance: true
-      });
-      let options;
-      if (this.language === 'spanish') {
-        options = {
-          header: 'Éxito',
-          message: '¡El estudiante se marcó presente!',
-          buttons: ['Aprobar']
-        };
-      } else {
-        options = {
-          header: 'Success!',
-          message: 'Student was marked present!',
-          buttons: ['OK']
-        };
-      }
-      this.showSimpleAlert(options);
-    } else {
-      handleError(response.error);
-    }
-  }
-
-  addAbsence(opts: { id: string }) {
-    const response = this.db.addAbsence({ date: this.date, id: opts.id });
-    if (response.success === true) {
-      let options;
-      if (this.language === 'spanish') {
-        options = {
-          header: 'Éxito',
-          message: '¡El estudiante se marcó ausente!',
-          buttons: ['Aprobar']
-        };
-      } else {
-        options = {
-          header: 'Success!',
-          message: 'Student was marked absent!',
-          buttons: ['OK']
-        };
-      }
-      this.showSimpleAlert(options);
-      this.updateStudentAttendance({
-        id: opts.id,
-        absence: true,
-        attendance: false
-      });
-    } else {
-      handleError(response.error);
-    }
-  }
-
-  private updateStudentAttendance(opts: { id: string; absence: boolean; attendance: boolean }) {
-    // const results = this.students.map(student => {
-    //   if (student.id === opts.id) {
-    //     return {
-    //       ...student,
-    //       attendance: opts.attendance,
-    //       absence: opts.absence
-    //     };
-    //   } else {
-    //     return student;
-    //   }
-    // });
-    // this.unfilteredStudents = [...results];
-    // this.students = [...results];
-    for (let i = 0; i < this.students.length; i++) {
-      if (this.students[i].id === opts.id) {
-        this.students[i].attendance = opts.attendance;
-        this.students[i].absence = opts.absence;
-        this.unfilteredStudents[i].attendance = opts.attendance;
-        this.unfilteredStudents[i].absence = opts.absence;
-
-      }
-    }
-  }
-
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl
-      .create({
-        header: options.header,
-        message: options.message,
-        buttons: options.buttons
-      });
-    alert.present();
+    this.students = <any>(
+      filterStudentsList({ query: query, students: this.unfilteredStudents })
+    );
   }
 
   async goToCreate() {
     const modal = await this.modalCtrl.create({
-      component: CreatePage
+      component: CreatePage,
     });
     modal.present();
-    modal.onDidDismiss().then(_ => {
+    modal.onDidDismiss().then((_) => {
       this.getStudents();
       this.filterOptions = this.getFilterOptions();
     });
-  }
-
-  goToProfile(id) {
-    this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
   }
 
   goToEvents() {

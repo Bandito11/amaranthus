@@ -10,6 +10,8 @@ declare const window: Window;
   styleUrls: ['./tabs.page.scss'],
 })
 export class TabsPage implements DoCheck, OnInit {
+  @ViewChild('tabBar') tabBarElement;
+
   counter = 0;
   viewIsLarge: boolean;
   pages;
@@ -46,9 +48,6 @@ export class TabsPage implements DoCheck, OnInit {
     },
   };
 
-  @ViewChild('tabBar') tabBarElement;
-
-
   constructor(public platform: Platform, public storage: Storage) {}
 
   ngOnInit() {
@@ -80,13 +79,14 @@ export class TabsPage implements DoCheck, OnInit {
       }
     });
   }
+
   ngDoCheck() {
     if (
       this.platform.is('tablet') ||
       this.platform.is('ipad') ||
       this.platform.is('desktop')
     ) {
-      this.viewIsLarge = window.matchMedia('(min-width: 768px)').matches;
+      this.viewIsLarge = window.matchMedia('(min-width: 992px)').matches;
     }
   }
 
