@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IProductGet, ISimpleAlertOptions } from '../common/models';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { LoadingController, Platform, AlertController } from '@ionic/angular';
-import { AppPurchaseProvider } from '../services/app-purchase/app-purchase';
+import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Market } from '@ionic-native/market/ngx';
 import { stateAndroid } from '../common/constants';
 import { Storage } from '@ionic/storage';
@@ -107,13 +107,12 @@ export class SettingsPage implements OnInit {
 
   constructor(
     public emailComposer: EmailComposer,
-    public loading: LoadingController,
+    public loadingController: LoadingController,
     public storage: Storage,
     public platform: Platform,
     public iap: AppPurchaseProvider,
     public alertCtrl: AlertController,
-    public loadingController: LoadingController,
-    public market: Market
+    public market: Market,
   ) {}
 
   setTextArea() {
@@ -146,7 +145,6 @@ export class SettingsPage implements OnInit {
 
   ngOnInit() {
     this.storage.get('language').then((value) => {
-      console.log(value);
       this.languages = [
         {
           language: 'english',
@@ -302,7 +300,7 @@ export class SettingsPage implements OnInit {
   }
 
   async restorePurchases() {
-    const loading = await this.loading.create({
+    const loading = await this.loadingController.create({
       message: 'Restoring Purchases!',
     });
     loading.present();
@@ -371,7 +369,7 @@ export class SettingsPage implements OnInit {
   }
 
   async buyProduct(opts: { productTitle: string; productId: string }) {
-    const loading = await this.loading.create({
+    const loading = await this.loadingController.create({
       message: `Buying ${opts.productTitle}!`,
     });
     loading.present();

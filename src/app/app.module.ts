@@ -1,6 +1,5 @@
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { CreateEventPageModule } from './create-event/create-event.module';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { EditPageModule } from './edit/edit.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,6 +19,7 @@ import { File } from '@ionic-native/file/ngx';
 import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
 import { EditEventPageModule } from './editevent/editevent.module';
 import { StatsPageModule } from './stats/stats.module';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 
 @NgModule({
     declarations: [AppComponent],

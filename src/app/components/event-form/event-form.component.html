@@ -1,0 +1,99 @@
+<div id="event-form">
+  <div *ngIf="logo" class="logo-image">
+    <img [src]="imgSrc" alt="A picture for the logo for the event" />
+  </div>
+  <div id="logo">
+    <div id="input">
+      <div *ngIf="platform.is('desktop'); else notDesktop">
+        <ion-button>
+          <input
+            id="inputFile"
+            (change)="getPicture()"
+            type="file"
+            accept="image/*"
+          />
+          {{ htmlControls.picture }}
+        </ion-button>
+      </div>
+      <ng-template #notDesktop>
+        <ion-button (click)="addLogo()" type="button" color="primary">{{
+          htmlControls.picture
+        }}</ion-button>
+      </ng-template>
+      <ion-button (click)="logo = ''" type="button" color="secondary">{{
+        htmlControls.reset
+      }}</ion-button>
+    </div>
+    <p>({{ htmlControls.optional }})</p>
+  </div>
+  <ion-item>
+    <ion-label stacked>{{ htmlControls.eventName }}</ion-label>
+    <ion-input
+      type="text"
+      #name
+      placeholder="{{ htmlControls.placeholder }}"
+      [(ngModel)]="eventName"
+    ></ion-input>
+    <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
+  </ion-item>
+  <div *ngIf="!infiniteDates; else noStartDate">
+    <ion-item>
+      <ion-label>{{ htmlControls.start }}</ion-label>
+      <ion-datetime
+        monthNames="{{ monthNames }}"
+        displayFormat="MMMM DD YYYY"
+        pickerFormat="MMMM DD YYYY"
+        [(ngModel)]="startDate"
+      ></ion-datetime>
+    </ion-item>
+  </div>
+  <ng-template #noStartDate>
+    <ion-item>
+      <ion-label fixed>{{ htmlControls.start }}</ion-label>
+      <ion-input disabled></ion-input>
+    </ion-item>
+  </ng-template>
+  <ion-item *ngIf="!infiniteDates; else checkDisabled">
+    <ion-label>{{ htmlControls.hasEnd }}</ion-label>
+    <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
+  </ion-item>
+  <ng-template #checkDisabled>
+    <ion-item>
+      <ion-label>{{ htmlControls.hasEnd }}</ion-label>
+      <ion-checkbox disabled="true"></ion-checkbox>
+    </ion-item>
+  </ng-template>
+  <div *ngIf="!infiniteDates">
+    <ion-item *ngIf="hasEndDate">
+      <ion-label>{{ htmlControls.end }}</ion-label>
+      <ion-datetime
+        monthNames="{{ monthNames }}"
+        displayFormat="MMMM DD YYYY"
+        pickerFormat="MMMM DD YYYY"
+        [(ngModel)]="endDate"
+      ></ion-datetime>
+      <ion-icon
+        id="form-icon"
+        name="warning"
+        *ngIf="!this.endDate && hasEndDate"
+      ></ion-icon>
+    </ion-item>
+  </div>
+  <ion-item>
+    <ion-label>{{ htmlControls.run }}</ion-label>
+    <ion-checkbox
+      [(ngModel)]="infiniteDates"
+      color="primary"
+      checked="false"
+    ></ion-checkbox>
+  </ion-item>
+
+  <app-event-students-list
+    [htmlControls]="htmlControls"
+    [students]="students"
+    [studentIds]="studentIds"
+    (studentIdsData)="assignStudentId($event)"
+  ></app-event-students-list>
+
+  <ion-button expand="full" (click)="submit()">Submit</ion-button>
+</div>

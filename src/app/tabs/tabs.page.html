@@ -1,10 +1,6 @@
 <ion-tabs>
-
   <!--Tabs for Phone views-->
-  <ion-tab-bar
-    *ngIf="this.platform.is('mobile') && !this.platform.is('ipad') "
-    color="primary"
-  >
+  <ion-tab-bar *ngIf="!viewIsLarge " color="primary">
     <ion-tab-button tab="home">
       <ion-icon name="home"></ion-icon>
       <ion-label
@@ -56,11 +52,7 @@
   </ion-tab-bar>
 
   <!--Tablet View-->
-  <ion-tab-bar
-    *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')"
-    slot="top"
-    color="primary"
-  >
+  <ion-tab-bar *ngIf="this.viewIsLarge" slot="top" color="primary">
     <ion-tab-button tab="home">
       <ion-label> {{htmlControls.home}} </ion-label>
     </ion-tab-button>

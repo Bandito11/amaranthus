@@ -7,6 +7,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { CalendarPage } from './calendar.page';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ComponentsModule,
+    ScrollingModule,
     RouterModule.forChild(routes)
   ],
   declarations: [CalendarPage]

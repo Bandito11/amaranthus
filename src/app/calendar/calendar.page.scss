@@ -1,4 +1,4 @@
-.calendar {
+#calendar {
   h4 {
     text-align: center;
   }
@@ -27,10 +27,8 @@
   .pad {
     padding-bottom: 1em;
   }
-  .bottom {
-    padding-bottom: 4.7em;
-  }
-  .note {
-    padding: 15px;
+  cdk-virtual-scroll-viewport {
+    height: 100%;
+    width: 100%;
   }
 }

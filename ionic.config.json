@@ -1,7 +1,6 @@
 {
-  "name": "amaranthus2",
+  "name": "Attendance Log Tracker",
   "integrations": {
-    "cordova": {},
     "capacitor": {}
   },
   "type": "angular",
