@@ -10,6 +10,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "electron-serve": "ionic build --configuration production && cordova run electron --nobuild",
+    "electron-build": "ionic build --configuration production && cordova build electron --release",
+    "electron-store": "ionic build --configuration production && cordova build electron --store",
     "postinstall": "jetifier"
   },
   "private": true,
@@ -74,7 +77,7 @@
     "@types/jasminewd2": "2.0.8",
     "@types/lokijs": "^1.5.7",
     "@types/node": "^12.20.46",
-    "codelyzer": "^6.0.0",
+    "codelyzer": "^5.1.2",
     "cordova-res": "^0.15.4",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
