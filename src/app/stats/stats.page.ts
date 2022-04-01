@@ -4,10 +4,10 @@ import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
 import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
-import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { AlertController, ModalController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-stats',
@@ -32,8 +32,8 @@ export class StatsPage implements OnInit {
     toolbar: {
       title: '',
       buttons: {
-        export: ''
-      }
+        export: '',
+      },
     },
     filter: '',
     year: '',
@@ -43,8 +43,8 @@ export class StatsPage implements OnInit {
       name: '',
       attendance: '',
       absence: '',
-      percent: ''
-    }
+      percent: '',
+    },
   };
 
   LANGUAGE = {
@@ -52,8 +52,8 @@ export class StatsPage implements OnInit {
       toolbar: {
         title: 'Stats',
         buttons: {
-          export: 'EXPORT'
-        }
+          export: 'EXPORT',
+        },
       },
       filter: 'Filter by: ',
       year: 'Year: ',
@@ -63,15 +63,15 @@ export class StatsPage implements OnInit {
         name: 'Name',
         attendance: 'Attendance',
         absence: 'Absence',
-        percent: 'Attendance %'
-      }
+        percent: 'Attendance %',
+      },
     },
     spanish: {
       toolbar: {
         title: 'Estadísticas',
         buttons: {
-          export: 'Exportar'
-        }
+          export: 'Exportar',
+        },
       },
       filter: 'Filtrar por: ',
       year: 'Año',
@@ -81,22 +81,22 @@ export class StatsPage implements OnInit {
         name: 'Nombre',
         attendance: 'Asistencia',
         absence: 'Ausencia',
-        percent: 'Asistence %'
-      }
-    }
+        percent: 'Asistence %',
+      },
+    },
   };
   language;
 
   constructor(
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
     private storage: Storage
-  ) { }
+  ) {}
 
   ionViewWillEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
       } else {
@@ -105,10 +105,24 @@ export class StatsPage implements OnInit {
       this.htmlControls = this.LANGUAGE[this.language];
       if (this.language === 'spanish') {
         this.filterElement.value = 'Sin filtro';
-        this.selectOptions = ['Id', 'Asistencia', 'Ausencia', 'Fecha', 'Nombre', 'Sin filtro'];
+        this.selectOptions = [
+          'Id',
+          'Asistencia',
+          'Ausencia',
+          'Fecha',
+          'Nombre',
+          'Sin filtro',
+        ];
         this.months = MESESLABELS;
       } else {
-        this.selectOptions = ['Id', 'Attendance', 'Absence', 'Date', 'Name', 'None'];
+        this.selectOptions = [
+          'Id',
+          'Attendance',
+          'Absence',
+          'Date',
+          'Name',
+          'None',
+        ];
         this.filterElement.value = 'None';
         this.months = MESESLABELS;
         this.months = MONTHSLABELS;
@@ -183,12 +197,15 @@ export class StatsPage implements OnInit {
     const date: ICalendar = {
       year: +year,
       month: this.months.indexOf(this.monthQuery) + 1,
-      day: null
+      day: null,
     };
     try {
-      const response = this.db.getQueriedRecordsByDate({ event: this.event, date: date });
-      if (response.success === true) {
-        this.students = [...response.data];
+      const records = this.dbService.getAllStudentsRecords({
+        event: this.event,
+        date: date,
+      });
+      if (records['length']) {
+        this.students = [...records];
       }
     } catch (error) {
       handleError(error);
@@ -207,12 +224,15 @@ export class StatsPage implements OnInit {
     date = {
       year: +this.yearQuery,
       month: index + 1,
-      day: null
+      day: null,
     };
     try {
-      const response = this.db.getQueriedRecordsByDate({ event: this.event, date: date });
-      if (response.success === true) {
-        this.students = [...response.data];
+      const records = this.dbService.getAllStudentsRecords({
+        event: this.event,
+        date: date,
+      });
+      if (records['length']) {
+        this.students = [...records];
       }
     } catch (error) {
       handleError(error);
@@ -226,12 +246,15 @@ export class StatsPage implements OnInit {
    */
   getStudentsRecords() {
     try {
-      const response = this.db.getQueriedRecords({ event: this.event, query: this.query });
-      if (response.success === true) {
+      const records = this.dbService.getQueriedRecords({
+        event: this.event,
+        query: this.query,
+      });
+      if (records['length']) {
         if (this.studentIds.length > 0) {
           let list = [];
           for (const id of this.studentIds) {
-            const found = response.data.find(student => id === student.id);
+            const found = records.find((student) => id === student.id);
             if (found) {
               list = [...list, found];
             }
@@ -239,11 +262,11 @@ export class StatsPage implements OnInit {
           this.students = list;
           this.unfilteredStudents = list;
         } else {
-          this.students = response.data;
-          this.unfilteredStudents = response.data;
+          this.students = [...records];
+          this.unfilteredStudents = [...records];
         }
       } else {
-        handleError(response.error);
+        handleError(`Stats Page: No records in database were found`);
       }
     } catch (error) {
       handleError(error);
@@ -265,7 +288,7 @@ export class StatsPage implements OnInit {
           return 1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -284,7 +307,7 @@ export class StatsPage implements OnInit {
           return -1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -303,7 +326,7 @@ export class StatsPage implements OnInit {
           return -1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -322,7 +345,7 @@ export class StatsPage implements OnInit {
           return 1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -334,23 +357,23 @@ export class StatsPage implements OnInit {
   async toExportPage() {
     const modal = await this.modalCtrl.create({
       component: ExportPage,
-      componentProps: { students: this.students, event: this.event }
+      componentProps: { students: this.students, event: this.event },
     });
     modal.present();
-    modal.onDidDismiss().then(response => {
+    modal.onDidDismiss().then((response) => {
       try {
         if (response.data) {
           if (this.language === 'spanish') {
             this.showSimpleAlert({
               buttons: ['OK'],
               header: '¡Información!',
-              message: response.data
+              message: response.data,
             });
           } else {
             this.showSimpleAlert({
               buttons: ['OK'],
               header: 'Information!',
-              message: response.data
+              message: response.data,
             });
           }
         }
@@ -368,12 +391,11 @@ export class StatsPage implements OnInit {
    * @memberof StatsPage
    */
   private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl
-      .create({
-        header: options.header,
-        message: options.message,
-        buttons: options.buttons
-      });
+    const alert = await this.alertCtrl.create({
+      header: options.header,
+      message: options.message,
+      buttons: options.buttons,
+    });
     alert.present();
   }
 }

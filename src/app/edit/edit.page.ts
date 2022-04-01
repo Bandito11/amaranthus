@@ -212,17 +212,15 @@ export class EditPage implements OnInit {
               // user has clicked the alert button
               // begin the alert's dismiss transition
               const navTransition = alert.dismiss();
-              const response = {
-                ...this.dbService.removeStudent(opts),
-              };
-              if (response.success === true) {
+              try {
+                this.dbService.removeStudent(opts);
                 options = {
                   ...options,
                   event: 'delete',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
-              } else {
-                handleError(response.error);
+              } catch (error) {
+                handleError(error);
                 options = {
                   header: 'Error',
                   message:
@@ -254,17 +252,15 @@ export class EditPage implements OnInit {
               // user has clicked the alert button
               // begin the alert's dismiss transition
               const navTransition = alert.dismiss();
-              const response = {
-                ...this.dbService.removeStudent(opts),
-              };
-              if (response.success === true) {
+              try {
+                this.dbService.removeStudent(opts);
                 options = {
                   ...options,
                   event: 'delete',
                 };
                 navTransition.then(() => this.showAdvancedAlert(options));
-              } else {
-                handleError(response.error);
+              } catch (error) {
+                handleError(error);
                 options = {
                   header: 'Error',
                   message:
@@ -330,18 +326,16 @@ export class EditPage implements OnInit {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                const response = {
-                  ...this.dbService.updateStudent(studentTrimmed),
-                };
-                if (response.success === true) {
-                  navTransition.then(() => {
-                    options = {
-                      header: '¡Éxito!',
-                      message: `${opts.firstName} ${opts.lastName} ha sido editado.`,
-                    };
-                    this.showAdvancedAlert(options);
-                  });
-                } else {
+                try {
+                  this.dbService.updateStudent(studentTrimmed),
+                    navTransition.then(() => {
+                      options = {
+                        header: '¡Éxito!',
+                        message: `${opts.firstName} ${opts.lastName} ha sido editado.`,
+                      };
+                      this.showAdvancedAlert(options);
+                    });
+                } catch (error) {
                   options = {
                     header: 'Error',
                     message: `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`,
@@ -368,18 +362,16 @@ export class EditPage implements OnInit {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
                 const navTransition = alert.dismiss();
-                const response = {
-                  ...this.dbService.updateStudent(studentTrimmed),
-                };
-                if (response.success === true) {
-                  navTransition.then(() => {
-                    options = {
-                      header: 'Success!',
-                      message: `${opts.firstName} ${opts.lastName} record was edited.`,
-                    };
-                    this.showAdvancedAlert(options);
-                  });
-                } else {
+                try {
+                  this.dbService.updateStudent(studentTrimmed),
+                    navTransition.then(() => {
+                      options = {
+                        header: 'Success!',
+                        message: `${opts.firstName} ${opts.lastName} record was edited.`,
+                      };
+                      this.showAdvancedAlert(options);
+                    });
+                } catch (error) {
                   options = {
                     header: 'Error',
                     message: `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`,

@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IStudent } from '../common/models';
 import { ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { handleError } from '../common/handleError';
 import { EditPage } from '../edit/edit.page';
 import { Storage } from '@ionic/storage';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-profile',
@@ -106,7 +106,7 @@ export class ProfilePage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private modalCtrl: ModalController,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     private storage: Storage,
     private sanitizer: DomSanitizer
   ) {}
@@ -140,11 +140,11 @@ export class ProfilePage implements OnInit {
 
   getNotesFromDB(id: string) {
     try {
-      const response = this.db.getAllNotesById(id);
-      if (response.success) {
+      const notes = this.dbService.getAllNotesById(id);
+      if (notes['length']) {
         let note: { note; date };
         let date;
-        for (const data of response.data) {
+        for (const data of notes) {
           date = `${MONTHSLABELS[data.month]}, ${data.day} ${data.year}`;
           note = {
             note: data.notes,
@@ -160,7 +160,7 @@ export class ProfilePage implements OnInit {
 
   getStudentFromDB(id: string) {
     try {
-      const student = this.db.getStudentById(id);
+      const student = this.dbService.getStudentById(id);
       if (student) {
         this.isActive = student.isActive;
         this.gender = student.gender;

@@ -69,6 +69,18 @@ export class DatabaseService {
     return this.db.getQueriedRecordsByCurrentDate(opts);
   }
 
+  removeStudent(student: IStudent) {
+    this.db.removeStudent(student);
+  }
+
+  updateStudent(student: IStudent) {
+    this.db.updateStudent(student);
+  }
+
+  studentExists(id) {
+    return this.db.studentExists(id);
+  }
+
   insertOrUpdateRecord(opts: {
     attendance: boolean;
     absence: boolean;
@@ -77,5 +89,29 @@ export class DatabaseService {
     event?: string;
   }) {
     this.db.insertOrUpdateRecord(opts);
+  }
+
+  getEvents() {
+    return this.db.getEvents();
+  }
+
+  updateEventMembers(opts: { name: string; member: { id: any } }) {
+    this.db.updateEventMembers(opts);
+  }
+
+  checkIfUserExists(opts: { username: string; password }) {
+    return this.db.checkIfUserExists(opts);
+  }
+
+  getAllStudentsRecords(opts: { event?: string; date: ICalendar }) {
+    return this.db.getAllStudentsRecords(opts);
+  }
+
+  getQueriedRecords(opts: { event?: string; query: string; date?: ICalendar }) {
+    return this.db.getQueriedRecords(opts);
+  }
+
+  getAllNotesById(id: string){
+    return this.db.getAllNotesById(id);
   }
 }

@@ -2,9 +2,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CreateEventPage } from './../create-event/create-event.page';
 import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';
-import { AmaranthusDBProvider } from 'src/app/repositories/amaranthus-db/amaranthus-db';
 import { formatDate } from '../common/format';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-events',
@@ -14,8 +14,8 @@ import { Storage } from '@ionic/storage';
 export class EventsPage {
 
   selectOptions: string[] = ['Attendance', 'Absence', 'Name', 'Date', 'None'];
-  events: any[] = [];
-  unfilteredEvents: any[] = [];
+  events = [];
+  unfilteredEvents = [];
   homeURL = '/tabs/tabs/home/events';
   htmlControls = {
     toolbar: {
@@ -64,7 +64,7 @@ export class EventsPage {
 
   constructor(
     private navCtrl: NavController,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     private modal: ModalController,
     private storage: Storage,
     private sanitizer: DomSanitizer
@@ -159,9 +159,9 @@ export class EventsPage {
   }
 
   getEvents() {
-    const response = this.db.getEvents();
-    if (response.success) {
-      this.events = response.data.map(data => {
+    const events = this.dbService.getEvents();
+    if (events['length']) {
+      this.events = events.map(data => {
         let attendance = 0, absence = 0;
         let totalMembers = 0;
         for (const member of data.members) {
@@ -171,11 +171,11 @@ export class EventsPage {
           if (member.absence) {
             absence += 1;
           }
-          const studentExists = this.db.studentExists(member.id);
+          const studentExists = this.dbService.studentExists(member.id);
           if (studentExists) {
             totalMembers++;
           } else {
-            this.db.updateEventMembers({ name: data.name, member: member });
+            this.dbService.updateEventMembers({ name: data.name, member: member });
           }
         }
         let event: any = {

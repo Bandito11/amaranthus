@@ -1,7 +1,5 @@
 import { Storage } from '@ionic/storage';
 
-const directoryName = 'database';
-
 const storage = new Storage({});
 
 /**

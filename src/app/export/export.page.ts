@@ -207,18 +207,14 @@ export class ExportPage {
       }
       if (textTabResponse.success) {
         try {
-          const fileResponse = await this.file.exportFile({
+          await this.file.exportFile({
             fileName: fileName,
             data: textTabResponse.data,
             type: 'txt',
           });
           loading.dismiss();
-          //TODO:
-          // if (fileResponse.success) {
-          //   this.modal.dismiss(fileResponse.data);
-          // } else {
-          //   this.modal.dismiss(fileResponse.error);
-          // }
+          //TODO: Implement a message when it fails
+          this.modal.dismiss('');
         } catch (error) {
           // If FileProvider err
           loading.dismiss();
@@ -267,18 +263,14 @@ export class ExportPage {
       }
       if (csvResponse.success) {
         try {
-          const fileResponse = await this.file.exportFile({
+          await this.file.exportFile({
             fileName: fileName,
             data: csvResponse.data,
             type: 'csv',
           });
-          loading.dismiss();
-          //TODO:
-          // if (fileResponse.success) {
-          //   this.modal.dismiss(fileResponse.data);
-          // } else {
-          //   this.modal.dismiss(fileResponse.error);
-          // }
+          await loading.dismiss();
+          //TODO: Dismiss the modal once the file finishes saving
+          this.modal.dismiss('');
         } catch (error) {
           // If FileProvider err
           loading.dismiss();
@@ -315,17 +307,17 @@ export class ExportPage {
           day: parseInt(dateVal[2]),
         };
       }
-      const response = this.db.getQueriedRecords({
+      const records = this.db.getQueriedRecords({
         event: this.event,
         query: opts.query,
         date: date,
       });
-      if (response.success === true) {
-        this.students = [...response.data];
+      if (records['length']) {
+        this.students = [...records];
       } else {
         // TODO:  implement an alert message if it fails message should say no students
         // can be retrieved.
-        handleError(response.error);
+        handleError(`No records were found`);
       }
     } catch (error) {
       handleError(error);
