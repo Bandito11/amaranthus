@@ -10,41 +10,37 @@
     <div *ngFor="let product of products">
       <ion-icon name="pricetag"></ion-icon>
       <div *ngIf="isIos">
-        <span>
-          {{htmlControls.masterKey.title}}
-        </span>
-        <p>
-          {{htmlControls.masterKey.description}}
-        </p>
+        <span> {{htmlControls.masterKey.title}} </span>
+        <p>{{htmlControls.masterKey.description}}</p>
       </div>
       <div *ngIf="isAndroid">
-        <span>
-          {{product.title}}
-        </span>
-        <p>
-          {{product.description}}
-        </p>
+        <span> {{product.title}} </span>
+        <p>{{product.description}}</p>
       </div>
-      <ion-button *ngIf="isAndroid" color="primary"
-        (click)="buyProduct({productId: product.productId, productTitle: product.title})">
+      <ion-button
+        *ngIf="isAndroid"
+        color="primary"
+        (click)="buyProduct({productId: product.id, productTitle: product.title})"
+      >
         {{htmlControls.buy}}{{product.priceAsDecimal}} {{product.currency}}!
       </ion-button>
-      <ion-button *ngIf="isIos" color="primary"
-        (click)="buyProduct({productId: product.productId, productTitle: 'The Master Key!'})">
+      <ion-button
+        *ngIf="isIos"
+        color="primary"
+        (click)="buyProduct({productId: product.id, productTitle: 'The Master Key!'})"
+      >
         {{htmlControls.buy}}{{product.priceAsDecimal}} {{product.currency}}!
       </ion-button>
-      <br>
+      <br />
       <ion-button color="secondary" (click)="restorePurchases()">
         <div *ngIf="isAndroid">
           {{htmlControls.restoreAndroid}}{{product.title.slice(0,15)}}
         </div>
-        <div *ngIf="isIos">
-          {{htmlControls.restoreiOS}}
-        </div>
+        <div *ngIf="isIos">{{htmlControls.restoreiOS}}</div>
         &nbsp;
         <ion-icon name="happy"> </ion-icon>
       </ion-button>
-      <hr>
+      <hr />
     </div>
   </div>
   <div *ngIf="!this.platform.is('desktop')">
@@ -52,35 +48,38 @@
     <ion-button *ngIf="platform.is('ios')" (click)="openMarketPage()">
       {{htmlControls.rate.iOS}}&nbsp; <ion-icon name="logo-apple"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="platform.is('android')" color="secondary" (click)="openMarketPage()">
-      {{htmlControls.rate.android}}&nbsp; <ion-icon name="logo-google"></ion-icon>
+    <ion-button
+      *ngIf="platform.is('android')"
+      color="secondary"
+      (click)="openMarketPage()"
+    >
+      {{htmlControls.rate.android}}&nbsp;
+      <ion-icon name="logo-google"></ion-icon>
     </ion-button>
   </div>
   <div *ngIf="bought">
-    <hr>
+    <hr />
     <h2>{{htmlControls.feedback.title}}</h2>
-    <p>
-      {{htmlControls.feedback.message}}
-    </p>
+    <p>{{htmlControls.feedback.message}}</p>
     <textarea #message value="{{textArea}}"></textarea>
-    <br>
-    <ion-button color="primary" (click)="sendEmail(message.value)">{{htmlControls.feedback.button}}</ion-button>
-    <hr>
+    <br />
+    <ion-button color="primary" (click)="sendEmail(message.value)"
+      >{{htmlControls.feedback.button}}</ion-button
+    >
+    <hr />
   </div>
 
   <ion-list>
-    <ion-radio-group>
+    <ion-radio-group value="{{language}}">
       <ion-list-header>
-        <ion-label>
-          {{htmlControls.language.title}}
-        </ion-label>
+        <ion-label> {{htmlControls.language.title}} </ion-label>
       </ion-list-header>
       <ion-item *ngFor="let language of languages">
-        <ion-label>
-          {{language.controls}}
-        </ion-label>
-        <ion-radio value="{{language.controls}}" (click)="setLanguage(language)"
-          checked="{{language.checked}}"></ion-radio>
+        <ion-label> {{language.controls}} </ion-label>
+        <ion-radio
+          value="{{language.language}}"
+          (click)="setLanguage(language.language)"
+        ></ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-list>

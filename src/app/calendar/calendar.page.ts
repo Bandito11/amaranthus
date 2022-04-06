@@ -20,7 +20,7 @@ export class CalendarPage {
   students: IRecord[];
   homeURL = '/tabs/tabs/calendar';
   private unfilteredStudents: IRecord[];
-  private date: ICalendar;
+  date: ICalendar;
   timer;
 
   toggle: string;

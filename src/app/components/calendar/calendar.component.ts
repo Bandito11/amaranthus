@@ -1,15 +1,26 @@
 import { DIASLABELS, MESESLABELS, DIASHEADER } from './../../common/constants';
-import { Component, OnInit, Output, EventEmitter, OnChanges, Input, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  OnChanges,
+  Input,
+  SimpleChanges,
+} from '@angular/core';
 import { ICalendar } from '../../common/models';
-import { WEEKDAYSHEADER, WEEKDAYSLABELS, MONTHSLABELS } from '../../common/constants';
+import {
+  WEEKDAYSHEADER,
+  WEEKDAYSLABELS,
+  MONTHSLABELS,
+} from '../../common/constants';
 import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'calendar-component',
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.scss']
+  styleUrls: ['./calendar.component.scss'],
 })
-
 export class CalendarComponent implements OnInit, OnChanges {
   /**
    * Date chosen by the user to be shown in the card Header
@@ -44,7 +55,7 @@ export class CalendarComponent implements OnInit, OnChanges {
 
   @Input() language;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.currentDate = new Date();
@@ -61,7 +72,7 @@ export class CalendarComponent implements OnInit, OnChanges {
   setCurrentStyles() {
     this.currentStyles = {
       'background-color': this.chosen ? '#e60000' : '',
-      'color': this.chosen ? '#fff' : ''
+      color: this.chosen ? '#fff' : '',
     };
   }
 
@@ -77,15 +88,16 @@ export class CalendarComponent implements OnInit, OnChanges {
       this.weekDaysHeader = WEEKDAYSHEADER;
     }
     const calendar: ICalendar = {
-      day: this.currentDate.getDate(), month: this.currentDate.getMonth(),
-      year: this.currentDate.getFullYear()
+      day: this.currentDate.getDate(),
+      month: this.currentDate.getMonth(),
+      year: this.currentDate.getFullYear(),
     };
     calendar.weekDay = this.currentDate.getDay();
     this.choseDay(calendar);
   }
 
   // When the day is chosen, load the data from the db using the date as a parameter.
-  private choseDay(date: ICalendar) {
+  choseDay(date: ICalendar) {
     this.chosen = date.day;
     this.getDate.emit(date);
   }
@@ -99,13 +111,19 @@ export class CalendarComponent implements OnInit, OnChanges {
     // Max days for the months in the Gregorian calendar.
     const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     this.calendarDays = [];
-    this.month = (isNaN(month) || month == null) ? this.currentDate.getMonth() : month;
-    this.year = (isNaN(year) || year == null) ? this.currentDate.getFullYear() : year;
+    this.month =
+      isNaN(month) || month == null ? this.currentDate.getMonth() : month;
+    this.year =
+      isNaN(year) || year == null ? this.currentDate.getFullYear() : year;
     const firstDay = new Date(this.year, this.month, 1);
     const startingDay = firstDay.getDay();
     let monthsLength = daysInMonth[this.month];
-    if (this.month === 1) { // Only February Leap Years
-      if ((this.year % 4 === 0 && this.year % 100 !== 0) || this.year % 400 === 0) {
+    if (this.month === 1) {
+      // Only February Leap Years
+      if (
+        (this.year % 4 === 0 && this.year % 100 !== 0) ||
+        this.year % 400 === 0
+      ) {
         monthsLength = 29;
       }
     }
@@ -115,14 +133,14 @@ export class CalendarComponent implements OnInit, OnChanges {
           weekDay: new Date(this.year, this.month, i).getDay(),
           day: i,
           month: this.month,
-          year: this.year
+          year: this.year,
         });
       } else {
         this.calendarDays.push({
           weekDay: null,
           day: null,
           month: null,
-          year: null
+          year: null,
         });
       }
     }
@@ -139,7 +157,7 @@ export class CalendarComponent implements OnInit, OnChanges {
       month: this.month,
       year: this.year,
       day: 1,
-      weekDay: new Date(this.year, this.month, 1).getDay()
+      weekDay: new Date(this.year, this.month, 1).getDay(),
     };
     this.choseDay(calendar);
   }
@@ -155,7 +173,7 @@ export class CalendarComponent implements OnInit, OnChanges {
       month: this.month,
       year: this.year,
       day: 1,
-      weekDay: new Date(this.year, this.month, 1).getDay()
+      weekDay: new Date(this.year, this.month, 1).getDay(),
     };
     this.choseDay(calendar);
   }

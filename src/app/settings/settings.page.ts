@@ -18,7 +18,7 @@ export class SettingsPage implements OnInit {
   isIos: boolean;
   isAndroid: boolean;
   bought: boolean;
-  languages: { language: string; controls: string; checked: boolean }[];
+  languages: { language: string; controls: string }[];
   language;
   LANGUAGE = {
     spanish: {
@@ -112,7 +112,7 @@ export class SettingsPage implements OnInit {
     public platform: Platform,
     public iap: AppPurchaseProvider,
     public alertCtrl: AlertController,
-    public market: Market,
+    public market: Market
   ) {}
 
   setTextArea() {
@@ -144,28 +144,23 @@ export class SettingsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.languages = [
+      {
+        language: 'english',
+        controls: 'English',
+      },
+      {
+        language: 'spanish',
+        controls: 'Español',
+      },
+    ];
+    this.language = 'english';
     this.storage.get('language').then((value) => {
-      this.languages = [
-        {
-          language: 'english',
-          controls: 'English',
-          checked: true,
-        },
-        {
-          language: 'spanish',
-          controls: 'Español',
-          checked: false,
-        },
-      ];
       if (value === 'spanish') {
         this.language = 'spanish';
-      } else {
-        this.language = 'english';
       }
       this.htmlControls = this.LANGUAGE[this.language];
       if (value === 'spanish') {
-        this.languages[0].checked = false;
-        this.languages[1].checked = true;
         this.htmlControls = {
           ...this.htmlControls,
           masterKey: {
@@ -174,7 +169,6 @@ export class SettingsPage implements OnInit {
           },
         };
       } else {
-        this.languages[0].checked = true;
         this.htmlControls = {
           ...this.htmlControls,
           masterKey: {
@@ -202,8 +196,8 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  async setLanguage(language: { checked; language; controls }) {
-    this.storage.set('language', language.language);
+  async setLanguage(language: string) {
+    this.storage.set('language', language);
     const loading = await this.loadingController.create({
       translucent: true,
       spinner: 'dots',
@@ -213,23 +207,14 @@ export class SettingsPage implements OnInit {
 
     await loading.onDidDismiss();
 
-    if (language.language === 'spanish') {
-      this.languages[0].checked = false;
-      this.languages[1].checked = true;
-    } else {
-      this.languages[0].checked = true;
-      this.languages[1].checked = false;
-    }
-    if (language.language === 'spanish') {
+    if (language === 'spanish') {
       this.language = 'spanish';
     } else {
       this.language = 'english';
     }
     this.setTextArea();
     this.htmlControls = this.LANGUAGE[this.language];
-    if (language.language === 'spanish') {
-      this.languages[0].checked = false;
-      this.languages[1].checked = true;
+    if (language === 'spanish') {
       this.htmlControls = {
         ...this.htmlControls,
         masterKey: {
@@ -238,7 +223,6 @@ export class SettingsPage implements OnInit {
         },
       };
     } else {
-      this.languages[0].checked = true;
       this.htmlControls = {
         ...this.htmlControls,
         masterKey: {
