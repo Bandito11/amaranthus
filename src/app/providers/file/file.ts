@@ -41,15 +41,13 @@ export class FileProvider {
     return new Promise((_, reject) => {
       let path = ``;
       if (navigator.userAgent.match('Macintosh')) {
-        path = `${process.env.HOME}/Documents/${opts.fileName}`;
+        //FIXME: process.env.HOME is supposed to be the user's home directory
+        // path = `${process.env.HOME}/Documents/${opts.fileName}`;
       } else if (navigator.userAgent.match('Windows')) {
-        path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
+        // FIXME: process.env.USERPROFILE is supposed to be the user's home directory
+        // path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
       }
-      fs.writeFile(path, opts.data, {}, (err) => {
-        if (err) {
-          reject(err);
-        }
-      });
+      console.log(opts.fileName, ' ', opts.data);
     });
   }
 
