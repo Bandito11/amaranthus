@@ -1,4 +1,3 @@
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IEvent, ISimpleAlertOptions, IEventControls } from '../common/models';
@@ -7,10 +6,8 @@ import {
   AlertController,
   ModalController,
 } from '@ionic/angular';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { MONTHSLABELS } from '../common/constants';
 import { formatDate } from '../common/format';
-import { handleError } from '../common/handleError';
 import { EditEventPage } from '../editevent/editevent.page';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
@@ -28,7 +25,6 @@ export class EventProfilePage implements OnInit {
     private alertCtrl: AlertController,
     private modal: ModalController,
     private storage: Storage,
-    private sanitizer: DomSanitizer
   ) {}
 
   /**
@@ -140,10 +136,10 @@ export class EventProfilePage implements OnInit {
    * @param {*} id
    * @memberof EventProfilePage
    */
-  getEventProfile(id) {
+  async getEventProfile(id) {
     this.eventControls = <IEvent & LokiObj>{};
     const date = new Date();
-    const event = this.dbService.getEvent(id);
+    const event = await this.dbService.getEvent(id);
     if (!event) {
       throw new Error(`Couldn't find this event in db.`);
     }
@@ -152,7 +148,7 @@ export class EventProfilePage implements OnInit {
     this.studentIds = [];
     for (const member of this.event.members) {
       this.studentIds = [...this.studentIds, member.id];
-      const student = this.dbService.getStudentById(member.id);
+      const student = await this.dbService.getStudentById(member.id);
       if (student) {
         if (this.event.infiniteDates) {
           let record = this.dbService.getQueriedRecordsByCurrentDate({
@@ -178,7 +174,7 @@ export class EventProfilePage implements OnInit {
             initial: student.initial,
             lastName: student.lastName,
             phoneNumber: student.phoneNumber,
-            picture: this.sanitizer.bypassSecurityTrustUrl(student.picture),
+            picture: student.picture,
             class: student.class,
             attendance: member.attendance,
             absence: member.absence,
@@ -191,7 +187,7 @@ export class EventProfilePage implements OnInit {
             initial: student.initial,
             lastName: student.lastName,
             phoneNumber: student.phoneNumber,
-            picture: this.sanitizer.bypassSecurityTrustUrl(student.picture),
+            picture: student.picture,
             class: student.class,
             attendance: member.attendance,
             absence: member.absence,
@@ -222,7 +218,7 @@ export class EventProfilePage implements OnInit {
     }
     this.eventControls = {
       ...this.eventControls,
-      logo: this.sanitizer.bypassSecurityTrustUrl(event.logo),
+      logo: event.logo,
     };
   }
 

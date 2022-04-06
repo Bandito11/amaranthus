@@ -1,6 +1,3 @@
-import { DomSanitizer } from '@angular/platform-browser';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Component, OnInit } from '@angular/core';
 import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
 import {
@@ -13,11 +10,7 @@ import {
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
 import { Storage } from '@ionic/storage';
-import { File } from '@ionic-native/file/ngx';
 import { DatabaseService } from '../services/database.service';
-
-declare const fs;
-declare const process;
 
 @Component({
   selector: 'app-editevent',
@@ -121,15 +114,11 @@ export class EditEventPage implements OnInit {
   constructor(
     private navCtrl: NavController,
     private navParams: NavParams,
-    private camera: Camera,
     public platform: Platform,
     private modalCtrl: ModalController,
     private dbService: DatabaseService,
     private alertCtrl: AlertController,
-    private file: File,
     private storage: Storage,
-    private webview: WebView,
-    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -156,13 +145,13 @@ export class EditEventPage implements OnInit {
     }
   }
 
-  getEventProfile(id) {
+  async getEventProfile(id) {
     this.studentIds = [];
     try {
-      this.event = this.dbService.getEvent(id);
+      this.event = await this.dbService.getEvent(id);
       this.infiniteDates = this.event.infiniteDates;
       this.logo = this.event.logo;
-      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
+      this.imgSrc = this.logo;
       this.eventName = this.event.name;
       this.startDate = this.event.startDate;
       this.endDate = this.event.endDate;
@@ -368,9 +357,9 @@ export class EditEventPage implements OnInit {
     }
   }
 
-  getStudents() {
+  async getStudents() {
     try {
-      const students = this.dbService.getAllStudents(true);
+      const students = await this.dbService.getAllStudents(true);
       this.students = students;
       this.STUDENTS = students;
     } catch (error) {
@@ -403,162 +392,6 @@ export class EditEventPage implements OnInit {
       }
     });
     this.students = [...newQuery];
-  }
-
-  getPicture() {
-    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
-    let directory = '';
-    if (navigator.userAgent.match('Mac')) {
-      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-    } else if (navigator.userAgent.match('Windows')) {
-      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
-    }
-    if (chosenPic.files.length !== 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fs.mkdir(directory, { recursive: true }, (err) => {
-          if (err) {
-            fs.writeFile(
-              `${directory}${chosenPic.files[0].name}`,
-              reader.result,
-              {},
-              (error) => {
-                if (error) {
-                  let options;
-                  if (this.language === 'spanish') {
-                    options = {
-                      header: '¡Información!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  } else {
-                    options = {
-                      header: 'Information!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  }
-                  this.showSimpleAlert(options);
-                } else {
-                  this.logo = reader.result;
-                }
-              }
-            );
-          } else {
-            fs.writeFile(
-              `${directory}${chosenPic.files[0].name}`,
-              reader.result,
-              {},
-              (error) => {
-                if (error) {
-                  let options;
-                  if (this.language === 'spanish') {
-                    options = {
-                      header: '¡Información!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  } else {
-                    options = {
-                      header: 'Information!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  }
-                  this.showSimpleAlert(options);
-                } else {
-                  this.logo = reader.result;
-                }
-              }
-            );
-          }
-        });
-      };
-      reader.readAsDataURL(chosenPic.files[0]);
-    }
-  }
-
-  addLogo() {
-    const options: CameraOptions = {
-      quality: 100,
-      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG,
-      targetWidth: 250,
-      targetHeight: 250,
-    };
-    this.camera.getPicture(options).then(
-      (imageData: string) => {
-        if (this.platform.is('android')) {
-          this.logo = this.webview.convertFileSrc(imageData);
-          this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
-          return 0;
-        }
-        const array = imageData.split('/');
-        const fileName = array.pop();
-        const directory = array.slice(0, array.length).join('/');
-        const path = this.file.dataDirectory;
-        const outDirectory = 'images';
-        this.file
-          .checkDir(path, outDirectory)
-          .then(() => {
-            this.file
-              .copyFile(directory, fileName, path + outDirectory, fileName)
-              .then((image) => {
-                this.logo = this.webview.convertFileSrc(image.nativeURL);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(this.logo);
-              })
-              .catch((e) => {
-                if (e.code === 12) {
-                  this.logo = this.webview.convertFileSrc(
-                    path + outDirectory + fileName
-                  );
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                    this.logo
-                  );
-                  return 0;
-                }
-                const opts: ISimpleAlertOptions = {
-                  header: 'Error!',
-                  message: JSON.stringify(e),
-                };
-                this.showSimpleAlert(opts);
-              });
-          })
-          .catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file
-                .copyFile(directory, fileName, path + outDirectory, fileName)
-                .then((image) => {
-                  this.logo = this.webview.convertFileSrc(image.nativeURL);
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                    this.logo
-                  );
-                })
-                .catch((e) => {
-                  if (e.code === 12) {
-                    this.logo = this.webview.convertFileSrc(
-                      path + outDirectory + fileName
-                    );
-                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                      this.logo
-                    );
-                    return 0;
-                  }
-                  const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e),
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
-          });
-      },
-      (error) => handleError(error)
-    );
   }
 
   addToEvent(id) {

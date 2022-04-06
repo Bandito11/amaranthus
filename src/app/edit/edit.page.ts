@@ -157,14 +157,14 @@ export class EditPage implements OnInit {
     public sanitizer: DomSanitizer
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.student = { ...this.student, id: this.navParams.get('id') };
     try {
-      const student = this.getStudentFromDB(this.student);
+      const student = await this.getStudentFromDB(this.student);
       if (student) {
         this.isActive = student.isActive;
         this.gender = student.gender;
-        this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(student.picture);
+        this.imgSrc = student.picture;
         this.student = { ...student };
       }
     } catch (error) {
@@ -181,9 +181,9 @@ export class EditPage implements OnInit {
     });
   }
 
-  getStudentFromDB(student: IStudent): IStudent {
+  async getStudentFromDB(student: IStudent): Promise<IStudent> {
     try {
-      return this.dbService.getStudentById(student.id);
+      return await this.dbService.getStudentById(student.id);
     } catch (error) {
       handleError(error);
     }

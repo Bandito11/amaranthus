@@ -7,12 +7,7 @@ import {
   AlertController,
 } from '@ionic/angular';
 import { addZeroInFront } from '../common/validation';
-import { handleError } from '../common/handleError';
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Storage } from '@ionic/storage';
-import { File } from '@ionic-native/file/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { DomSanitizer } from '@angular/platform-browser';
 import { DatabaseService } from '../services/database.service';
 
 declare const fs;
@@ -112,18 +107,14 @@ export class CreateEventPage implements OnInit {
       notAdded: ` no fue añadido al evento.`,
     },
   };
-  
+
   constructor(
     public navCtrl: NavController,
-    public camera: Camera,
     public platform: Platform,
     public modalCtrl: ModalController,
     public dbService: DatabaseService,
     public alertCtrl: AlertController,
-    private file: File,
     private storage: Storage,
-    private webview: WebView,
-    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -149,56 +140,6 @@ export class CreateEventPage implements OnInit {
     });
   }
 
-  getPicture() {
-    const chosenPic: HTMLInputElement = document.querySelector('#inputFile');
-    const blob = window.URL.createObjectURL(chosenPic.files[0]);
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(blob);
-    let directory = '';
-    if (navigator.userAgent.match('Mac')) {
-      directory = `${process.env.HOME}/Attendance-Log-Tracker/`;
-    } else if (navigator.userAgent.match('Windows')) {
-      directory = `${process.env.USERPROFILE}/Attendance-Log-Tracker/`;
-    }
-    if (chosenPic.files.length !== 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        fs.mkdir(directory, { recursive: true }, (err) => {
-          if (err) {
-            fs.writeFile(
-              `${directory}${chosenPic.files[0].name}`,
-              reader.result,
-              {},
-              (error) => {
-                if (error) {
-                  let options;
-                  if (this.language === 'spanish') {
-                    options = {
-                      header: '¡Información!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  } else {
-                    options = {
-                      header: 'Information!',
-                      message: error,
-                      buttons: ['OK'],
-                    };
-                  }
-                  this.showSimpleAlert(options);
-                } else {
-                  this.logo = reader.result;
-                }
-              }
-            );
-          } else {
-            this.getPicture();
-          }
-        });
-      };
-      reader.readAsDataURL(chosenPic.files[0]);
-    }
-  }
-
   resetEndDate() {
     this.endDate = '';
   }
@@ -210,7 +151,7 @@ export class CreateEventPage implements OnInit {
   }
 
   async createNewEvent(eventData) {
-    try { 
+    try {
       if (eventData.studentIds.length < 1) {
         let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
@@ -413,9 +354,9 @@ export class CreateEventPage implements OnInit {
     }
   }
 
-  getStudents() {
+  async getStudents() {
     try {
-      const students = this.dbService.getAllStudents(true);
+      const students = await this.dbService.getAllStudents(true);
       this.students = students;
       this.STUDENTS = students;
     } catch (error) {
@@ -448,90 +389,6 @@ export class CreateEventPage implements OnInit {
       }
     });
     this.students = [...newQuery];
-  }
-
-  addLogo() {
-    const options: CameraOptions = {
-      quality: 100,
-      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      mediaType: this.camera.MediaType.PICTURE,
-      encodingType: this.camera.EncodingType.PNG,
-      targetWidth: 250,
-      targetHeight: 250,
-    };
-    this.camera.getPicture(options).then(
-      (imageData: string) => {
-        if (this.platform.is('android')) {
-          this.logo = this.webview.convertFileSrc(imageData);
-          return 0;
-        }
-        const array = imageData.split('/');
-        const fileName = array.pop();
-        const directory = array.slice(0, array.length).join('/');
-        const path = this.file.dataDirectory;
-        const outDirectory = 'images';
-        this.file
-          .checkDir(path, outDirectory)
-          .then(() => {
-            this.file
-              .copyFile(directory, fileName, path + outDirectory, fileName)
-              .then((image) => {
-                this.logo = this.webview.convertFileSrc(image.nativeURL);
-                this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                  this.webview.convertFileSrc(image.nativeURL)
-                );
-              })
-              .catch((e) => {
-                if (e.code === 12) {
-                  this.logo = this.webview.convertFileSrc(
-                    path + outDirectory + fileName
-                  );
-                  this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                    this.webview.convertFileSrc(path + outDirectory + fileName)
-                  );
-                  return 0;
-                }
-                const opts: ISimpleAlertOptions = {
-                  header: 'Error!',
-                  message: JSON.stringify(e),
-                };
-                this.showSimpleAlert(opts);
-              });
-          })
-          .catch(() => {
-            this.file.createDir(path, outDirectory, true).then(() => {
-              this.file
-                .copyFile(directory, fileName, path + outDirectory, fileName)
-                .then((image) => {
-                  this.logo = this.webview.convertFileSrc(image.nativeURL);
-                  this.logo = this.sanitizer.bypassSecurityTrustUrl(
-                    this.webview.convertFileSrc(image.nativeURL)
-                  );
-                })
-                .catch((e) => {
-                  if (e.code === 12) {
-                    this.logo = this.webview.convertFileSrc(
-                      path + outDirectory + fileName
-                    );
-                    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(
-                      this.webview.convertFileSrc(
-                        path + outDirectory + fileName
-                      )
-                    );
-                    return 0;
-                  }
-                  const opts: ISimpleAlertOptions = {
-                    header: 'Error',
-                    message: JSON.stringify(e),
-                  };
-                  this.showSimpleAlert(opts);
-                });
-            });
-          });
-      },
-      (error) => handleError(error)
-    );
   }
 
   private async showSimpleAlert(options: ISimpleAlertOptions) {
