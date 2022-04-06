@@ -12,6 +12,7 @@ import {
 import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
+import { CameraToolsService } from 'src/app/services/camera-tools.service';
 
 /**
  * Collections use on db
@@ -34,7 +35,10 @@ let eventsView: DynamicView<IEvent[]>;
   providedIn: 'root',
 })
 export class AmaranthusDBProvider {
-  constructor(private storage: Storage) {}
+  constructor(
+    private storage: Storage,
+    private cameraTools: CameraToolsService
+  ) {}
 
   async init(): Promise<Collection<IStudent>> {
     return new Promise((resolve) => {
@@ -92,6 +96,10 @@ export class AmaranthusDBProvider {
     });
   }
 
+  private async convertPictures(data) {
+    return await this.cameraTools.readAsBlob(data);
+  }
+
   deleteInvalidCharacters() {
     studentsColl.findAndRemove({ id: { $containsAny: '/' } });
     studentsColl.findAndRemove({ id: { $containsAny: '#' } });
@@ -136,12 +144,7 @@ export class AmaranthusDBProvider {
   }
 
   getNoteByDate(opts: { date: ICalendar; id: string; event: string }) {
-    let response: IResponse<INote> = {
-      success: false,
-      error: null,
-      data: undefined,
-    };
-    const results: any = notesColl.findOne({
+    const results = notesColl.findOne({
       id: {
         $eq: opts.id,
       },
@@ -158,21 +161,7 @@ export class AmaranthusDBProvider {
         $eq: opts.event,
       },
     });
-    if (results) {
-      response = {
-        ...response,
-        success: true,
-        data: results,
-      };
-      return response;
-    } else {
-      response = {
-        ...response,
-        error: 'Error retrieving notes. Please try again!',
-        data: null,
-      };
-      return response;
-    }
+    return results;
   }
 
   getNoteById(id: string) {
@@ -595,7 +584,7 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
+  async getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
     const students = studentsColl.find({
       isActive: {
         $eq: true,
@@ -660,13 +649,13 @@ export class AmaranthusDBProvider {
         ...opts.date,
         month: opts.date.month - 1,
       };
-      const noteResponse = this.getNoteByDate({
+      const noteData = this.getNoteByDate({
         id: student.id,
         date: noteDate,
         event: opts.event,
       });
-      if (noteResponse.success) {
-        studentRecord = { notes: noteResponse.data.notes };
+      if (noteData) {
+        studentRecord = { notes: noteData.notes };
       } else {
         studentRecord = { notes: '' };
       }
@@ -920,7 +909,7 @@ export class AmaranthusDBProvider {
             month: date.month,
           }),
         };
-        const note = this.getNoteByDate({
+        const noteData = this.getNoteByDate({
           id: student.id,
           event: '',
           date: {
@@ -937,10 +926,10 @@ export class AmaranthusDBProvider {
             ...record,
           };
         }
-        if (note.success) {
+        if (noteData) {
           newStudent = {
             ...newStudent,
-            notes: note.data.notes,
+            notes: noteData.notes,
           };
         }
         return newStudent;

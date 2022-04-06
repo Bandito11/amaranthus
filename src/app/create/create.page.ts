@@ -5,9 +5,6 @@ import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
-declare const fs;
-declare const process;
-
 @Component({
   selector: 'app-create',
   templateUrl: './create.page.html',
@@ -200,10 +197,6 @@ export class CreatePage implements OnInit {
       }
       this.showSimpleAlert(options);
     } else {
-      const picture = this.validatePicture({
-        gender: student.gender,
-        picture: student.picture,
-      });
       const studentTrimmed: IStudent = {
         ...trimText(student),
         picture: student.picture,
@@ -310,22 +303,6 @@ export class CreatePage implements OnInit {
       ],
     });
     await alert.present();
-  }
-
-  /**
-   *
-   * @param opts
-   * Validates user's gender in order to choose a picture.
-   */
-  private validatePicture(opts: { gender: string; picture: string }) {
-    if (opts.gender === 'male' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultMale.png';
-    } else if (opts.gender === 'female' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultFemale.png';
-    } else if (opts.gender === 'undisclosed' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultUndisclosed.png';
-    }
-    return opts.picture;
   }
 
   /**

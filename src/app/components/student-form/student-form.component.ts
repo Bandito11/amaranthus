@@ -18,7 +18,11 @@ export class StudentFormComponent implements OnInit {
   @Output() studentData = new EventEmitter<IStudent>();
   @Output() deleteStudentData = new EventEmitter<IStudent>();
 
-  constructor(public sanitizer: DomSanitizer, public platform: Platform, public cameraTools: CameraToolsService) {}
+  constructor(
+    public sanitizer: DomSanitizer,
+    public platform: Platform,
+    public cameraTools: CameraToolsService
+  ) {}
 
   ngOnInit() {
     if (this.create) {
@@ -27,7 +31,7 @@ export class StudentFormComponent implements OnInit {
     }
   }
 
-  submit() {
+  async submit() {
     //TODO: Set imgSrc to student.picture
     this.student = {
       ...this.student,
@@ -43,10 +47,6 @@ export class StudentFormComponent implements OnInit {
 
   resetPicture() {
     this.imgSrc = './assets/profilePics/defaultMale.png';
-    if (this.platform.is('desktop')) {
-      const pictureInput = document.querySelector('#inputFile');
-      pictureInput['value'] = '';
-    }
     this.student.picture = this.imgSrc;
   }
 
@@ -54,8 +54,9 @@ export class StudentFormComponent implements OnInit {
     this.deleteStudentData.emit(this.student);
   }
 
-  async getPictureFromMobile(){
-   const image = await this.cameraTools.takePicture();
-   this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+  async getPicture() {
+    const image = await this.cameraTools.takePicture();
+    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+    this.student.picture = await this.cameraTools.readAsBase64(image.webPath);
   }
 }

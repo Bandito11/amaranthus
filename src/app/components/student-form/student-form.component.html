@@ -4,27 +4,12 @@
   </div>
 
   <ion-item-group>
-    <div id="input">
-      <div *ngIf="platform.is('desktop'); else notDesktop">
-        <ion-button>
-          <input
-            id="inputFile"
-            (change)="getPicture()"
-            type="file"
-            accept="image/*"
-          />
-          {{ htmlControls.change }}
-        </ion-button>
-      </div>
-      <ng-template #notDesktop>
-        <ion-button (click)="getPictureFromMobile()" color="primary">
-          <ion-icon name="camera-outline"></ion-icon>
-        </ion-button>
-      </ng-template>
-      <ion-button (click)="resetPicture()" color="secondary">{{
-        htmlControls.reset
-      }}</ion-button>
-    </div>
+    <ion-button (click)="getPicture()" color="primary">
+      <ion-icon name="camera-outline"></ion-icon>
+    </ion-button>
+    <ion-button (click)="resetPicture()" color="secondary">{{
+      htmlControls.reset
+    }}</ion-button>
     <ion-item>
       <ion-label stacked>ID</ion-label>
       <ion-input type="text" #id [(ngModel)]="student.id"></ion-input>
@@ -149,7 +134,11 @@
   <ion-button (click)="reset()" color="secondary" expand="full">{{
     htmlControls.reset
   }}</ion-button>
-  <ion-button *ngIf="!create" (click)="deleteStudent()" expand="full" color="tertiary">{{
-    htmlControls.delete
-  }}</ion-button>
+  <ion-button
+    *ngIf="!create"
+    (click)="deleteStudent()"
+    expand="full"
+    color="tertiary"
+    >{{ htmlControls.delete }}</ion-button
+  >
 </div>

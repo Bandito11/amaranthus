@@ -108,7 +108,8 @@ export class ProfilePage implements OnInit {
     private modalCtrl: ModalController,
     private dbService: DatabaseService,
     private storage: Storage,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    
   ) {}
 
   ngOnInit() {

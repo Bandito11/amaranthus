@@ -74,10 +74,10 @@ export class CalendarPage {
   constructor(
     private route: ActivatedRoute,
     private storage: Storage,
-    private db: DatabaseService
+    private dbService: DatabaseService
   ) {}
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.timer = 0;
     this.storage.get('language').then((value) => {
       if (value) {
@@ -96,7 +96,7 @@ export class CalendarPage {
     } catch (error) {
       this.studentIds = [];
     }
-    this.getStudentsRecords(this.date);
+    await this.getStudentsRecords(this.date);
   }
 
   /**
@@ -104,7 +104,7 @@ export class CalendarPage {
    * @param {ICalendar} opts
    * Will get all Students queried by today's date.
    */
-  getStudentsRecords(opts: ICalendar) {
+  async getStudentsRecords(opts: ICalendar) {
     const date = {
       ...opts,
       month: opts.month + 1,
@@ -112,7 +112,7 @@ export class CalendarPage {
     this.students = [];
     this.unfilteredStudents = [];
     try {
-      const records = this.db.getStudentsRecordsByDate({
+      const records = await this.dbService.getStudentsRecordsByDate({
         date: date,
         event: this.event,
       });
