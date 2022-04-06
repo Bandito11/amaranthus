@@ -13,9 +13,6 @@ import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
-declare const fs;
-declare const process;
-
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.page.html',
@@ -160,15 +157,14 @@ export class EditPage implements OnInit {
     public sanitizer: DomSanitizer
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.student = { ...this.student, id: this.navParams.get('id') };
     try {
-      const student = this.getStudentFromDB(this.student);
+      const student = await this.getStudentFromDB(this.student);
       if (student) {
         this.isActive = student.isActive;
         this.gender = student.gender;
-        this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(student.picture);
-        this.picture = student.picture;
+        this.imgSrc = student.picture;
         this.student = { ...student };
       }
     } catch (error) {
@@ -185,9 +181,9 @@ export class EditPage implements OnInit {
     });
   }
 
-  getStudentFromDB(student: IStudent): IStudent {
+  async getStudentFromDB(student: IStudent): Promise<IStudent> {
     try {
-      return this.dbService.getStudentById(student.id);
+      return await this.dbService.getStudentById(student.id);
     } catch (error) {
       handleError(error);
     }
@@ -302,15 +298,9 @@ export class EditPage implements OnInit {
         phoneNumber: opts.phoneNumber,
         emergencyContactPhoneNumber: opts.emergencyContactPhoneNumber,
       };
-      const picture = this.validatePicture({
-        gender: this.gender,
-        picture: this.picture,
-      });
       const studentTrimmed: IStudent = {
-        ...trimText(opts),
-        picture: picture,
-        gender: this.gender,
-        isActive: this.isActive,
+        ...opts,
+        ...trimText(opts)
       };
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
@@ -386,17 +376,6 @@ export class EditPage implements OnInit {
         alert.present();
       }
     }
-  }
-
-  public validatePicture(opts: { gender: string; picture: string }) {
-    if (opts.gender === 'male' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultMale.png';
-    } else if (opts.gender === 'female' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultFemale.png';
-    } else if (opts.gender === 'undisclosed' && opts.picture === '') {
-      opts.picture = './assets/profilePics/defaultUndisclosed.png';
-    }
-    return opts.picture;
   }
 
   public async showSimpleAlert(options: ISimpleAlertOptions) {

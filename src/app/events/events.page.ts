@@ -12,7 +12,6 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./events.page.scss'],
 })
 export class EventsPage {
-
   selectOptions: string[] = ['Attendance', 'Absence', 'Name', 'Date', 'None'];
   events = [];
   unfilteredEvents = [];
@@ -21,45 +20,45 @@ export class EventsPage {
     toolbar: {
       title: '',
       buttons: {
-        add: ''
-      }
+        add: '',
+      },
     },
     sort: '',
     start: '',
     end: '',
     attended: '',
     absence: '',
-    members: ''
+    members: '',
   };
   LANGUAGE = {
     english: {
       toolbar: {
         title: 'Events',
         buttons: {
-          add: 'Create event'
-        }
+          add: 'Create event',
+        },
       },
       sort: 'Sort By: ',
       start: 'Start Date: ',
       end: 'End Date: ',
       attended: 'Total Attended: ',
       absence: 'Total Absence: ',
-      members: 'Total Members: '
+      members: 'Total Members: ',
     },
     spanish: {
       toolbar: {
         title: 'Eventos',
         buttons: {
-          add: 'Crear evento'
-        }
+          add: 'Crear evento',
+        },
       },
       sort: 'Ordenar por: ',
       start: 'Inicia en:',
       end: 'Termina en: ',
       attended: 'Asistencia Total: ',
       absence: 'Ausencia Total: ',
-      members: 'Membresía Total: '
-    }
+      members: 'Membresía Total: ',
+    },
   };
 
   constructor(
@@ -67,16 +66,14 @@ export class EventsPage {
     private dbService: DatabaseService,
     private modal: ModalController,
     private storage: Storage,
-    private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   goBack() {
     this.navCtrl.back();
   }
 
-
   ionViewDidEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.htmlControls = this.LANGUAGE[value];
       } else {
@@ -115,7 +112,7 @@ export class EventsPage {
           return 1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -129,18 +126,21 @@ export class EventsPage {
           return 1;
         }
         return 0;
-      })
+      }),
     ];
-
   }
 
   sortByName() {
     this.events = [
       ...this.events.sort((a, b) => {
-        if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-        if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        }
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        }
         return 0;
-      })
+      }),
     ];
   }
 
@@ -154,15 +154,16 @@ export class EventsPage {
           return 1;
         }
         return 0;
-      })
+      }),
     ];
   }
 
-  getEvents() {
-    const events = this.dbService.getEvents();
+  async getEvents() {
+    const events = await this.dbService.getEvents();
     if (events['length']) {
-      this.events = events.map(data => {
-        let attendance = 0, absence = 0;
+      this.events = events.map((data) => {
+        let attendance = 0,
+          absence = 0;
         let totalMembers = 0;
         for (const member of data.members) {
           if (member.attendance) {
@@ -175,21 +176,23 @@ export class EventsPage {
           if (studentExists) {
             totalMembers++;
           } else {
-            this.dbService.updateEventMembers({ name: data.name, member: member });
+            this.dbService.updateEventMembers({
+              name: data.name,
+              member: member,
+            });
           }
         }
         let event: any = {
           ...data,
-          logo: this.sanitizer.bypassSecurityTrustUrl(data.logo),
           startDate: formatDate(data.startDate),
           totalMembers: totalMembers,
           totalAttendance: attendance,
-          totalAbsence: absence
+          totalAbsence: absence,
         };
         if (data.endDate) {
           event = {
             ...event,
-            endDate: formatDate(data.endDate)
+            endDate: formatDate(data.endDate),
           };
         }
         return event;
@@ -200,14 +203,13 @@ export class EventsPage {
 
   async goToCreateEvent() {
     const modal = await this.modal.create({
-      component: CreateEventPage
+      component: CreateEventPage,
     });
     modal.present();
-    modal.onDidDismiss().then(_ => this.getEvents());
+    modal.onDidDismiss().then((_) => this.getEvents());
   }
 
   async goToEventProfile(id) {
     this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
   }
-
 }

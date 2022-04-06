@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { AlertController, NavController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import {
@@ -14,7 +15,7 @@ import { DatabaseService } from 'src/app/services/database.service';
   templateUrl: './user-item.component.html',
   styleUrls: ['./user-item.component.scss'],
 })
-export class UserItemComponent implements OnInit {
+export class UserItemComponent {
   @Input() student: IStudent & IRecord;
   @Input() htmlControls;
   @Input() homeURL;
@@ -26,10 +27,9 @@ export class UserItemComponent implements OnInit {
   constructor(
     private alertCtrl: AlertController,
     private navCtrl: NavController,
-    private dbService: DatabaseService
+    private dbService: DatabaseService,
+    public sanitizer: DomSanitizer
   ) {}
-
-  ngOnInit() {}
 
   addAttendance(opts: { id: string }) {
     try {

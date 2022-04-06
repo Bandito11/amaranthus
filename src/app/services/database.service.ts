@@ -1,16 +1,120 @@
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ICalendar, IEvent, INote, IRecord, IStudent } from '../common/models';
 import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
+import { CameraToolsService } from './camera-tools.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DatabaseService {
-  constructor(private db: AmaranthusDBProvider) {}
+  constructor(
+    private db: AmaranthusDBProvider,
+    public cameraTools: CameraToolsService,
+    public sanitizer: DomSanitizer
+  ) {}
+
+  private async dataUrlToObjectUrl(dataUrl) {
+    const blob = await this.cameraTools.readAsBlob(dataUrl);
+    return this.sanitizer.bypassSecurityTrustUrl(blob) as unknown as string;
+  }
 
   async getAllActiveStudents(date: ICalendar): Promise<(IStudent & IRecord)[]> {
     const students = await this.db.getAllActiveStudents(date);
+
+    for (let i = 0; i < students.length; i++) {
+      if (students[i].picture) {
+        students[i] = {
+          ...students[i],
+          picture: await this.dataUrlToObjectUrl(students[i].picture),
+        };
+      }
+    }
+
     return students;
+  }
+
+  async getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
+    const records = await this.db.getStudentsRecordsByDate(opts);
+
+    for (let i = 0; i < records.length; i++) {
+      if (records[i].picture) {
+        records[i].picture = await this.dataUrlToObjectUrl(records[i].picture);
+      }
+    }
+
+    return records;
+  }
+
+  async getStudentById(id: string) {
+    let student = this.db.getStudentById(id);
+    if (student.picture) {
+      student = {
+        ...student,
+        picture: await this.dataUrlToObjectUrl(student.picture),
+      };
+    }
+    return student;
+  }
+
+  getQueriedRecordsByCurrentDate(opts: {
+    event?: string;
+    studentId: string;
+    day: number;
+    year: number;
+    month: number;
+  }) {
+    const records = this.db.getQueriedRecordsByCurrentDate(opts);
+
+    return records;
+  }
+
+  async getAllStudents(event: boolean) {
+    const students = this.db.getAllStudents(event);
+
+    for (let i = 0; i < students.length; i++) {
+      if (students[i].picture) {
+        students[i] = {
+          ...students[i],
+          picture: await this.dataUrlToObjectUrl(students[i].picture),
+        };
+      }
+    }
+
+    return students;
+  }
+
+  async getEvent(id) {
+    let event = this.db.getEvent(id);
+    if (event.logo) {
+      event = {
+        ...event,
+        logo: await this.dataUrlToObjectUrl(event.logo),
+      };
+    }
+    return event;
+  }
+
+  async getEvents() {
+    const events = this.db.getEvents();
+
+    for (let i = 0; i < events.length; i++) {
+      if (events[i].logo) {
+        events[i] = {
+          ...events[i],
+          logo: await this.dataUrlToObjectUrl(events[i].logo),
+        };
+      }
+    }
+
+    return events;
+  }
+  getAllStudentsRecords(opts: { event?: string; date: ICalendar }) {
+    return this.db.getAllStudentsRecords(opts);
+  }
+
+  getQueriedRecords(opts: { event?: string; query: string; date?: ICalendar }) {
+    return this.db.getQueriedRecords(opts);
   }
 
   addAttendance(opts: { date: ICalendar; id: string; event?: string }) {
@@ -31,24 +135,8 @@ export class DatabaseService {
     await this.db.insertStudent(student);
   }
 
-  getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
-    return this.db.getStudentsRecordsByDate(opts);
-  }
-
-  getStudentById(id: string) {
-    return this.db.getStudentById(id);
-  }
-
   insertEvent(event: IEvent) {
     this.db.insertEvent(event);
-  }
-
-  getAllStudents(event: boolean) {
-    return this.db.getAllStudents(event);
-  }
-
-  getEvent(id) {
-    return this.getEvent(id);
   }
 
   updateEvent(event: IEvent) {
@@ -57,16 +145,6 @@ export class DatabaseService {
 
   removeEvent(event: IEvent) {
     this.db.removeEvent(event);
-  }
-
-  getQueriedRecordsByCurrentDate(opts: {
-    event?: string;
-    studentId: string;
-    day: number;
-    year: number;
-    month: number;
-  }) {
-    return this.db.getQueriedRecordsByCurrentDate(opts);
   }
 
   removeStudent(student: IStudent) {
@@ -91,10 +169,6 @@ export class DatabaseService {
     this.db.insertOrUpdateRecord(opts);
   }
 
-  getEvents() {
-    return this.db.getEvents();
-  }
-
   updateEventMembers(opts: { name: string; member: { id: any } }) {
     this.db.updateEventMembers(opts);
   }
@@ -103,15 +177,7 @@ export class DatabaseService {
     return this.db.checkIfUserExists(opts);
   }
 
-  getAllStudentsRecords(opts: { event?: string; date: ICalendar }) {
-    return this.db.getAllStudentsRecords(opts);
-  }
-
-  getQueriedRecords(opts: { event?: string; query: string; date?: ICalendar }) {
-    return this.db.getQueriedRecords(opts);
-  }
-
-  getAllNotesById(id: string){
+  getAllNotesById(id: string) {
     return this.db.getAllNotesById(id);
   }
 }

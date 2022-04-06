@@ -1,31 +1,16 @@
 <div id="event-form">
-  <div *ngIf="logo" class="logo-image">
+  <div *ngIf="logo; else noLogo" class="logo-image">
     <img [src]="imgSrc" alt="A picture for the logo for the event" />
   </div>
-  <div id="logo">
-    <div id="input">
-      <div *ngIf="platform.is('desktop'); else notDesktop">
-        <ion-button>
-          <input
-            id="inputFile"
-            (change)="getPicture()"
-            type="file"
-            accept="image/*"
-          />
-          {{ htmlControls.picture }}
-        </ion-button>
-      </div>
-      <ng-template #notDesktop>
-        <ion-button (click)="addLogo()" type="button" color="primary">{{
-          htmlControls.picture
-        }}</ion-button>
-      </ng-template>
-      <ion-button (click)="logo = ''" type="button" color="secondary">{{
-        htmlControls.reset
-      }}</ion-button>
-    </div>
+  <ng-template #noLogo>
     <p>({{ htmlControls.optional }})</p>
-  </div>
+  </ng-template>
+  <ion-button (click)="getPicture()" type="button" color="primary">{{
+    htmlControls.picture
+  }}</ion-button>
+  <ion-button (click)="resetPicture()" type="button" color="secondary">{{
+    htmlControls.reset
+  }}</ion-button>
   <ion-item>
     <ion-label stacked>{{ htmlControls.eventName }}</ion-label>
     <ion-input

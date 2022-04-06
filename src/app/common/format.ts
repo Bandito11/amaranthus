@@ -22,10 +22,11 @@ export function trimText(student: IStudent) {
     if (Object.prototype.hasOwnProperty.call(student, key)) {
       const element = student[key];
       try {
-        student[key] = element.trim();
-    } catch (error) {
-        if(typeof element !== 'boolean')
-          console.error(error);
+        if (typeof element === 'string') {
+          student[key] = element.trim();
+        }
+      } catch (error) {
+        if (typeof element !== 'boolean') console.error(error);
       }
     }
   }

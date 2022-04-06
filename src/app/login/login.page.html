@@ -5,7 +5,6 @@
       <ion-button *ngIf="modalVal" (click)="cancel()">
         {{htmlControls.toolbar.buttons.cancel}}
       </ion-button>
-      <app-menu-button *ngIf="!modalVal"></app-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button *ngIf="!modalVal" (click)="goToLogin()">

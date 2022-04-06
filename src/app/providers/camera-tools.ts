@@ -1,4 +1,4 @@
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 /**
  *
@@ -10,6 +10,7 @@ export async function takePicture() {
     quality: 90,
     allowEditing: true,
     resultType: CameraResultType.Uri,
+    source: CameraSource.Prompt
   });
 
   // image.webPath will contain a path that can be set as an image src.

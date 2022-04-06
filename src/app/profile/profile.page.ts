@@ -108,7 +108,8 @@ export class ProfilePage implements OnInit {
     private modalCtrl: ModalController,
     private dbService: DatabaseService,
     private storage: Storage,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    
   ) {}
 
   ngOnInit() {
@@ -158,13 +159,13 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getStudentFromDB(id: string) {
+  async getStudentFromDB(id: string) {
     try {
-      const student = this.dbService.getStudentById(id);
+      const student = await this.dbService.getStudentById(id);
       if (student) {
         this.isActive = student.isActive;
         this.gender = student.gender;
-        this.picture = this.sanitizer.bypassSecurityTrustUrl(student.picture);
+        this.picture = student.picture;
         this.student = {
           ...student,
           gender:

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
+import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { IEvent, IStudent } from '../../common/models';
 import { addZeroInFront } from '../../common/validation';
 
@@ -26,7 +28,11 @@ export class EventFormComponent implements OnInit {
   hasEndDate;
   monthNames;
 
-  constructor(public platform: Platform) {}
+  constructor(
+    public platform: Platform,
+    public cameraTools: CameraToolsService,
+    public sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     if (this.create) {
@@ -35,8 +41,8 @@ export class EventFormComponent implements OnInit {
         currentDate.getMonth() + 1
       )}-${addZeroInFront(currentDate.getDate())}`;
       this.endDate = ``;
-    } else { 
-      if(this.endDate){
+    } else {
+      if (this.endDate) {
         this.hasEndDate = true;
       }
     }
@@ -53,9 +59,16 @@ export class EventFormComponent implements OnInit {
     this.endDate = '';
   }
 
-  getPicture() {}
-
-  addLogo() {}
+  async getPicture() {
+    const image = await this.cameraTools.takePicture();
+    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+    this.logo = await this.cameraTools.readAsBase64(image.webPath);
+  }
+  
+  resetPicture() {
+    this.imgSrc = '';
+    this.logo = this.imgSrc;
+  }
 
   assignStudentId(studentIds) {
     this.studentIds = [...studentIds];
@@ -67,7 +80,7 @@ export class EventFormComponent implements OnInit {
       startDate: this.startDate,
       endDate: this.endDate,
       infiniteDates: this.infiniteDates,
-      logo: '',
+      logo: this.logo,
       members: [],
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
