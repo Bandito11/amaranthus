@@ -20,10 +20,10 @@ export class CancelComponent implements OnInit {
 
   LANGUAGE = {
     english: {
-      cancel: 'Cancel'
+      cancel: 'Close'
     },
     spanish: {
-      cancel: 'Cancelar'
+      cancel: 'Cerrar'
     }
   };
 

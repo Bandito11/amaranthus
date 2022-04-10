@@ -50,17 +50,14 @@
       >
         {{ htmlControls.profile }}
       </ion-button>
-      <ion-button fill="solid" color="dark" (click)="showNotes(student.id)">
+      <ion-button
+        fill="solid"
+        color="dark"
+        (click)="showNotes(student.id, student.notes)"
+      >
         <ion-icon class="note" name="document-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-item lines="none" *ngIf="toggle == student.id" class="top">
-      <textarea
-        #notes
-        (keyup)="addNotes({ id: student.id, notes: notes.value })"
-        >{{ student.notes }}</textarea
-      >
-    </ion-item>
     <div
       lines="none"
       class="attended"
