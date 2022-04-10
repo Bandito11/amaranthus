@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, ModalController, NavController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import {
   ICalendar,
@@ -9,6 +9,7 @@ import {
   IStudent,
 } from 'src/app/common/models';
 import { DatabaseService } from 'src/app/services/database.service';
+import { NotesComponent } from '../notes/notes.component';
 
 @Component({
   selector: 'app-user-item',
@@ -28,7 +29,8 @@ export class UserItemComponent {
     private alertCtrl: AlertController,
     private navCtrl: NavController,
     private dbService: DatabaseService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public modalCtrl: ModalController
   ) {}
 
   addAttendance(opts: { id: string }) {
@@ -100,11 +102,20 @@ export class UserItemComponent {
     this.navCtrl.navigateForward(`${this.homeURL}/profile/${id}`);
   }
 
-  showNotes(id) {
-    if (this.toggle) {
-      this.toggle = '';
-    } else {
-      this.toggle = id;
+  async showNotes(id:string, notes: string) {
+    const modal = await this.modalCtrl.create({
+      component: NotesComponent,
+      componentProps: {
+        id,
+        notes
+      },
+    })
+    await modal.present();
+
+    const {data} = await modal.onWillDismiss();
+
+    if (data) {
+      this.student.notes = data.notes;
     }
   }
 
