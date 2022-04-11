@@ -1,11 +1,7 @@
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { IResponse } from 'src/app/common/models';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
-
-declare const fs;
-declare const process;
+import { Filesystem, Directory, Encoding, WriteFileOptions } from '@capacitor/filesystem';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +19,21 @@ export class FileProvider {
    * @memberof FileProvider
    */
   async exportFile(opts: { fileName: string; data: any; type: string }) {
-    if (this.platform.is('capacitor')) {
-      await this.writeToMobile(opts);
+    try {
+      if (this.platform.is('mobile')) {
+        const results = await this.writeToMobile(opts);
+        if (this.platform.is('mobileweb')) {
+          return results;
+        }
+        await this.toFileOpener({ type: opts.type, path: results });
+        return results;
+      }
+      if (this.platform.is('desktop')) {
+        return await this.writeToDesktop(opts);
+      }
+    } catch (error) {
+      throw error;
     }
-    if (this.platform.is('desktop')) {
-      await this.writeToDesktop(opts);
-    }
-    throw new Error(`Platform: ${this.platform.platforms()}`);
   }
 
   /**
@@ -47,7 +51,8 @@ export class FileProvider {
         // FIXME: process.env.USERPROFILE is supposed to be the user's home directory
         // path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
       }
-      console.log(opts.fileName, ' ', opts.data);
+      console.log(path, ' ', opts.data);
+      return path + ' ' + opts.data;
     });
   }
 
@@ -57,83 +62,44 @@ export class FileProvider {
    * @param {{ fileName: string, data: any }} opts
    * @memberof FileProvider
    */
-  async writeToMobile(opts: { fileName: string; data: any }) {
-    await Filesystem.writeFile({
+  async writeToMobile(opts: { fileName: string; data: any; type: string }) {
+    const options: WriteFileOptions = {
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
       directory: Directory.Documents,
-      encoding: Encoding.UTF8,
       recursive: true,
-    });
+    };
+    if (opts.type !== 'xlsx') {
+      options.encoding = Encoding.UTF8;
+    }
+    const results = await Filesystem.writeFile(options);
+    return results.uri;
   }
 
   /**
    *
    *
-   * @param {{ fileName: string, type: string }} opts
+   * @param {{ path: string, type: string }} opts
    * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    */
-  toFileOpener(opts: { fileName: string; type: string }) {
-    return new Promise((resolve, reject) => {
-      let response: IResponse<string> = {
-        success: false,
-        error: '',
-        data: '',
-      };
-      const directory = `${Directory.Documents}/AttendanceLog/`;
-      const path = opts.fileName;
+  async toFileOpener(opts: { path: string; type: string }) {
+    try {
+      let result;
       if (opts.type === 'xlsx') {
-        response = {
-          ...response,
-          success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
-        };
-        this.fileOpener
-          .open(
-            path,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          )
-          .then(() => resolve(response))
-          .catch((_) =>
-            reject(
-              `${opts.fileName} was exported successfully to the folder ${directory} in your device
-             but there was an error opening the file, please try again!`
-            )
-          );
+        result = await this.fileOpener.open(
+          opts.path,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
       }
       if (opts.type === 'txt') {
-        response = {
-          ...response,
-          success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
-        };
-        this.fileOpener
-          .open(path, 'text/plain')
-          .then(() => resolve(response))
-          .catch((_) =>
-            reject(
-              `${opts.fileName} was exported successfully to the folder ${directory} in your device
-             but there was an error opening the file, please try again!`
-            )
-          );
+        result = await this.fileOpener.open(opts.path, 'text/plain');
       }
       if (opts.type === 'csv') {
-        response = {
-          ...response,
-          success: true,
-          data: `${opts.fileName} was exported successfully to the folder ${directory} in your device!`,
-        };
-        this.fileOpener
-          .open(path, 'text/csv')
-          .then(() => resolve(response))
-          .catch((_) =>
-            reject(
-              `${opts.fileName} was exported successfully to the folder ${directory} in your device
-             but there was an error opening the file, please try again!`
-            )
-          );
+        result = await this.fileOpener.open(opts.path, 'text/csv');
       }
-    });
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -1,9 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'xyz.attendancelog.amaranthus',
-  appName: 'Attendance Log Tracker',
-  webDir: 'www',
+  appId: 'amaranthus.web',
+  appName: 'amaranthus-web',
+  webDir: 'dist',
   bundledWebRuntime: false
 };
 

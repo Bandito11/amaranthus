@@ -101,7 +101,7 @@ export class ExportPage {
    * @memberof ExportPage
    */
   async exportAsXLSX() {
-    let xlsxResponse;
+    let xlsxData;
     let message = 'Creating the File...';
     if (this.month) {
       this.date = this.date.slice(0, 7);
@@ -114,59 +114,46 @@ export class ExportPage {
     const loading = await this.loading.create({
       message: message,
     });
-    loading.present();
+    await loading.present();
     try {
       if (this.month) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({
+        xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.month,
           records: this.students,
           fileName: fileName,
         });
       }
       if (this.day) {
-        xlsxResponse = this.xlsx.exportXLSXToFile({
+        xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.day,
           records: this.students,
           fileName: fileName,
         });
       }
-      if (xlsxResponse.success) {
-        if (!this.platform.is('desktop')) {
-          try {
-            const fileResponse = await this.file.exportFile({
-              fileName: fileName,
-              data: xlsxResponse.data,
-              type: 'xlsx',
-            });
-            loading.dismiss();
-            // if (fileResponse.success) {
-            //   this.modal.dismiss(fileResponse.data);
-            // } else {
-            //   this.modal.dismiss(fileResponse.error);
-            // }
-          } catch (error) {
-            // If FileProvider err
-            loading.dismiss();
-            this.modal.dismiss(error);
-          }
+      if (xlsxData) {
+        const path = await this.file.exportFile({
+          fileName: fileName,
+          data: xlsxData,
+          type: 'xlsx',
+        });
+        await loading.dismiss();
+        if (this.language === 'spanish') {
+          await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
         } else {
-          loading.dismiss();
-          this.modal.dismiss(xlsxResponse.error);
+          await this.modal.dismiss(`The file was created on ${path}!`);
         }
-      } else {
-        loading.dismiss();
-        this.modal.dismiss(xlsxResponse.error);
       }
+      throw new Error('Error creating the file');
     } catch (error) {
       // If XLSX Provider err
-      loading.dismiss();
+      await loading.dismiss();
       if (this.language === 'spanish') {
-        this.modal.dismiss(
+        await this.modal.dismiss(
           'Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!'
         );
       } else {
-        this.modal.dismiss(
-          'There was an error while creating the file. Please try again later!'
+        await this.modal.dismiss(
+          `There was an error while creating the file. Please try again later!`
         );
       }
     }
@@ -191,40 +178,53 @@ export class ExportPage {
     const loading = await this.loading.create({
       message: message,
     });
-    loading.present();
+    await loading.present();
     try {
       if (this.month) {
         textTabResponse = await this.textTab.exportTextTabDelimited({
           type: recordType.month,
           records: this.students,
+          fileName,
         });
       }
       if (this.day) {
         textTabResponse = await this.textTab.exportTextTabDelimited({
           type: recordType.day,
           records: this.students,
+          fileName,
         });
       }
-      if (textTabResponse.success) {
+      if (textTabResponse) {
         try {
-          await this.file.exportFile({
+          const path = await this.file.exportFile({
             fileName: fileName,
-            data: textTabResponse.data,
+            data: textTabResponse,
             type: 'txt',
           });
-          loading.dismiss();
-          //TODO: Implement a message when it fails
-          this.modal.dismiss('');
+          await loading.dismiss();
+          if (this.language === 'spanish') {
+            await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
+          } else {
+            await this.modal.dismiss(`The file was created on ${path}!`);
+          }
         } catch (error) {
           // If FileProvider err
-          loading.dismiss();
-          this.modal.dismiss(error);
+          await loading.dismiss();
+          await this.modal.dismiss(error);
         }
       }
     } catch (error) {
       // If TextTabDelimited Provider err
-      loading.dismiss();
-      this.modal.dismiss(error.error);
+      await loading.dismiss();
+      if (this.language === 'spanish') {
+        await this.modal.dismiss(
+          `Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!`
+        );
+      } else {
+        await this.modal.dismiss(
+          `There was an error while creating the file. Please try again later!`
+        );
+      }
     }
   }
 
@@ -247,40 +247,53 @@ export class ExportPage {
     const loading = await this.loading.create({
       message: message,
     });
-    loading.present();
+    await loading.present();
     try {
       if (this.month) {
         csvResponse = await this.csv.exportCSV({
           type: recordType.month,
           records: this.students,
+          fileName,
         });
       }
       if (this.day) {
         csvResponse = await this.csv.exportCSV({
           type: recordType.day,
           records: this.students,
+          fileName,
         });
       }
-      if (csvResponse.success) {
+      if (csvResponse) {
         try {
-          await this.file.exportFile({
+          const path = await this.file.exportFile({
             fileName: fileName,
-            data: csvResponse.data,
+            data: csvResponse,
             type: 'csv',
           });
           await loading.dismiss();
-          //TODO: Dismiss the modal once the file finishes saving
-          this.modal.dismiss('');
+          if (this.language === 'spanish') {
+            await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
+          } else {
+            await this.modal.dismiss(`The file was created on ${path}!`);
+          }
         } catch (error) {
           // If FileProvider err
-          loading.dismiss();
+          await loading.dismiss();
           this.modal.dismiss(error);
         }
       }
     } catch (error) {
       // If CSV Provider err
-      loading.dismiss();
-      this.modal.dismiss(error.error);
+      await loading.dismiss();
+      if (this.language === 'spanish') {
+        this.modal.dismiss(
+          'Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!'
+        );
+      } else {
+        this.modal.dismiss(
+          'There was an error while creating the file. Please try again later!'
+        );
+      }
     }
   }
 

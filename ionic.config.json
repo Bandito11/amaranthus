@@ -1,10 +1,7 @@
 {
   "name": "Attendance Log Tracker",
+  "type": "angular",
   "integrations": {
     "capacitor": {}
-  },
-  "type": "angular",
-  "hooks": {
-    "build:after": "src/util.js"
   }
 }
