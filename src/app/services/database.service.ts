@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ICalendar, IEvent, INote, IRecord, IStudent } from '../common/models';
+import { ICalendar, IEvent, INote, IStudent } from '../common/models';
 import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
-import { CameraToolsService } from './camera-tools.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,26 +8,10 @@ import { CameraToolsService } from './camera-tools.service';
 export class DatabaseService {
   constructor(
     private db: AmaranthusDBProvider,
-    public cameraTools: CameraToolsService,
-    public sanitizer: DomSanitizer
   ) {}
 
-  private async dataUrlToObjectUrl(dataUrl) {
-    const blob = await this.cameraTools.readAsBlob(dataUrl);
-    return this.sanitizer.bypassSecurityTrustUrl(blob) as unknown as string;
-  }
-
-  async getAllActiveStudents(date: ICalendar): Promise<(IStudent & IRecord)[]> {
+  async getAllActiveStudents(date: ICalendar) {
     const students = await this.db.getAllActiveStudents(date);
-
-    for (let i = 0; i < students.length; i++) {
-      if (students[i].picture) {
-        students[i] = {
-          ...students[i],
-          picture: await this.dataUrlToObjectUrl(students[i].picture),
-        };
-      }
-    }
 
     return students;
   }
@@ -37,23 +19,12 @@ export class DatabaseService {
   async getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
     const records = await this.db.getStudentsRecordsByDate(opts);
 
-    for (let i = 0; i < records.length; i++) {
-      if (records[i].picture) {
-        records[i].picture = await this.dataUrlToObjectUrl(records[i].picture);
-      }
-    }
-
     return records;
   }
 
   async getStudentById(id: string) {
-    let student = this.db.getStudentById(id);
-    if (student.picture) {
-      student = {
-        ...student,
-        picture: await this.dataUrlToObjectUrl(student.picture),
-      };
-    }
+    let student = await this.db.getStudentById(id) as IStudent;
+   
     return student;
   }
 
@@ -70,42 +41,18 @@ export class DatabaseService {
   }
 
   async getAllStudents(event: boolean) {
-    const students = this.db.getAllStudents(event);
-
-    for (let i = 0; i < students.length; i++) {
-      if (students[i].picture) {
-        students[i] = {
-          ...students[i],
-          picture: await this.dataUrlToObjectUrl(students[i].picture),
-        };
-      }
-    }
-
+    const students = await this.db.getAllStudents(event) as IStudent[];
     return students;
   }
 
   async getEvent(id) {
-    let event = this.db.getEvent(id);
-    if (event.logo) {
-      event = {
-        ...event,
-        logo: await this.dataUrlToObjectUrl(event.logo),
-      };
-    }
+    let event = await this.db.getEvent(id);
     return event;
   }
 
   async getEvents() {
     const events = this.db.getEvents();
 
-    for (let i = 0; i < events.length; i++) {
-      if (events[i].logo) {
-        events[i] = {
-          ...events[i],
-          logo: await this.dataUrlToObjectUrl(events[i].logo),
-        };
-      }
-    }
 
     return events;
   }
@@ -131,10 +78,6 @@ export class DatabaseService {
     this.db.insertNotes(note);
   }
 
-  async insertStudent(student: IStudent) {
-    await this.db.insertStudent(student);
-  }
-
   insertEvent(event: IEvent) {
     this.db.insertEvent(event);
   }
@@ -151,8 +94,12 @@ export class DatabaseService {
     this.db.removeStudent(student);
   }
 
-  updateStudent(student: IStudent) {
-    this.db.updateStudent(student);
+  async insertStudent(student: IStudent) {
+    await this.db.insertStudent(student);
+  }
+
+  async updateStudent(student: IStudent) {
+    await this.db.updateStudent(student);
   }
 
   studentExists(id) {
