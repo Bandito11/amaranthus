@@ -1,4 +1,3 @@
-import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   ModalController,
@@ -110,8 +109,7 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     //TODO: Create a way to restore purchases for mobile
     if (
-      this.platform.is('desktop') &&
-      navigator.userAgent.match('Windows')
+      this.platform.is('desktop') || this.platform.is('mobileweb')
     ) {
       this.storage.set('boughtMasterKey', true);
     }

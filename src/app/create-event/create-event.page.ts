@@ -10,9 +10,6 @@ import { addZeroInFront } from '../common/validation';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
-declare const fs;
-declare const process;
-
 @Component({
   selector: 'app-create-event',
   templateUrl: './create-event.page.html',
