@@ -1,7 +1,13 @@
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Filesystem, Directory, Encoding, WriteFileOptions } from '@capacitor/filesystem';
+import {
+  Filesystem,
+  Directory,
+  Encoding,
+  WriteFileOptions,
+  ReadFileOptions,
+} from '@capacitor/filesystem';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +72,7 @@ export class FileProvider {
     const options: WriteFileOptions = {
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
-      directory: Directory.Documents,
+      directory: Directory.Library,
       recursive: true,
     };
     if (opts.type !== 'xlsx') {
@@ -74,6 +80,18 @@ export class FileProvider {
     }
     const results = await Filesystem.writeFile(options);
     return results.uri;
+  }
+
+  async readFromMobile(opts: { type: string; path: string }) {
+    const options: ReadFileOptions = {
+      path: `AttendanceLog/${opts.path}`,
+      directory: Directory.Library,
+    };
+    if (opts.type !== 'xlsx') {
+      options.encoding = Encoding.UTF8;
+    }
+    const result = await Filesystem.readFile(options);
+    return result.data;
   }
 
   /**

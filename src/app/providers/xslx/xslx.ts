@@ -2,8 +2,9 @@ import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { IRecord } from 'src/app/common/models';
-import { recordType } from 'src/app/common/constants';
 import { Storage } from '@ionic/storage';
+import { recordType } from 'src/app/common/constants';
+import { getTableHeaders } from 'src/app/common/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -16,28 +17,13 @@ export class XLSXProvider {
     records: IRecord[];
     fileName: string;
   }) {
-    let headers;
     let language;
     try {
       language = await this.storage.get('language');
     } catch (error) {
       throw error;
     }
-    if (language === 'spanish') {
-      if (opts.type === recordType.month) {
-        headers = ['Id', 'Nombre', 'Asistencia', 'Ausencia', '% de Asistencia'];
-      }
-      if (opts.type === recordType.day) {
-        headers = ['Id', 'Nombre', 'Asistencia', 'Ausencia'];
-      }
-    } else {
-      if (opts.type === recordType.month) {
-        headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
-      }
-      if (opts.type === recordType.day) {
-        headers = ['Id', 'Name', 'Attendance', 'Absence'];
-      }
-    }
+    let headers = getTableHeaders({...opts, language})
     let studentRecords: IRecord[][] = [];
     try {
       studentRecords = opts.records.map((record) => {

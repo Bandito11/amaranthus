@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { IRecord, IResponse } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 import * as XLSX from 'xlsx';
+import { getTableHeaders } from 'src/app/common/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -16,28 +17,13 @@ export class CSVProvider {
     type: string;
     records: IRecord[];
   }) {
-    let headers;
     let language;
     try {
       language = await this.storage.get('language');
     } catch (error) {
       throw error;
     }
-    if (language === 'spanish') {
-      if (opts.type === recordType.month) {
-        headers = ['Id', 'Nombre', 'Asistencia', 'Ausencia', '% de Asistencia'];
-      }
-      if (opts.type === recordType.day) {
-        headers = ['Id', 'Nombre', 'Asistencia', 'Ausencia'];
-      }
-    } else {
-      if (opts.type === recordType.month) {
-        headers = ['Id', 'Name', 'Attendance', 'Absence', 'Attendance %'];
-      }
-      if (opts.type === recordType.day) {
-        headers = ['Id', 'Name', 'Attendance', 'Absence'];
-      }
-    }
+    let headers = getTableHeaders({...opts, language})
     let studentRecords: IRecord[][] = [];
     try {
       studentRecords = opts.records.map((record) => {
