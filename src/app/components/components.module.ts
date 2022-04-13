@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { EventFormComponent } from './event-form/event-form.component';
 import { EventStudentsListComponent } from './event-students-list/event-students-list.component';
 import { NotesComponent } from './notes/notes.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -22,9 +23,9 @@ import { NotesComponent } from './notes/notes.component';
     StudentFormComponent,
     EventFormComponent,
     EventStudentsListComponent,
-    NotesComponent
+    NotesComponent,
   ],
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule, FormsModule, ScrollingModule],
   exports: [
     LoaderComponent,
     GobackComponent,
@@ -34,7 +35,7 @@ import { NotesComponent } from './notes/notes.component';
     StudentFormComponent,
     EventFormComponent,
     EventStudentsListComponent,
-    NotesComponent
+    NotesComponent,
   ],
 })
 export class ComponentsModule {}
