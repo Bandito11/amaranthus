@@ -55,6 +55,8 @@ export class EventFormComponent implements OnInit {
     }
   }
 
+  search(event) {}
+  
   resetEndDate() {
     this.endDate = '';
   }

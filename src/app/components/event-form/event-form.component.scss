@@ -24,4 +24,9 @@
     opacity: 0;
     filter: alpha(opacity=0);
   }
+
+  cdk-virtual-scroll-viewport {
+    height: 250px;
+    width: 100%;
+  }
 }
