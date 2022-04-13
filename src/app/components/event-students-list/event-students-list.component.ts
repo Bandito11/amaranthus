@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { IStudent } from 'src/app/common/models';
 
 @Component({
@@ -8,7 +8,7 @@ import { IStudent } from 'src/app/common/models';
 })
 export class EventStudentsListComponent implements OnInit {
   @Input() htmlControls;
-  @Input() students: IStudent[];
+  @Input() student: IStudent;
   @Input() studentIds: string[];
 
   @Output() studentIdsData = new EventEmitter<string[]>();
@@ -16,7 +16,6 @@ export class EventStudentsListComponent implements OnInit {
 
   ngOnInit() {}
 
-  search(event) {}
 
   ifOnEventList(id) {
     if (this.studentIds.indexOf(id) !== -1) {
