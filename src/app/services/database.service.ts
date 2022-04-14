@@ -46,7 +46,7 @@ export class DatabaseService {
   }
 
   async getEvent(id) {
-    let event = await this.db.getEvent(id);
+    const event = await this.db.getEvent(id);
     return event;
   }
 

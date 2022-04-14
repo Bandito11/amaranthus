@@ -280,25 +280,38 @@ export class AmaranthusDBProvider {
       name: event.name,
     });
     if (!exists) {
-      const { name, data } = this.getPictureName({
-        name: formattedEvent.name,
-        picture: formattedEvent.logo,
-      });
-      await this.file.writeToMobile({
-        fileName: name,
-        data,
-        type: 'image',
-      });
-      formattedEvent.logo = name;
-
+      if (formattedEvent.logo) {
+        const { name, data } = this.getPictureName({
+          name: formattedEvent.name,
+          picture: formattedEvent.logo,
+        });
+        await this.file.writeToMobile({
+          fileName: name,
+          data,
+          type: 'image',
+        });
+        formattedEvent.logo = name;
+      }
       eventsColl.insert(formattedEvent);
     }
   }
 
-  updateEvent(event) {
+  async updateEvent(event) {
     try {
       const results = eventsColl.get(event.$loki);
       if (results) {
+        if (results.logo) {
+          const { name, data } = this.getPictureName({
+            name: event.name,
+            picture: event.logo,
+          });
+          await this.file.writeToMobile({
+            fileName: name,
+            data,
+            type: 'image',
+          });
+          event.logo = name;
+        }
         eventsColl.update(event);
       } else {
         throw new Error(`User doesn't exist on Database`);
@@ -617,7 +630,7 @@ export class AmaranthusDBProvider {
         $eq: id,
       },
     });
-    if (results.picture) {
+    if (results.picture && !results.picture.match('default')) {
       results = {
         ...results,
         picture: await this.dataUrlToObjectUrl(
@@ -626,6 +639,11 @@ export class AmaranthusDBProvider {
             path: results.picture,
           })
         ),
+      };
+    } else if (results.picture && results.picture.match('default')) {
+      results = {
+        ...results,
+        picture: await this.dataUrlToObjectUrl(results.picture),
       };
     }
     return results;
@@ -772,13 +790,15 @@ export class AmaranthusDBProvider {
     });
 
     for (let i = 0; i < records.length; i++) {
-      if (records[i].picture) {
+      if (records[i].picture && !records[i].picture.match('default')) {
         records[i].picture = await this.dataUrlToObjectUrl(
           await this.file.readFromMobile({
             type: 'image',
             path: records[i].picture,
           })
         );
+      } else if (records[i].picture && records[i].picture.match('default')) {
+        records[i].picture = await this.dataUrlToObjectUrl(records[i].picture);
       }
     }
     return records;
@@ -980,6 +1000,14 @@ export class AmaranthusDBProvider {
               })
             ),
           };
+        } else if (
+          students[i].picture &&
+          students[i].picture.match('default')
+        ) {
+          students[i] = {
+            ...students[i],
+            picture: await this.dataUrlToObjectUrl(students[i].picture),
+          };
         }
       } catch (error) {
         students[i].picture = '';
@@ -1058,6 +1086,14 @@ export class AmaranthusDBProvider {
                   path: results[i].picture,
                 })
               ),
+            };
+          } else if (
+            results[i].picture &&
+            results[i].picture.match('default')
+          ) {
+            results[i] = {
+              ...results[i],
+              picture: await this.dataUrlToObjectUrl(results[i].picture),
             };
           }
         } catch (error) {

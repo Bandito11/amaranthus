@@ -8,7 +8,12 @@ export class CameraToolsService {
   constructor() {}
 
   takePicture() {
-    return takePicture();
+    try {
+      return takePicture();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async readAsBase64(url: string): Promise<string> {
