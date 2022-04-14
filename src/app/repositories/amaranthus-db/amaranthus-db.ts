@@ -13,6 +13,8 @@ import { trimEvent, trimText } from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
+import { FileProvider } from 'src/app/providers/file/file';
+import { DomSanitizer } from '@angular/platform-browser';
 
 /**
  * Collections use on db
@@ -37,7 +39,9 @@ let eventsView: DynamicView<IEvent[]>;
 export class AmaranthusDBProvider {
   constructor(
     private storage: Storage,
-    private cameraTools: CameraToolsService
+    public cameraTools: CameraToolsService,
+    public file: FileProvider,
+    public sanitizer: DomSanitizer
   ) {}
 
   async init(): Promise<Collection<IStudent>> {
@@ -96,8 +100,9 @@ export class AmaranthusDBProvider {
     });
   }
 
-  private async convertPictures(data) {
-    return await this.cameraTools.readAsBlob(data);
+  private async dataUrlToObjectUrl(dataUrl) {
+    const blob = await this.cameraTools.readAsBlob(dataUrl);
+    return this.sanitizer.bypassSecurityTrustUrl(blob) as unknown as string;
   }
 
   deleteInvalidCharacters() {
@@ -141,6 +146,17 @@ export class AmaranthusDBProvider {
       throw new Error('User not in database.');
     }
     return checkUser.firstName;
+  }
+
+  private getPictureName(opts: { name: string; picture: string }) {
+    const extension = opts.picture
+      .split(',')[0]
+      .split(':')[1]
+      .split(';')[0]
+      .split('/')[1];
+    const data = opts.picture;
+    const name = `${opts.name}.${extension}`;
+    return { name, data };
   }
 
   getNoteByDate(opts: { date: ICalendar; id: string; event: string }) {
@@ -258,20 +274,44 @@ export class AmaranthusDBProvider {
     eventsColl.update(event);
   }
 
-  insertEvent(event: IEvent) {
+  async insertEvent(event: IEvent) {
     const formattedEvent = trimEvent(event);
     const exists = eventsColl.findOne({
       name: event.name,
     });
     if (!exists) {
+      if (formattedEvent.logo) {
+        const { name, data } = this.getPictureName({
+          name: formattedEvent.name,
+          picture: formattedEvent.logo,
+        });
+        await this.file.writeToMobile({
+          fileName: name,
+          data,
+          type: 'image',
+        });
+        formattedEvent.logo = name;
+      }
       eventsColl.insert(formattedEvent);
     }
   }
 
-  updateEvent(event) {
+  async updateEvent(event) {
     try {
       const results = eventsColl.get(event.$loki);
       if (results) {
+        if (results.logo) {
+          const { name, data } = this.getPictureName({
+            name: event.name,
+            picture: event.logo,
+          });
+          await this.file.writeToMobile({
+            fileName: name,
+            data,
+            type: 'image',
+          });
+          event.logo = name;
+        }
         eventsColl.update(event);
       } else {
         throw new Error(`User doesn't exist on Database`);
@@ -294,16 +334,40 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getEvents(): IEvent[] {
+  async getEvents(): Promise<IEvent[]> {
     const results: any = eventsColl
       .chain()
       .simplesort('startDate', true)
       .data();
+    for (let i = 0; i < results.length; i++) {
+      if (results[i].logo) {
+        results[i] = {
+          ...results[i],
+          logo: await this.dataUrlToObjectUrl(
+            await this.file.readFromMobile({
+              type: 'image',
+              path: results[i].logo,
+            })
+          ),
+        };
+      }
+    }
     return results;
   }
 
-  getEvent(id) {
-    const results = eventsColl.get(id);
+  async getEvent(id) {
+    let results = eventsColl.get(id);
+    if (results.logo) {
+      results = {
+        ...results,
+        logo: await this.dataUrlToObjectUrl(
+          await this.file.readFromMobile({
+            type: 'image',
+            path: results.logo,
+          })
+        ),
+      };
+    }
     return results;
   }
 
@@ -326,10 +390,22 @@ export class AmaranthusDBProvider {
     }
   }
 
-  insertStudentIntoDB(student: IStudent) {
+  async insertStudentIntoDB(student: IStudent) {
     const value = this.checkIfStudentExists({ id: student.id });
     if (value === false) {
       const formattedStudent = trimText(student);
+      if (!formattedStudent.picture.match('default')) {
+        const { name, data } = this.getPictureName({
+          name: `${formattedStudent.id}-${formattedStudent.firstName}${formattedStudent.lastName}`,
+          picture: formattedStudent.picture,
+        });
+        await this.file.writeToMobile({
+          fileName: name,
+          data,
+          type: 'image',
+        });
+        formattedStudent.picture = name;
+      }
       studentsColl.insert(formattedStudent);
     } else {
       throw new Error('User already exists in the database');
@@ -340,18 +416,18 @@ export class AmaranthusDBProvider {
     if (studentsColl.data.length > 9) {
       const boughtMasterKey = await this.storage.get('boughtMasterKey');
       if (boughtMasterKey === true) {
-        this.insertStudentIntoDB(student);
+        await this.insertStudentIntoDB(student);
       } else {
         throw new Error(
           `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`
         );
       }
     } else {
-      this.insertStudentIntoDB(student);
+      await this.insertStudentIntoDB(student);
     }
   }
 
-  updateStudent(student: IStudent) {
+  async updateStudent(student: IStudent) {
     let results: any = studentsColl.findOne({
       id: {
         $eq: student.id,
@@ -362,6 +438,15 @@ export class AmaranthusDBProvider {
       ...results,
       ...formattedStudent,
     };
+    if (!results.picture.match('default')) {
+      const { name, data } = this.getPictureName(results);
+      await this.file.writeToMobile({
+        fileName: name,
+        data,
+        type: 'image',
+      });
+      results.picture = name;
+    }
     studentsColl.update(results);
   }
 
@@ -539,12 +624,28 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getStudentById(id: string): IStudent {
-    const results = studentsColl.findOne({
+  async getStudentById(id: string) {
+    let results = studentsColl.findOne({
       id: {
         $eq: id,
       },
     });
+    if (results.picture && !results.picture.match('default')) {
+      results = {
+        ...results,
+        picture: await this.dataUrlToObjectUrl(
+          await this.file.readFromMobile({
+            type: 'image',
+            path: results.picture,
+          })
+        ),
+      };
+    } else if (results.picture && results.picture.match('default')) {
+      results = {
+        ...results,
+        picture: await this.dataUrlToObjectUrl(results.picture),
+      };
+    }
     return results;
   }
 
@@ -687,6 +788,19 @@ export class AmaranthusDBProvider {
         return studentRecord;
       }
     });
+
+    for (let i = 0; i < records.length; i++) {
+      if (records[i].picture && !records[i].picture.match('default')) {
+        records[i].picture = await this.dataUrlToObjectUrl(
+          await this.file.readFromMobile({
+            type: 'image',
+            path: records[i].picture,
+          })
+        );
+      } else if (records[i].picture && records[i].picture.match('default')) {
+        records[i].picture = await this.dataUrlToObjectUrl(records[i].picture);
+      }
+    }
     return records;
   }
 
@@ -862,7 +976,7 @@ export class AmaranthusDBProvider {
     }
   }
 
-  getAllStudents(event?: boolean): IStudent[] {
+  async getAllStudents(event?: boolean) {
     let students;
     if (event) {
       students = studentsColl.find({
@@ -872,6 +986,32 @@ export class AmaranthusDBProvider {
       });
     } else {
       students = studentsColl.data;
+    }
+
+    for (let i = 0; i < students.length; i++) {
+      try {
+        if (students[i].picture && !students[i].picture.match('default')) {
+          students[i] = {
+            ...students[i],
+            picture: await this.dataUrlToObjectUrl(
+              await this.file.readFromMobile({
+                type: 'image',
+                path: students[i].picture,
+              })
+            ),
+          };
+        } else if (
+          students[i].picture &&
+          students[i].picture.match('default')
+        ) {
+          students[i] = {
+            ...students[i],
+            picture: await this.dataUrlToObjectUrl(students[i].picture),
+          };
+        }
+      } catch (error) {
+        students[i].picture = '';
+      }
     }
     return students;
   }
@@ -934,6 +1074,33 @@ export class AmaranthusDBProvider {
         }
         return newStudent;
       }) as unknown as (IStudent & IRecord)[]; // got results
+
+      for (let i = 0; i < results.length; i++) {
+        try {
+          if (results[i].picture && !results[i].picture.match('default')) {
+            results[i] = {
+              ...results[i],
+              picture: await this.dataUrlToObjectUrl(
+                await this.file.readFromMobile({
+                  type: 'image',
+                  path: results[i].picture,
+                })
+              ),
+            };
+          } else if (
+            results[i].picture &&
+            results[i].picture.match('default')
+          ) {
+            results[i] = {
+              ...results[i],
+              picture: await this.dataUrlToObjectUrl(results[i].picture),
+            };
+          }
+        } catch (error) {
+          results[i].picture = '';
+        }
+      }
+
       return results;
     } catch (error) {
       console.log(error);

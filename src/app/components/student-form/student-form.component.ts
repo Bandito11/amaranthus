@@ -55,8 +55,12 @@ export class StudentFormComponent implements OnInit {
   }
 
   async getPicture() {
-    const image = await this.cameraTools.takePicture();
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
-    this.student.picture = await this.cameraTools.readAsBase64(image.webPath);
+    try {
+      const image = await this.cameraTools.takePicture();
+      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+      this.student.picture = await this.cameraTools.readAsBase64(image.webPath);
+    } catch (error) {
+      //TODO: Handle error
+    }
   }
 }

@@ -360,28 +360,27 @@ export class StatsPage implements OnInit {
       component: ExportPage,
       componentProps: { students: this.students, event: this.event },
     });
-    modal.present();
-    modal.onDidDismiss().then((response) => {
-      try {
-        if (response.data) {
-          if (this.language === 'spanish') {
-            this.showSimpleAlert({
-              buttons: ['OK'],
-              header: '¡Información!',
-              message: response.data,
-            });
-          } else {
-            this.showSimpleAlert({
-              buttons: ['OK'],
-              header: 'Information!',
-              message: response.data,
-            });
-          }
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    try {
+      if (data) {
+        if (this.language === 'spanish') {
+          this.showSimpleAlert({
+            buttons: ['OK'],
+            header: '¡Información!',
+            message: data,
+          });
+        } else {
+          this.showSimpleAlert({
+            buttons: ['OK'],
+            header: 'Information!',
+            message: data,
+          });
         }
-      } catch (error) {
-        console.error(error);
       }
-    });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**

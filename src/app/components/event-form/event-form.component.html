@@ -73,12 +73,25 @@
     ></ion-checkbox>
   </ion-item>
 
-  <app-event-students-list
-    [htmlControls]="htmlControls"
-    [students]="students"
-    [studentIds]="studentIds"
-    (studentIdsData)="assignStudentId($event)"
-  ></app-event-students-list>
-
+  <ion-list lines="none">
+    <ion-searchbar
+      placeholder="{{ htmlControls.search }}"
+      (ionInput)="search($event)"
+    ></ion-searchbar>
+    <cdk-virtual-scroll-viewport
+      itemSize="56"
+      minBufferPx="900"
+      maxBufferPx="1350"
+    >
+      <app-event-students-list
+        *cdkVirtualFor="let student of students"
+        [htmlControls]="htmlControls"
+        [student]="student"
+        [studentIds]="studentIds"
+        (studentIdsData)="assignStudentId($event)"
+      ></app-event-students-list>
+    </cdk-virtual-scroll-viewport>
+  </ion-list>
+  
   <ion-button expand="full" (click)="submit()">Submit</ion-button>
 </div>

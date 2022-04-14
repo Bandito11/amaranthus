@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { IProductGet, ISimpleAlertOptions } from '../common/models';
-import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { LoadingController, Platform, AlertController } from '@ionic/angular';
 import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Market } from '@ionic-native/market/ngx';
 import { stateAndroid } from '../common/constants';
 import { Storage } from '@ionic/storage';
+import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 
 @Component({
   selector: 'app-settings',
