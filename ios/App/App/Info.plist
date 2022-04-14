@@ -27,6 +27,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>To be able to customize profile</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To be able to customize profile</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To be able to customize profile</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
