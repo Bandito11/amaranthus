@@ -153,10 +153,11 @@ export class HomePage implements OnInit {
     };
     try {
       this.students = await this.dbService.getAllActiveStudents(date);
-      this.filterOptions = this.getFilterOptions();
     } catch (error) {
+      this.students = []
       handleError(error);
     }
+    this.filterOptions = this.getFilterOptions();
   }
 
   getFilterOptions() {
