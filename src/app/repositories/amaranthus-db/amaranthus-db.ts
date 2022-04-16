@@ -45,6 +45,9 @@ export class AmaranthusDBProvider {
   ) {}
 
   async initializeDatabase() {
+    if (amaranthusDB) {
+      return;
+    }
     return new Promise((resolve) => {
       let lokiOptions: Partial<LokiConfigOptions> = {
         autosave: true,

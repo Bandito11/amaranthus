@@ -1,9 +1,11 @@
 import { ModalController, AlertController, Platform } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
-import { IStudent, ISimpleAlertOptions } from '../common/models';
+import { IStudent } from '../common/models';
 import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { handleError } from '../common/handleError';
+import { toastController } from '@ionic/core';
 
 @Component({
   selector: 'app-create',
@@ -152,28 +154,14 @@ export class CreatePage implements OnInit {
    * Creates a student in database
    */
   async createStudent(student: IStudent) {
-    let options: ISimpleAlertOptions = {
-      header: '',
-      message: '',
-      buttons: [],
-    };
+    let message;
     if (!student.firstName || !student.lastName || !student.id) {
       if (this.language === 'spanish') {
-        options = {
-          ...options,
-          header: '¡Advertencia!',
-          message: 'Algunos campos no contienen la información requerida.',
-          buttons: ['Si'],
-        };
+        message = 'Algunos campos no contienen la información requerida.';
       } else {
-        options = {
-          ...options,
-          header: 'Warning!',
-          message: "Some fields doesn't have the required info",
-          buttons: ['Ok'],
-        };
+        message = "Some fields doesn't have the required info";
       }
-      this.showSimpleAlert(options);
+      handleError(message);
     } else if (
       student.id.includes('#') ||
       student.id.includes('/') ||
@@ -181,21 +169,11 @@ export class CreatePage implements OnInit {
       student.id.includes(';')
     ) {
       if (this.language === 'spanish') {
-        options = {
-          ...options,
-          header: '¡Advertencia!',
-          message: 'El campo de ID no puede contener "#" o "/" o "%".',
-          buttons: ['Si'],
-        };
+        message = 'El campo de ID no puede contener "#" o "/" o "%".';
       } else {
-        options = {
-          ...options,
-          header: 'Warning!',
-          message: 'The ID field can\'t contain "#" or "/" or "%"',
-          buttons: ['Ok'],
-        };
+        message = 'The ID field can\'t contain "#" or "/" or "%"';
       }
-      this.showSimpleAlert(options);
+      handleError(message);
     } else {
       const studentTrimmed: IStudent = {
         ...trimText(student),
@@ -217,19 +195,22 @@ export class CreatePage implements OnInit {
                 const navTransition = alert.dismiss();
                 try {
                   await this.dbService.insertStudent(studentTrimmed);
-                  navTransition.then(() => {
-                    const userCreatedMsg = {
-                      header: '¡Éxito!',
-                      message: `${student.firstName} ${student.lastName} ha sido creado.`,
-                    };
-                    this.showAdvancedAlert(userCreatedMsg);
+                  navTransition.then(async () => {
+                    const message = `${student.firstName} ${student.lastName} ha sido creado.`;
+
+                    const toast = await toastController.create({
+                      message,
+                      duration: 2000,
+                      color: 'success',
+                    });
+                    toast.present();
+
+                    await this.modalCtrl.dismiss();
                   });
                 } catch (error) {
-                  const errorMsg = {
-                    header: 'Error',
-                    message: `Se alcanzó el límite de 10 personas en la base de datos. Si desea deshacerse de este límite, ¡considere comprar la aplicación!`,
-                  };
-                  navTransition.then(() => this.showAdvancedAlert(errorMsg));
+                  const message = `Se alcanzó el límite de 10 personas en la base de datos. Si desea deshacerse de este límite, ¡considere comprar la aplicación!`;
+                  await alert.dismiss();
+                  handleError(message);
                   this.generateId();
                 }
                 return false;
@@ -247,26 +228,26 @@ export class CreatePage implements OnInit {
             {
               text: 'Yes',
               handler: async () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
                 try {
                   Promise.race([
                     await alert.dismiss(),
                     await this.dbService.insertStudent(studentTrimmed),
                   ]);
-                  const userCreatedMsg = {
-                    header: 'Success!',
-                    message: `${student.firstName} ${student.lastName} was created.`,
-                  };
 
-                  this.showAdvancedAlert(userCreatedMsg);
+                  const message = `${student.firstName} ${student.lastName} was created.`;
+
+                  const toast = await toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
+                  });
+                  toast.present();
+
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
-                  const errorMsg = {
-                    header: 'Error',
-                    message: `Reached the limit of 10 persons in database. If you want to get rid of this limit, please consider buying the app!`,
-                  };
+                  message = `Reached the limit of 10 persons in database. If you want to get rid of this limit, please consider buying the app!`;
                   await alert.dismiss();
-                  this.showAdvancedAlert(errorMsg);
+                  handleError(message);
                   this.generateId();
                 }
                 return false;
@@ -277,45 +258,5 @@ export class CreatePage implements OnInit {
         alert.present();
       }
     }
-  }
-
-  /**
-   *
-   * @param options
-   * Display a message on the screen
-   */
-  async showAdvancedAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: [
-        {
-          text: 'OK',
-          handler: () => {
-            // user has clicked the alert button
-            // begin the alert's dismiss transition
-            alert.dismiss().then(() => {
-              this.modalCtrl.dismiss();
-            });
-            return false;
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  /**
-   *
-   * @param options
-   * Show a message on the screen
-   */
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
   }
 }

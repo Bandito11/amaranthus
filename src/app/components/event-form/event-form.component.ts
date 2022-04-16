@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
+import { handleError } from 'src/app/common/handleError';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { IEvent, IStudent } from '../../common/models';
 import { addZeroInFront } from '../../common/validation';
@@ -56,17 +57,21 @@ export class EventFormComponent implements OnInit {
   }
 
   search(event) {}
-  
+
   resetEndDate() {
     this.endDate = '';
   }
 
   async getPicture() {
-    const image = await this.cameraTools.takePicture();
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
-    this.logo = await this.cameraTools.readAsBase64(image.webPath);
+    try {
+      const image = await this.cameraTools.takePicture();
+      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+      this.logo = await this.cameraTools.readAsBase64(image.webPath);
+    } catch (error) {
+      handleError(error);
+    }
   }
-  
+
   resetPicture() {
     this.imgSrc = '';
     this.logo = this.imgSrc;
