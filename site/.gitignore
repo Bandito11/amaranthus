@@ -19,3 +19,5 @@ package-lock.json
 Thumbs.db
 UserInterfaceState.xcuserstate
 **.firebase**
+
+dist
