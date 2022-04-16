@@ -9,6 +9,14 @@ export function trimEvent(event: IEvent) {
   return formattedEvent;
 }
 
+export function getTodayFullDate() {
+  const date = new Date();
+  const month = MONTHSLABELS[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month} ${day}, ${year}`;
+}
+
 export function formatDate(date: string) {
   const year = date.slice(0, 4);
   const month = parseInt(date.slice(5, 7));

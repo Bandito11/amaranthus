@@ -1,13 +1,16 @@
 import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
-import { LoadingController, ModalController, Platform } from '@ionic/angular';
+import {
+  LoadingController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { CSVProvider } from '../providers/csv/csv';
 import { TextTabDelimitedProvider } from '../providers/text-tab-delimited/text-tab-delimited';
 import { FileProvider } from '../providers/file/file';
 import { XLSXProvider } from '../providers/xslx/xslx';
 import { recordType } from '../common/constants';
 import { handleError } from '../common/handleError';
-import { ActivatedRoute } from '@angular/router';
 import { ICalendar } from '../common/models';
 import { addZeroInFront } from '../common/validation';
 import { Storage } from '@ionic/storage';
@@ -59,9 +62,8 @@ export class ExportPage {
   };
   students = [];
   event;
-  month = true;
-  day = false;
   date: string;
+  dateControl;
 
   constructor(
     private loading: LoadingController,
@@ -71,10 +73,13 @@ export class ExportPage {
     private file: FileProvider,
     private xlsx: XLSXProvider,
     private db: AmaranthusDBProvider,
-    private route: ActivatedRoute,
     private storage: Storage,
-    private platform: Platform
+    private toastController: ToastController
   ) {}
+
+  ngOnInit() {
+    this.dateControl = 'month';
+  }
 
   ionViewWillEnter() {
     this.storage.get('language').then((value) => {
@@ -103,7 +108,7 @@ export class ExportPage {
   async exportAsXLSX() {
     let xlsxData;
     let message = 'Creating the File...';
-    if (this.month) {
+    if (this.dateControl === 'month') {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.xlsx`;
@@ -116,14 +121,14 @@ export class ExportPage {
     });
     await loading.present();
     try {
-      if (this.month) {
+      if (this.dateControl === 'month') {
         xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.month,
           records: this.students,
           fileName: fileName,
         });
       }
-      if (this.day) {
+      if (this.dateControl=== 'day') {
         xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.day,
           records: this.students,
@@ -137,25 +142,34 @@ export class ExportPage {
           type: 'xlsx',
         });
         await loading.dismiss();
+        let message;
         if (this.language === 'spanish') {
-          await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
+          message = `¡El archivo ha sido creado en ${path}!`;
         } else {
-          await this.modal.dismiss(`The file was created on ${path}!`);
+          message = `The file was created on ${path}!`;
         }
+        const toast = await this.toastController.create({
+          message,
+
+          duration: 2000,
+          color: 'success',
+        });
+        await toast.present();
+        return
       }
-      throw new Error('Error creating the file');
+      await loading.dismiss();
+      handleError('Error creating the file');
     } catch (error) {
       // If XLSX Provider err
       await loading.dismiss();
+      let message;
       if (this.language === 'spanish') {
-        await this.modal.dismiss(
-          'Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!'
-        );
+        message =
+          'Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!';
       } else {
-        await this.modal.dismiss(
-          `There was an error while creating the file. Please try again later!`
-        );
+        message = `There was an error while creating the file. Please try again later!`;
       }
+      handleError(message);
     }
   }
 
@@ -166,7 +180,7 @@ export class ExportPage {
    */
   async exportAsText() {
     let textTabResponse;
-    if (this.month) {
+    if (this.dateControl === 'month') {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.txt`;
@@ -180,14 +194,14 @@ export class ExportPage {
     });
     await loading.present();
     try {
-      if (this.month) {
+      if (this.dateControl === 'month') {
         textTabResponse = await this.textTab.exportTextTabDelimited({
           type: recordType.month,
           records: this.students,
           fileName,
         });
       }
-      if (this.day) {
+      if (this.dateControl === 'day') {
         textTabResponse = await this.textTab.exportTextTabDelimited({
           type: recordType.day,
           records: this.students,
@@ -202,29 +216,51 @@ export class ExportPage {
             type: 'txt',
           });
           await loading.dismiss();
+          let message;
           if (this.language === 'spanish') {
-            await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
+            message = `¡El archivo ha sido creado en ${path}!`
           } else {
-            await this.modal.dismiss(`The file was created on ${path}!`);
+            message = `The file was created on ${path}!`
           }
+          const toast = await this.toastController.create({
+            message,
+            duration: 2000,
+            color: 'success',
+          });
+          await toast.present();
+          await this.modal.dismiss()
         } catch (error) {
           // If FileProvider err
           await loading.dismiss();
-          await this.modal.dismiss(error);
+          const toast = await this.toastController.create({
+            message: error,
+            duration: 2000,
+            color: 'danger',
+          });
+          await toast.present();
         }
+        return
       }
+      await loading.dismiss();
+      handleError('Error creating the file');
     } catch (error) {
       // If TextTabDelimited Provider err
       await loading.dismiss();
+      let message;
       if (this.language === 'spanish') {
-        await this.modal.dismiss(
+        message = 
           `Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!`
-        );
       } else {
-        await this.modal.dismiss(
+        message = 
           `There was an error while creating the file. Please try again later!`
-        );
       }
+          const toast = await this.toastController.create({
+            message,
+            duration: 2000,
+            color: 'success',
+          });
+          await toast.present();
+          await this.modal.dismiss()
     }
   }
 
@@ -235,7 +271,7 @@ export class ExportPage {
    */
   async exportAsCSV() {
     let csvResponse;
-    if (this.month) {
+    if (this.dateControl === 'month') {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.csv`;
@@ -249,14 +285,14 @@ export class ExportPage {
     });
     await loading.present();
     try {
-      if (this.month) {
+      if (this.dateControl === 'month') {
         csvResponse = await this.csv.exportCSV({
           type: recordType.month,
           records: this.students,
           fileName,
         });
       }
-      if (this.day) {
+      if (this.dateControl === 'day') {
         csvResponse = await this.csv.exportCSV({
           type: recordType.day,
           records: this.students,
@@ -271,17 +307,28 @@ export class ExportPage {
             type: 'csv',
           });
           await loading.dismiss();
+          let message;
           if (this.language === 'spanish') {
-            await this.modal.dismiss(`¡El archivo ha sido creado en ${path}!`);
+            message = `¡El archivo ha sido creado en ${path}!`
           } else {
-            await this.modal.dismiss(`The file was created on ${path}!`);
+            message = `The file was created on ${path}!`
           }
+          const toast = await this.toastController.create({
+            message,
+            duration: 2000,
+            color: 'success',
+          });
+          await toast.present();
+          await this.modal.dismiss()
         } catch (error) {
           // If FileProvider err
           await loading.dismiss();
           this.modal.dismiss(error);
         }
+        return
       }
+      await loading.dismiss();
+      handleError('Error creating the file');
     } catch (error) {
       // If CSV Provider err
       await loading.dismiss();

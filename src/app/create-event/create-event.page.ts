@@ -5,12 +5,12 @@ import {
   Platform,
   ModalController,
   AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { addZeroInFront } from '../common/validation';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 import { handleError } from '../common/handleError';
-import { toastController } from '@ionic/core';
 
 @Component({
   selector: 'app-create-event',
@@ -113,7 +113,8 @@ export class CreateEventPage implements OnInit {
     public modalCtrl: ModalController,
     public dbService: DatabaseService,
     public alertCtrl: AlertController,
-    private storage: Storage
+    private storage: Storage,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -247,7 +248,7 @@ export class CreateEventPage implements OnInit {
                 try {
                   this.dbService.insertEvent(newEvent);
                   message = `${eventData.name} fue creado.`;
-                  const toast = await toastController.create({
+                  const toast = await this.toastController.create({
                     message,
                     duration: 2000,
                     color: 'success',
@@ -277,7 +278,7 @@ export class CreateEventPage implements OnInit {
                 try {
                   this.dbService.insertEvent(newEvent);
                   message = `${eventData.name} was created.`;
-                  const toast = await toastController.create({
+                  const toast = await this.toastController.create({
                     message,
                     duration: 2000,
                     color: 'success',

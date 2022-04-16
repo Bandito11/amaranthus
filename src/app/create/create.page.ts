@@ -1,11 +1,10 @@
-import { ModalController, AlertController, Platform } from '@ionic/angular';
+import { ModalController, AlertController, Platform, ToastController } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
 import { IStudent } from '../common/models';
 import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 import { handleError } from '../common/handleError';
-import { toastController } from '@ionic/core';
 
 @Component({
   selector: 'app-create',
@@ -119,7 +118,8 @@ export class CreatePage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     public platform: Platform,
-    private storage: Storage
+    private storage: Storage,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -198,7 +198,7 @@ export class CreatePage implements OnInit {
                   navTransition.then(async () => {
                     const message = `${student.firstName} ${student.lastName} ha sido creado.`;
 
-                    const toast = await toastController.create({
+                    const toast = await this.toastController.create({
                       message,
                       duration: 2000,
                       color: 'success',
@@ -236,7 +236,7 @@ export class CreatePage implements OnInit {
 
                   const message = `${student.firstName} ${student.lastName} was created.`;
 
-                  const toast = await toastController.create({
+                  const toast = await this.toastController.create({
                     message,
                     duration: 2000,
                     color: 'success',
