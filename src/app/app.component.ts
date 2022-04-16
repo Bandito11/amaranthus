@@ -1,29 +1,24 @@
-import { AmaranthusDBProvider } from './repositories/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
 })
 export class AppComponent {
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
-    private db: AmaranthusDBProvider
-  ) {
-    this.db.init();
+  constructor(private platform: Platform) {
     this.initializeApp();
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+  async initializeApp() {
+    this.platform.ready().then(async () => {
+      if (this.platform.is('mobile') && this.platform.is('android')) {
+        StatusBar.setBackgroundColor({ color: '#e60000' });
+      }
+      await SplashScreen.hide();
     });
   }
 }
