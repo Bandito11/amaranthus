@@ -15,7 +15,7 @@ export async function takePicture() {
     });
 
     return image;
-  } catch (error) {
+  } catch (error) { 
     let permissions = await Camera.checkPermissions();
     if (permissions.camera === 'denied') {
       permissions = await Camera.requestPermissions();

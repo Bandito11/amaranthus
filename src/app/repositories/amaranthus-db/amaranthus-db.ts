@@ -28,10 +28,10 @@ let notesColl: Collection<INote>;
  */
 let amaranthusDB: Loki;
 
-let studentView: DynamicView<IStudent[]>;
-let recordsView: DynamicView<IRecord[]>;
-let notesView: DynamicView<INote[]>;
-let eventsView: DynamicView<IEvent[]>;
+let studentView: DynamicView<IStudent>;
+let recordsView: DynamicView<IRecord>;
+let notesView: DynamicView<INote>;
+let eventsView: DynamicView<IEvent>;
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,7 @@ export class AmaranthusDBProvider {
     public sanitizer: DomSanitizer
   ) {}
 
-  async init(): Promise<Collection<IStudent>> {
+  async initializeDatabase() {
     return new Promise((resolve) => {
       let lokiOptions: Partial<LokiConfigOptions> = {
         autosave: true,
@@ -69,27 +69,19 @@ export class AmaranthusDBProvider {
 
           studentView = studentsColl.getDynamicView('students');
           if (!studentView) {
-            studentView = studentsColl.addDynamicView(
-              'students'
-            ) as unknown as DynamicView<IStudent[]>;
+            studentView = studentsColl.addDynamicView('students');
           }
           recordsView = recordsColl.getDynamicView('records');
           if (!recordsView) {
-            recordsView = recordsColl.addDynamicView(
-              'records'
-            ) as unknown as DynamicView<IRecord[]>;
+            recordsView = recordsColl.addDynamicView('records');
           }
           notesView = notesColl.getDynamicView('notes');
           if (!notesView) {
-            notesView = notesColl.addDynamicView(
-              'notes'
-            ) as unknown as DynamicView<INote[]>;
+            notesView = notesColl.addDynamicView('notes');
           }
           eventsView = eventsColl.getDynamicView('events');
           if (!eventsView) {
-            eventsView = eventsColl.addDynamicView(
-              'events'
-            ) as unknown as DynamicView<IEvent[]>;
+            eventsView = eventsColl.addDynamicView('events');
           }
           resolve(studentsColl);
         },
@@ -1028,83 +1020,80 @@ export class AmaranthusDBProvider {
    *
    * @param date
    */
-  async getAllActiveStudents(date: ICalendar): Promise<(IStudent & IRecord)[]> {
+  async getAllActiveStudents(date: ICalendar) {
+    let students: (IStudent & LokiObj)[];
     try {
-      if (!studentsColl) {
-        studentsColl = await this.init();
-      }
-      const students = studentsColl.find({
+      students = studentsColl.find({
         isActive: {
           $eq: true,
         },
-      }); // Do not delete!
-      this.deleteInvalidCharacters();
-      let record: IRecord;
-      const results = students.map((student) => {
-        record = {
-          ...this.getQueriedRecordsByCurrentDate({
-            studentId: student.id,
-            year: date.year,
-            day: date.day,
-            month: date.month,
-          }),
-        };
-        const noteData = this.getNoteByDate({
-          id: student.id,
-          event: '',
-          date: {
-            ...date,
-            month: date.month - 1,
-          },
-        });
-        let newStudent = {
-          ...student,
-        };
-        if (record != null && record.id === student.id) {
-          newStudent = {
-            ...newStudent,
-            ...record,
-          };
-        }
-        if (noteData) {
-          newStudent = {
-            ...newStudent,
-            notes: noteData.notes,
-          };
-        }
-        return newStudent;
-      }) as unknown as (IStudent & IRecord)[]; // got results
-
-      for (let i = 0; i < results.length; i++) {
-        try {
-          if (results[i].picture && !results[i].picture.match('default')) {
-            results[i] = {
-              ...results[i],
-              picture: await this.dataUrlToObjectUrl(
-                await this.file.readFromMobile({
-                  type: 'image',
-                  path: results[i].picture,
-                })
-              ),
-            };
-          } else if (
-            results[i].picture &&
-            results[i].picture.match('default')
-          ) {
-            results[i] = {
-              ...results[i],
-              picture: await this.dataUrlToObjectUrl(results[i].picture),
-            };
-          }
-        } catch (error) {
-          results[i].picture = '';
-        }
-      }
-
-      return results;
+      });
     } catch (error) {
-      console.log(error);
+      const studentsColl =
+        (await this.initializeDatabase()) as Collection<IStudent>;
+      students = studentsColl.find({ isActive: { $eq: true } });
     }
+    this.deleteInvalidCharacters();
+    let record: IRecord;
+    const results = students.map((student) => {
+      record = {
+        ...this.getQueriedRecordsByCurrentDate({
+          studentId: student.id,
+          year: date.year,
+          day: date.day,
+          month: date.month,
+        }),
+      };
+      const noteData = this.getNoteByDate({
+        id: student.id,
+        event: '',
+        date: {
+          ...date,
+          month: date.month - 1,
+        },
+      });
+      let newStudent = {
+        ...student,
+      };
+      if (record != null && record.id === student.id) {
+        newStudent = {
+          ...newStudent,
+          ...record,
+        };
+      }
+      if (noteData) {
+        newStudent = {
+          ...newStudent,
+          notes: noteData.notes,
+        };
+      }
+      return newStudent;
+    }) as unknown as (IStudent & IRecord)[]; // got results
+
+    for (let i = 0; i < results.length; i++) {
+      try {
+        if (results[i].picture && !results[i].picture.match('default')) {
+          results[i] = {
+            ...results[i],
+            picture: await this.dataUrlToObjectUrl(
+              await this.file.readFromMobile({
+                type: 'image',
+                path: results[i].picture,
+              })
+            ),
+          };
+        } else if (results[i].picture && results[i].picture.match('default')) {
+          results[i] = {
+            ...results[i],
+            picture: await this.dataUrlToObjectUrl(results[i].picture),
+          };
+        }
+      } catch (error) {
+        results[i].picture = '';
+      }
+    }
+
+    return results;
   }
 
   getQueriedRecordsByCurrentDate(opts: {

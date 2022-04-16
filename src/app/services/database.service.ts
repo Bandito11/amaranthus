@@ -6,9 +6,11 @@ import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-d
   providedIn: 'root',
 })
 export class DatabaseService {
-  constructor(
-    private db: AmaranthusDBProvider,
-  ) {}
+  constructor(private db: AmaranthusDBProvider) {}
+
+  async initializeDatabase() {
+    await this.db.initializeDatabase();
+  }
 
   async getAllActiveStudents(date: ICalendar) {
     const students = await this.db.getAllActiveStudents(date);
@@ -23,8 +25,8 @@ export class DatabaseService {
   }
 
   async getStudentById(id: string) {
-    let student = await this.db.getStudentById(id) as IStudent;
-   
+    let student = (await this.db.getStudentById(id)) as IStudent;
+
     return student;
   }
 
@@ -41,7 +43,7 @@ export class DatabaseService {
   }
 
   async getAllStudents(event: boolean) {
-    const students = await this.db.getAllStudents(event) as IStudent[];
+    const students = (await this.db.getAllStudents(event)) as IStudent[];
     return students;
   }
 
@@ -52,7 +54,6 @@ export class DatabaseService {
 
   async getEvents() {
     const events = this.db.getEvents();
-
 
     return events;
   }
