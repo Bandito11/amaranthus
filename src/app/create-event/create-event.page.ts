@@ -5,10 +5,12 @@ import {
   Platform,
   ModalController,
   AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { addZeroInFront } from '../common/validation';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { handleError } from '../common/handleError';
 
 @Component({
   selector: 'app-create-event',
@@ -18,7 +20,6 @@ import { DatabaseService } from '../services/database.service';
 export class CreateEventPage implements OnInit {
   logo;
   students: IStudent[];
-  STUDENTS: IStudent[];
   studentIds: string[];
   eventName;
   startDate;
@@ -104,6 +105,7 @@ export class CreateEventPage implements OnInit {
       notAdded: ` no fue añadido al evento.`,
     },
   };
+  unfilteredStudents: any;
 
   constructor(
     public navCtrl: NavController,
@@ -112,17 +114,24 @@ export class CreateEventPage implements OnInit {
     public dbService: DatabaseService,
     public alertCtrl: AlertController,
     private storage: Storage,
+    private toastController: ToastController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.logo = '';
+    this.students = [];
     this.studentIds = [];
-    this.getStudents();
     const currentDate = new Date();
     this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
       currentDate.getMonth() + 1
     )}-${addZeroInFront(currentDate.getDate())}`;
-    this.endDate = ``;
+    this.endDate = false;
+    try {
+      this.students = await this.dbService.getAllStudents(true);
+      this.unfilteredStudents = this.students;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   ionViewWillEnter() {
@@ -137,64 +146,45 @@ export class CreateEventPage implements OnInit {
     });
   }
 
+  async searchStudent(event) {
+    const query = event;
+    query
+      ? (this.students = [...(await this.dbService.getStudent(query))])
+      : (this.students = [...this.unfilteredStudents]);
+  }
+
   resetEndDate() {
     this.endDate = '';
   }
 
-  addAll() {
-    for (const student of this.STUDENTS) {
-      // this.addToEvent(student.id);
-    }
-  }
-
   async createNewEvent(eventData) {
     try {
+      let message;
       if (eventData.studentIds.length < 1) {
-        let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: '¡Tienes que escoger por lo menos un usario de la lista!',
-          };
+          message = '¡Tienes que escoger por lo menos un usario de la lista!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to choose at least one user from the list!',
-          };
+          message = 'Have to choose at least one user from the list!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
         return;
       }
       if (!eventData.startDate && !eventData.infiniteDates) {
-        let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: 'Tienes que escoger una fecha de inicio!',
-          };
+          message = 'Tienes que escoger una fecha de inicio!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to choose a start date!',
-          };
+          message = 'Have to choose a start date!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
         return;
       }
       if (!eventData.name) {
-        let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: '¡Tienes que escribir un nombre para el evento!',
-          };
+          message = '¡Tienes que escribir un nombre para el evento!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to write a name for the event!',
-          };
+          message = 'Have to write a name for the event!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
         return;
       }
       if (
@@ -202,27 +192,12 @@ export class CreateEventPage implements OnInit {
         eventData.name.includes('/') ||
         eventData.name.includes('%')
       ) {
-        let options: ISimpleAlertOptions = {
-          header: '',
-          message: '',
-          buttons: [],
-        };
         if (this.language === 'spanish') {
-          options = {
-            ...options,
-            header: '¡Advertencia!',
-            message: 'El campo de ID no puede contener "#" o "/" o "%".',
-            buttons: ['Si'],
-          };
+          message = 'El campo de ID no puede contener "#" o "/" o "%".';
         } else {
-          options = {
-            ...options,
-            header: 'Warning!',
-            message: 'The ID field can\'t contain "#" or "/" or "%"',
-            buttons: ['Ok'],
-          };
+          message = 'The ID field can\'t contain "#" or "/" or "%"';
         }
-        this.showSimpleAlert(options);
+        handleError(message);
         return;
       }
       const members = eventData.studentIds.map((studentId) => {
@@ -249,21 +224,14 @@ export class CreateEventPage implements OnInit {
       }
       if (eventData.endDate && !newEvent.infiniteDates) {
         if (!eventData.startDate) {
-          let opts: ISimpleAlertOptions;
           if (this.language === 'spanish') {
-            opts = {
-              header: '¡Error!',
-              message:
-                'Si el evento tiene una fecha final entonces tambien debe de tener una fecha de inicio.',
-            };
+            message =
+              'Si el evento tiene una fecha final entonces tambien debe de tener una fecha de inicio.';
           } else {
-            opts = {
-              header: 'Error!',
-              message:
-                'If the event had an end date it has to have a start date.',
-            };
+            message =
+              'If the event had an end date it has to have a start date.';
           }
-          this.showSimpleAlert(opts);
+          handleError(message);
         } else {
           newEvent = {
             ...newEvent,
@@ -281,25 +249,22 @@ export class CreateEventPage implements OnInit {
             { text: 'No' },
             {
               text: 'Si',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
+              handler: async () => {
+                alert.dismiss();
                 try {
                   this.dbService.insertEvent(newEvent);
-                  navTransition.then(() => {
-                    const options = {
-                      header: '¡Éxito!',
-                      message: `${eventData.name} fue creado.`,
-                    };
-                    this.showAdvancedAlert(options, false);
+                  message = `${eventData.name} fue creado.`;
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
                   });
+                  toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
-                  const options = {
-                    header: 'Error',
-                    message: 'Evento ya existe.',
-                  };
-                  this.showAdvancedAlert(options, true);
+                  message = 'Evento ya existe.';
+
+                  handleError(message);
                 }
                 return false;
               },
@@ -315,25 +280,21 @@ export class CreateEventPage implements OnInit {
             { text: 'No' },
             {
               text: 'Yes',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
+              handler: async () => {
+                alert.dismiss();
                 try {
                   this.dbService.insertEvent(newEvent);
-                  navTransition.then(() => {
-                    const options = {
-                      header: 'Success!',
-                      message: `${eventData.name} was created.`,
-                    };
-                    this.showAdvancedAlert(options, false);
+                  message = `${eventData.name} was created.`;
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
                   });
+                  toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
-                  const options = {
-                    header: 'Error',
-                    message: 'Event already exits! ',
-                  };
-                  this.showAdvancedAlert(options, true);
+                  message = 'Event already exits! ';
+                  handleError(error);
                 }
                 return false;
               },
@@ -343,80 +304,7 @@ export class CreateEventPage implements OnInit {
         alert.present();
       }
     } catch (error) {
-      const opts: ISimpleAlertOptions = {
-        header: 'Error',
-        message: error,
-      };
-      this.showSimpleAlert(opts);
+      handleError(error);
     }
-  }
-
-  async getStudents() {
-    try {
-      const students = await this.dbService.getAllStudents(true);
-      this.students = students;
-      this.STUDENTS = students;
-    } catch (error) {
-      this.students = [];
-      this.STUDENTS = [];
-    }
-  }
-
-  private initializeStudentsList() {
-    this.students = [...this.STUDENTS];
-  }
-
-  search(event) {
-    const query = event.target.value;
-    query ? this.filterStudentsList(query) : this.initializeStudentsList();
-  }
-
-  private filterStudentsList(query: string) {
-    const students = [...this.STUDENTS];
-    let fullName: string;
-    const newQuery = students.filter((student) => {
-      fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      if (
-        student.id === query ||
-        student.firstName.toLowerCase().includes(query.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(query.toLowerCase()) ||
-        fullName === query.toLowerCase()
-      ) {
-        return student;
-      }
-    });
-    this.students = [...newQuery];
-  }
-
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
-  }
-
-  private async showAdvancedAlert(options: ISimpleAlertOptions, fail: boolean) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: [
-        {
-          text: 'OK',
-          handler: () => {
-            // user has clicked the alert button
-            // begin the alert's dismiss transition
-            if (!fail) {
-              alert.dismiss().then(() => {
-                this.modalCtrl.dismiss();
-              });
-              return false;
-            }
-          },
-        },
-      ],
-    });
-    alert.present();
   }
 }

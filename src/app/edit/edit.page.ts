@@ -1,17 +1,19 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { OnInit, Component } from '@angular/core';
-import { IStudent, ISimpleAlertOptions } from '../common/models';
+import { IStudent } from '../common/models';
 import {
   AlertController,
   NavController,
   NavParams,
   Platform,
   ModalController,
+  ToastController,
 } from '@ionic/angular';
 import { handleError } from '../common/handleError';
 import { trimText } from '../common/format';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { toastController } from '@ionic/core';
 
 @Component({
   selector: 'app-edit',
@@ -154,7 +156,8 @@ export class EditPage implements OnInit {
     public modalCtrl: ModalController,
     public platform: Platform,
     public storage: Storage,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public toastController: ToastController
   ) {}
 
   async ngOnInit() {
@@ -200,29 +203,23 @@ export class EditPage implements OnInit {
           },
           {
             text: 'Si',
-            handler: () => {
-              let options: ISimpleAlertOptions = {
-                header: '¡Éxito!',
-                message: 'El estudiante fue borrado.',
-              };
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
+            handler: async () => {
+              let message;
+              await alert.dismiss();
               try {
+                message = 'El estudiante fue borrado.';
                 this.dbService.removeStudent(opts);
-                options = {
-                  ...options,
-                  event: 'delete',
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                const toast = await toastController.create({
+                  message,
+                  duration: 2000,
+                  color: 'success',
+                });
+                await toast.present();
+                this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
               } catch (error) {
-                handleError(error);
-                options = {
-                  header: 'Error',
-                  message:
-                    'Hubo un error tratando de borrar este récord. Por favor trate de nuevo.',
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                message =
+                  'Hubo un error tratando de borrar este récord. Por favor trate de nuevo.';
+                handleError(message);
               }
               return false;
             },
@@ -240,29 +237,23 @@ export class EditPage implements OnInit {
           },
           {
             text: 'Yes',
-            handler: () => {
-              let options: ISimpleAlertOptions = {
-                header: 'Success!',
-                message: 'Student was deleted.',
-              };
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
+            handler: async () => {
+              let message;
+              await alert.dismiss();
               try {
+                message = 'Student was deleted.';
                 this.dbService.removeStudent(opts);
-                options = {
-                  ...options,
-                  event: 'delete',
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                const toast = await toastController.create({
+                  message,
+                  duration: 2000,
+                  color: 'success',
+                });
+                await toast.present();
+                await this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
               } catch (error) {
-                handleError(error);
-                options = {
-                  header: 'Error',
-                  message:
-                    'There was an error trying to delete the record. Please try again.',
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                message =
+                  'There was an error trying to delete the record. Please try again.';
+                handleError(message);
               }
               return false;
             },
@@ -274,24 +265,14 @@ export class EditPage implements OnInit {
   }
 
   async editStudent(opts: IStudent) {
-    let options: ISimpleAlertOptions = { header: '', message: '', buttons: [] };
+    let message;
     if (!opts.firstName || !opts.lastName || !opts.id) {
       if (this.language === 'spanish') {
-        options = {
-          ...options,
-          header: '¡Advertencia!',
-          message: 'Algunos campos no están llenos.',
-          buttons: ['Si'],
-        };
+        message = 'Algunos campos no están llenos.';
       } else {
-        options = {
-          ...options,
-          header: 'Warning!',
-          message: "Some fields doesn't have the required info",
-          buttons: ['Ok'],
-        };
+        message = "Some fields doesn't have the required info";
       }
-      this.showSimpleAlert(options);
+      handleError(message);
     } else {
       opts = {
         ...opts,
@@ -300,7 +281,7 @@ export class EditPage implements OnInit {
       };
       const studentTrimmed: IStudent = {
         ...opts,
-        ...trimText(opts)
+        ...trimText(opts),
       };
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
@@ -312,25 +293,24 @@ export class EditPage implements OnInit {
             },
             {
               text: 'Yes',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
+              handler: async () => {
+                let message;
+                await alert.dismiss();
                 try {
                   this.dbService.updateStudent(studentTrimmed),
-                    navTransition.then(() => {
-                      options = {
-                        header: '¡Éxito!',
-                        message: `${opts.firstName} ${opts.lastName} ha sido editado.`,
-                      };
-                      this.showAdvancedAlert(options);
-                    });
+                    (message = `${opts.firstName} ${opts.lastName} ha sido editado.`);
+
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
+                  });
+                  await toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
-                  options = {
-                    header: 'Error',
-                    message: `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`,
-                  };
-                  navTransition.then(() => this.showAdvancedAlert(options));
+                  message = `Hubo un error tratando de editar el récord de ${opts.firstName} ${opts.lastName}. Por favor intente de nuevo.`;
+
+                  handleError(error);
                 }
                 return false;
               },
@@ -348,25 +328,23 @@ export class EditPage implements OnInit {
             },
             {
               text: 'Yes',
-              handler: () => {
+              handler: async () => {
                 // user has clicked the alert button
                 // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
+                await alert.dismiss();
                 try {
-                  this.dbService.updateStudent(studentTrimmed),
-                    navTransition.then(() => {
-                      options = {
-                        header: 'Success!',
-                        message: `${opts.firstName} ${opts.lastName} record was edited.`,
-                      };
-                      this.showAdvancedAlert(options);
-                    });
+                  this.dbService.updateStudent(studentTrimmed);
+                  message = `${opts.firstName} ${opts.lastName} record was edited.`;
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
+                  });
+                  await toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
-                  options = {
-                    header: 'Error',
-                    message: `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`,
-                  };
-                  navTransition.then(() => this.showAdvancedAlert(options));
+                  message = `There was an error trying to edit the ${opts.firstName}'s record. Please try again.`;
+                  handleError(error);
                 }
                 return false;
               },
@@ -378,37 +356,4 @@ export class EditPage implements OnInit {
     }
   }
 
-  public async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
-  }
-
-  async showAdvancedAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: [
-        {
-          text: 'OK',
-          handler: () => {
-            // user has clicked the alert button
-            // begin the alert's dismiss transition
-            alert.dismiss().then(() => {
-              if (options['event'] === 'delete') {
-                this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
-              } else {
-                this.modalCtrl.dismiss();
-              }
-            });
-            return false;
-          },
-        },
-      ],
-    });
-    alert.present();
-  }
 }

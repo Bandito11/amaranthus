@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
+import { handleError } from 'src/app/common/handleError';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
+import { DatabaseService } from 'src/app/services/database.service';
 import { IEvent, IStudent } from '../../common/models';
-import { addZeroInFront } from '../../common/validation';
 
 @Component({
   selector: 'app-event-form',
@@ -24,28 +25,20 @@ export class EventFormComponent implements OnInit {
   @Input() infiniteDates: boolean;
 
   @Output() eventData = new EventEmitter<IEvent>();
+  @Output() queryData = new EventEmitter<string>();
 
   hasEndDate;
   monthNames;
+  unfilteredStudents: IStudent[];
 
   constructor(
     public platform: Platform,
     public cameraTools: CameraToolsService,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public dbService: DatabaseService
   ) {}
 
-  ngOnInit() {
-    if (this.create) {
-      const currentDate = new Date();
-      this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
-        currentDate.getMonth() + 1
-      )}-${addZeroInFront(currentDate.getDate())}`;
-      this.endDate = ``;
-    } else {
-      if (this.endDate) {
-        this.hasEndDate = true;
-      }
-    }
+  async ngOnInit() {
     if (this.language === 'spanish') {
       this.monthNames =
         'Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre';
@@ -53,20 +46,29 @@ export class EventFormComponent implements OnInit {
       this.monthNames =
         'January,February,March,April,May,June,July,August,September,October,November,December';
     }
+    if (this.endDate) {
+      this.hasEndDate = true;
+    }
   }
 
-  search(event) {}
-  
+  search(event) {
+    this.queryData.emit(event.target.value);
+  }
+
   resetEndDate() {
     this.endDate = '';
   }
 
   async getPicture() {
-    const image = await this.cameraTools.takePicture();
-    this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
-    this.logo = await this.cameraTools.readAsBase64(image.webPath);
+    try {
+      const image = await this.cameraTools.takePicture();
+      this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
+      this.logo = await this.cameraTools.readAsBase64(image.webPath);
+    } catch (error) {
+      handleError(error);
+    }
   }
-  
+
   resetPicture() {
     this.imgSrc = '';
     this.logo = this.imgSrc;
@@ -77,7 +79,12 @@ export class EventFormComponent implements OnInit {
   }
 
   async submit() {
-    const temp = {
+    if (typeof this.logo === 'object') {
+      this.logo = await this.cameraTools.readAsBase64(
+        this.logo.changingThisBreaksApplicationSecurity
+      );
+    }
+    const event = {
       name: this.eventName,
       startDate: this.startDate,
       endDate: this.endDate,
@@ -87,6 +94,7 @@ export class EventFormComponent implements OnInit {
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
     };
-    this.eventData.emit(temp);
+    
+    this.eventData.emit(event);
   }
 }

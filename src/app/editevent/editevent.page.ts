@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IStudent, IEvent, ISimpleAlertOptions } from '../common/models';
+import { IStudent, IEvent, } from '../common/models';
 import {
   NavController,
   NavParams,
   Platform,
   ModalController,
   AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { handleError } from '../common/handleError';
 import { CreatePage } from '../create/create.page';
@@ -110,6 +111,7 @@ export class EditEventPage implements OnInit {
       delete: 'Borrar',
     },
   };
+  unfilteredStudents: any;
 
   constructor(
     private navCtrl: NavController,
@@ -119,12 +121,19 @@ export class EditEventPage implements OnInit {
     private dbService: DatabaseService,
     private alertCtrl: AlertController,
     private storage: Storage,
+    private toastController: ToastController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getStudents();
     this.id = this.navParams.get('id');
     this.getEventProfile(this.id);
+    try {
+      this.students = await this.dbService.getAllStudents(true);
+      this.unfilteredStudents = this.students;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   ionViewWillEnter() {
@@ -139,6 +148,13 @@ export class EditEventPage implements OnInit {
     });
   }
 
+  async searchStudent(event) {
+    const query = event;
+    query
+      ? (this.students = [...(await this.dbService.getStudent(query))])
+      : (this.students = [...this.unfilteredStudents]);
+  }
+
   addAll() {
     for (const student of this.STUDENTS) {
       this.addToEvent(student.id);
@@ -150,8 +166,8 @@ export class EditEventPage implements OnInit {
     try {
       this.event = await this.dbService.getEvent(id);
       this.infiniteDates = this.event.infiniteDates;
+      this.imgSrc = this.event.logo;
       this.logo = this.event.logo;
-      this.imgSrc = this.logo;
       this.eventName = this.event.name;
       this.startDate = this.event.startDate;
       this.endDate = this.event.endDate;
@@ -168,51 +184,35 @@ export class EditEventPage implements OnInit {
   async editEvent(eventData) {
     try {
       if (eventData.studentIds.length < 1) {
-        let opts: ISimpleAlertOptions;
+        let message;
+
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: '¡Tienes que escoger por lo menos un usario de la lista!',
-          };
+          message = '¡Tienes que escoger por lo menos un usario de la lista!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to choose at least one user from the list!',
-          };
+          message = 'Have to choose at least one user from the list!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
+
         return;
       }
       if (!eventData.startDate && !eventData.infiniteDates) {
-        let opts: ISimpleAlertOptions;
+        let message;
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: 'Tienes que escoger una fecha de inicio!',
-          };
+          message = 'Tienes que escoger una fecha de inicio!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to choose a start date!',
-          };
+          message = 'Have to choose a start date!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
         return;
       }
       if (!eventData.name) {
-        let opts: ISimpleAlertOptions;
+        let message;
         if (this.language === 'spanish') {
-          opts = {
-            header: 'Error',
-            message: '¡Tienes que escribir un nombre para el evento!',
-          };
+          message = '¡Tienes que escribir un nombre para el evento!';
         } else {
-          opts = {
-            header: 'Error',
-            message: 'Have to write a name for the event!',
-          };
+          message = 'Have to write a name for the event!';
         }
-        this.showSimpleAlert(opts);
+        handleError(message);
         return;
       }
       if (
@@ -220,27 +220,13 @@ export class EditEventPage implements OnInit {
         eventData.name.includes('/') ||
         eventData.name.includes('%')
       ) {
-        let options: ISimpleAlertOptions = {
-          header: '',
-          message: '',
-          buttons: [],
-        };
+        let message;
         if (this.language === 'spanish') {
-          options = {
-            ...options,
-            header: '¡Advertencia!',
-            message: 'El campo de ID no puede contener "#" o "/" o "%".',
-            buttons: ['Si'],
-          };
+          message = 'El campo de ID no puede contener "#" o "/" o "%".';
         } else {
-          options = {
-            ...options,
-            header: 'Warning!',
-            message: 'The ID field can\'t contain "#" or "/" or "%"',
-            buttons: ['Ok'],
-          };
+          message = 'The ID field can\'t contain "#" or "/" or "%"';
         }
-        this.showSimpleAlert(options);
+        handleError(message);
         return;
       }
       const members = eventData.studentIds.map((studentId) => {
@@ -262,7 +248,7 @@ export class EditEventPage implements OnInit {
         startDate: '',
         members: [...members],
         endDate: '',
-        infiniteDates: this.infiniteDates,
+        infiniteDates: eventData.infiniteDates,
       };
       if (!this.event.infiniteDates) {
         this.event = {
@@ -286,26 +272,26 @@ export class EditEventPage implements OnInit {
             { text: 'No' },
             {
               text: 'Si',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
+              handler: async () => {
                 try {
-                  const navTransition = alert.dismiss();
+                  let message;
+                  await alert.dismiss();
                   this.dbService.updateEvent(this.event);
-                  navTransition.then(() => {
-                    const options = {
-                      header: '¡Éxito!',
-                      message: `${eventData.name} fue editado exitosamente.`,
-                    };
-                    this.showAdvancedAlert(options);
+                  message = `${eventData.name} fue editado exitosamente.`;
+
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
                   });
+
+                  await toast.present();
+                  await this.modalCtrl.dismiss(this.id);
                 } catch (error) {
-                  const options = {
-                    header: 'Error',
-                    message:
-                      'Usuario no se pudo editar. Por favor trate de nuevo.',
-                  };
-                  this.showAdvancedAlert(options);
+                  const message =
+                    'Usuario no se pudo editar. Por favor trate de nuevo.';
+
+                  handleError(message);
                 }
                 return false;
               },
@@ -321,25 +307,23 @@ export class EditEventPage implements OnInit {
             { text: 'No' },
             {
               text: 'Yes',
-              handler: () => {
-                // user has clicked the alert button
-                // begin the alert's dismiss transition
-                const navTransition = alert.dismiss();
+              handler: async () => {
+                let message;
+                await alert.dismiss();
                 try {
                   this.dbService.updateEvent(this.event);
-                  navTransition.then(() => {
-                    const options = {
-                      header: 'Success!',
-                      message: `${eventData.name} was edited successfully.`,
-                    };
-                    this.showAdvancedAlert(options);
+
+                  message = `${eventData.name} was edited successfully.`;
+                  const toast = await this.toastController.create({
+                    message,
+                    duration: 2000,
+                    color: 'success',
                   });
+                  await toast.present();
+                  await this.modalCtrl.dismiss(this.id);
                 } catch (error) {
-                  const options = {
-                    header: 'Error',
-                    message: `User couldn't be edited. Please try again!`,
-                  };
-                  this.showAdvancedAlert(options);
+                  message = `User couldn't be edited. Please try again!`;
+                  handleError(message);
                 }
                 return false;
               },
@@ -349,11 +333,7 @@ export class EditEventPage implements OnInit {
         alert.present();
       }
     } catch (error) {
-      const opts: ISimpleAlertOptions = {
-        header: 'Error',
-        message: error,
-      };
-      this.showSimpleAlert(opts);
+      handleError(error);
     }
   }
 
@@ -426,47 +406,6 @@ export class EditEventPage implements OnInit {
     return false;
   }
 
-  /**
-   *
-   * @param options
-   * Show a message on the screen
-   */
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
-  }
-
-  async showAdvancedAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: [
-        {
-          text: 'OK',
-          handler: () => {
-            // user has clicked the alert button
-            // begin the alert's dismiss transition
-            alert.dismiss().then(() => {
-              if (options['event'] === 'delete') {
-                this.navCtrl
-                  .navigateRoot('/tabs/tabs/home/events')
-                  .then(() => this.modalCtrl.dismiss());
-              } else {
-                this.modalCtrl.dismiss(this.id);
-              }
-            });
-            return false;
-          },
-        },
-      ],
-    });
-    alert.present();
-  }
-
   async removeEvent() {
     if (this.language === 'spanish') {
       const alert = await this.alertCtrl.create({
@@ -476,27 +415,24 @@ export class EditEventPage implements OnInit {
           { text: 'No' },
           {
             text: 'Si',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
+            handler: async () => {
+              let message;
+              await alert.dismiss();
               try {
                 this.dbService.removeEvent(this.event);
-                this.id = undefined;
-                navTransition.then(() => {
-                  const opts = {
-                    header: '¡éxisto!',
-                    message: '¡El evento se borro exitosamente!',
-                    event: 'delete',
-                  };
-                  this.showAdvancedAlert(opts);
+
+                message = '¡El evento se borro exitosamente!';
+                const toast = await this.toastController.create({
+                  message,
+                  duration: 2000,
+                  color: 'success',
                 });
+                await toast.present();
+                this.navCtrl
+                  .navigateRoot('/tabs/tabs/home/events')
+                  .then(() => this.modalCtrl.dismiss());
               } catch (error) {
-                const options = {
-                  header: 'Error',
-                  message: error,
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                handleError(error);
               }
               return false;
             },
@@ -512,27 +448,25 @@ export class EditEventPage implements OnInit {
           { text: 'No' },
           {
             text: 'Yes',
-            handler: () => {
-              // user has clicked the alert button
-              // begin the alert's dismiss transition
-              const navTransition = alert.dismiss();
+            handler: async () => {
+              let message;
+              await alert.dismiss();
               try {
                 this.dbService.removeEvent(this.event);
-                this.id = undefined;
-                navTransition.then(() => {
-                  const opts = {
-                    header: 'Success!',
-                    message: 'Event was removed successfully!',
-                    event: 'delete',
-                  };
-                  this.showAdvancedAlert(opts);
+
+                message = 'Event was removed successfully!';
+
+                const toast = await this.toastController.create({
+                  message,
+                  duration: 2000,
+                  color: 'success',
                 });
+                await toast.present();
+                this.navCtrl
+                  .navigateRoot('/tabs/tabs/home/events')
+                  .then(() => this.modalCtrl.dismiss());
               } catch (error) {
-                const options = {
-                  header: 'Error',
-                  message: error,
-                };
-                navTransition.then(() => this.showAdvancedAlert(options));
+                handleError(error);
               }
               return false;
             },

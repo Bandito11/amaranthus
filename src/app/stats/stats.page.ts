@@ -2,9 +2,12 @@ import { ActivatedRoute } from '@angular/router';
 import { MONTHS, MESESLABELS } from './../common/constants';
 import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IRecord, ICalendar, ISimpleAlertOptions } from 'src/app/common/models';
+import { IRecord, ICalendar } from 'src/app/common/models';
 import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
-import { AlertController, ModalController } from '@ionic/angular';
+import {
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
@@ -89,7 +92,7 @@ export class StatsPage implements OnInit {
 
   constructor(
     private dbService: DatabaseService,
-    private alertCtrl: AlertController,
+    private toastController: ToastController,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
     private storage: Storage
@@ -361,41 +364,5 @@ export class StatsPage implements OnInit {
       componentProps: { students: this.students, event: this.event },
     });
     await modal.present();
-    const { data } = await modal.onDidDismiss();
-    try {
-      if (data) {
-        if (this.language === 'spanish') {
-          this.showSimpleAlert({
-            buttons: ['OK'],
-            header: '¡Información!',
-            message: data,
-          });
-        } else {
-          this.showSimpleAlert({
-            buttons: ['OK'],
-            header: 'Information!',
-            message: data,
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  /**
-   *
-   *
-   * @private
-   * @param {ISimpleAlertOptions} options
-   * @memberof StatsPage
-   */
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
   }
 }

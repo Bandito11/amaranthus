@@ -3,6 +3,7 @@ import { IStudent } from 'src/app/common/models';
 import { Platform } from '@ionic/angular';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { handleError } from 'src/app/common/handleError';
 
 @Component({
   selector: 'app-student-form',
@@ -32,7 +33,11 @@ export class StudentFormComponent implements OnInit {
   }
 
   async submit() {
-    //TODO: Set imgSrc to student.picture
+    if (typeof this.student.picture === 'object') {
+      this.student.picture = await this.cameraTools.readAsBase64(
+        (this.student.picture as any).changingThisBreaksApplicationSecurity
+      );
+    }
     this.student = {
       ...this.student,
       isActive: this.student.isActive,
@@ -60,7 +65,7 @@ export class StudentFormComponent implements OnInit {
       this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
       this.student.picture = await this.cameraTools.readAsBase64(image.webPath);
     } catch (error) {
-      //TODO: Handle error
+      handleError(error);
     }
   }
 }

@@ -1,4 +1,3 @@
-import { DomSanitizer } from '@angular/platform-browser';
 import { CreateEventPage } from './../create-event/create-event.page';
 import { Component } from '@angular/core';
 import { NavController, ModalController } from '@ionic/angular';

@@ -14,7 +14,7 @@ export class EventStudentsListComponent implements OnInit {
   @Output() studentIdsData = new EventEmitter<string[]>();
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 
   ifOnEventList(id) {

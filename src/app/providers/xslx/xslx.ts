@@ -23,7 +23,7 @@ export class XLSXProvider {
     } catch (error) {
       throw error;
     }
-    let headers = getTableHeaders({...opts, language})
+    let headers = getTableHeaders({ ...opts, language });
     let studentRecords: IRecord[][] = [];
     try {
       studentRecords = opts.records.map((record) => {

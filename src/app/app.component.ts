@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 import { SplashScreen } from '@capacitor/splash-screen';
-import { StatusBar, Style } from '@capacitor/status-bar';
+import { StatusBar } from '@capacitor/status-bar';
 
 import { Platform } from '@ionic/angular';
+import { DatabaseService } from './services/database.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
 export class AppComponent {
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private dbService: DatabaseService) {
+    this.dbService.initializeDatabase();
     this.initializeApp();
   }
 

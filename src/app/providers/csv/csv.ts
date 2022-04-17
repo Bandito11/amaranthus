@@ -1,7 +1,7 @@
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
-import { IRecord, IResponse } from 'src/app/common/models';
+import { IRecord, } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 import * as XLSX from 'xlsx';
 import { getTableHeaders } from 'src/app/common/utils';

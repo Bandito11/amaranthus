@@ -14,7 +14,6 @@ import {
   WEEKDAYSLABELS,
   MONTHSLABELS,
 } from '../../common/constants';
-import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'calendar-component',

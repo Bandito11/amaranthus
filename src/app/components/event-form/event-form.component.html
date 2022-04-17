@@ -21,6 +21,8 @@
     ></ion-input>
     <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
   </ion-item>
+
+  <!--Start Date Control-->
   <div *ngIf="!infiniteDates; else noStartDate">
     <ion-item>
       <ion-label>{{ htmlControls.start }}</ion-label>
@@ -28,6 +30,7 @@
         monthNames="{{ monthNames }}"
         displayFormat="MMMM DD YYYY"
         pickerFormat="MMMM DD YYYY"
+        max="2050-12-31"
         [(ngModel)]="startDate"
       ></ion-datetime>
     </ion-item>
@@ -38,6 +41,8 @@
       <ion-input disabled></ion-input>
     </ion-item>
   </ng-template>
+
+  <!--End Date Control-->
   <ion-item *ngIf="!infiniteDates; else checkDisabled">
     <ion-label>{{ htmlControls.hasEnd }}</ion-label>
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
@@ -55,6 +60,7 @@
         monthNames="{{ monthNames }}"
         displayFormat="MMMM DD YYYY"
         pickerFormat="MMMM DD YYYY"
+        max="2050-12-31"
         [(ngModel)]="endDate"
       ></ion-datetime>
       <ion-icon
@@ -63,6 +69,7 @@
         *ngIf="!this.endDate && hasEndDate"
       ></ion-icon>
     </ion-item>
+
   </div>
   <ion-item>
     <ion-label>{{ htmlControls.run }}</ion-label>

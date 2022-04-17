@@ -1,6 +1,6 @@
 import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
-import { IRecord, IResponse } from 'src/app/common/models';
+import { IRecord, } from 'src/app/common/models';
 import { recordType } from 'src/app/common/constants';
 import * as XLSX from 'xlsx';
 import { Storage } from '@ionic/storage';

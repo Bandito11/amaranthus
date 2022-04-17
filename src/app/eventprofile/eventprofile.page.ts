@@ -1,16 +1,17 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { IEvent, ISimpleAlertOptions, IEventControls } from '../common/models';
+import { IEvent, IEventControls } from '../common/models';
 import {
   NavController,
-  AlertController,
   ModalController,
+  ToastController,
 } from '@ionic/angular';
 import { MONTHSLABELS } from '../common/constants';
 import { formatDate } from '../common/format';
 import { EditEventPage } from '../editevent/editevent.page';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { handleError } from '../common/handleError';
 
 @Component({
   selector: 'app-eventprofile',
@@ -22,9 +23,9 @@ export class EventProfilePage implements OnInit {
     private navCtrl: NavController,
     private route: ActivatedRoute,
     private dbService: DatabaseService,
-    private alertCtrl: AlertController,
+    private toastController: ToastController,
     private modal: ModalController,
-    private storage: Storage,
+    private storage: Storage
   ) {}
 
   /**
@@ -264,7 +265,7 @@ export class EventProfilePage implements OnInit {
    * @param {{ index: number; attendance: boolean; absence: boolean }} member
    * @memberof EventProfilePage
    */
-  updateAttendance(member: {
+  async updateAttendance(member: {
     index: number;
     attendance: boolean;
     absence: boolean;
@@ -288,29 +289,25 @@ export class EventProfilePage implements OnInit {
     }
     try {
       this.dbService.updateEvent(this.event);
+      const language = await this.storage.get('language');
+      if (language === 'spanish') {
+        const toast = await this.toastController.create({
+          message: 'Asistencia actualizada',
+          duration: 3000,
+          color: 'success',
+        });
+        await toast.present();
+      } else {
+        const toast = await this.toastController.create({
+          message: 'Attendance updated',
+          duration: 3000,
+          color: 'success',
+        });
+        await toast.present();
+      }
     } catch (error) {
-      const opts = {
-        header: 'Error!',
-        message: error,
-      };
-      this.showSimpleAlert(opts);
+      handleError(error);
     }
-  }
-
-  /**
-   *
-   *
-   * @private
-   * @param {ISimpleAlertOptions} options
-   * @memberof EventProfilePage
-   */
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
   }
 
   /**
