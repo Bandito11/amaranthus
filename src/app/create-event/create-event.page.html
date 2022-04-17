@@ -9,6 +9,7 @@
 
 <ion-content class="ion-padding">
   <app-event-form
+    [startDate]="startDate"
     [students]="students"
     [studentIds]="studentIds"
     [htmlControls]="htmlControls"
@@ -17,6 +18,6 @@
     [logo]="logo"
     [language]="language"
     (eventData)="createNewEvent($event)"
+    (queryData)="searchStudent($event)"
   ></app-event-form>
 </ion-content>
-

@@ -1,21 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  ModalController,
-  NavController,
-  Platform,
-} from '@ionic/angular';
+import { ModalController, NavController, Platform } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
-import {
-  IStudent,
-  ICalendar,
-  IRecord,
-} from 'src/app/common/models';
+import { IStudent, ICalendar, IRecord } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
-import {
-  sortStudentsbyId,
-  sortStudentsName,
-  filterStudentsList,
-} from 'src/app/common/search';
+import { sortStudentsbyId, sortStudentsName } from 'src/app/common/search';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
@@ -108,9 +96,7 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     //TODO: Create a way to restore purchases for mobile
-    if (
-      this.platform.is('desktop') || this.platform.is('mobileweb')
-    ) {
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       this.storage.set('boughtMasterKey', true);
     }
     const currentDate = new Date();
@@ -153,8 +139,9 @@ export class HomePage implements OnInit {
     };
     try {
       this.students = await this.dbService.getAllActiveStudents(date);
+      this.unfilteredStudents = [...this.students];
     } catch (error) {
-      this.students = []
+      this.students = [];
       handleError(error);
     }
     this.filterOptions = this.getFilterOptions();
@@ -264,9 +251,14 @@ export class HomePage implements OnInit {
     this.students = [...this.unfilteredStudents];
   }
 
-  searchStudent(event) {
-    const query: string = event.target.value;
-    query ? this.filterStudentsList(query) : this.initializeStudentsList();
+  async searchStudent(event) {
+    const query = event.target.value;
+    query
+      ? (this.students = [...await this.dbService.getStudentWithRecord({
+          query,
+          date: this.date,
+        })])
+      : this.getStudents();
   }
 
   sortData(option: string) {
@@ -289,12 +281,6 @@ export class HomePage implements OnInit {
 
   private sortStudentsName() {
     this.students = <any>sortStudentsName(this.students);
-  }
-
-  private filterStudentsList(query: string) {
-    this.students = <any>(
-      filterStudentsList({ query: query, students: this.unfilteredStudents })
-    );
   }
 
   async goToCreate() {

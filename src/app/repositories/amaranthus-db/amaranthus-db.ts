@@ -366,6 +366,77 @@ export class AmaranthusDBProvider {
     return results;
   }
 
+  async getProfilePictures(students: IStudent[]) {
+    for (let i = 0; i < students.length; i++) {
+      try {
+        if (students[i].picture && !students[i].picture.match('default')) {
+          students[i] = {
+            ...students[i],
+            picture: await this.dataUrlToObjectUrl(
+              await this.file.readFromMobile({
+                type: 'image',
+                path: students[i].picture,
+              })
+            ),
+          };
+        } else if (
+          students[i].picture &&
+          students[i].picture.match('default')
+        ) {
+          students[i] = {
+            ...students[i],
+            picture: await this.dataUrlToObjectUrl(students[i].picture),
+          };
+        }
+      } catch (error) {
+        students[i].picture = '';
+      }
+    }
+    return students;
+  }
+
+  async getStudent(query:string) {
+    const fullName = query.split(' ');
+    if (fullName.length > 1 && fullName[1]) {
+      const firstName =
+        fullName[0][0].toUpperCase() + fullName[0].slice(1, fullName[0].length);
+      const lastName = (
+        fullName[1][0].toUpperCase() + fullName[1].slice(1, fullName[1].length)
+      ).trim();
+      const resultsByName = studentsColl.find({
+        firstName: {
+          $contains: firstName,
+        },
+        lastName: {
+          $contains: lastName,
+        },
+      });
+      return resultsByName;
+    }
+    const resultsById = studentsColl.find({
+      id: query.trim(),
+    });
+    const capitalizeFirstLetter =
+     ( query[0].toUpperCase() + query.slice(1, query.length) ).trim();
+    const resultsByFirstName = studentsColl.find({
+      firstName: { $contains: capitalizeFirstLetter },
+    });
+    const resultsByLastName = studentsColl.find({
+      lastName: { $contains: capitalizeFirstLetter },
+      $loki: { $nin: resultsByFirstName.map((student) => student.$loki) },
+    });
+    return [...resultsById, ...resultsByFirstName, ...resultsByLastName];
+  }
+
+  async getStudentWithRecord(opts: { query: string; date: ICalendar }) {
+    const results = await this.getStudent(opts.query);
+    const studentRecords = await this.getRecords({
+      date: opts.date,
+      students: results,
+    });
+    return studentRecords;
+  }
+
   checkIfStudentExists(opts: { id: string }) {
     try {
       const results = studentsColl.findOne({
@@ -1019,40 +1090,22 @@ export class AmaranthusDBProvider {
     }
   }
 
-  /**
-   *
-   * @param date
-   */
-  async getAllActiveStudents(date: ICalendar) {
-    let students: (IStudent & LokiObj)[];
-    try {
-      students = studentsColl.find({
-        isActive: {
-          $eq: true,
-        },
-      });
-    } catch (error) {
-      const studentsColl =
-        (await this.initializeDatabase()) as Collection<IStudent>;
-      students = studentsColl.find({ isActive: { $eq: true } });
-    }
-    this.deleteInvalidCharacters();
-    let record: IRecord;
-    const results = students.map((student) => {
-      record = {
+  async getRecords(opts: { date: ICalendar; students: IStudent[] }) {
+    const studentRecords = opts.students.map((student) => {
+      const record = {
         ...this.getQueriedRecordsByCurrentDate({
           studentId: student.id,
-          year: date.year,
-          day: date.day,
-          month: date.month,
+          year: opts.date.year,
+          day: opts.date.day,
+          month: opts.date.month,
         }),
       };
       const noteData = this.getNoteByDate({
         id: student.id,
         event: '',
         date: {
-          ...date,
-          month: date.month - 1,
+          ...opts.date,
+          month: opts.date.month - 1,
         },
       });
       let newStudent = {
@@ -1072,29 +1125,56 @@ export class AmaranthusDBProvider {
       }
       return newStudent;
     }) as unknown as (IStudent & IRecord)[]; // got results
-
-    for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < studentRecords.length; i++) {
       try {
-        if (results[i].picture && !results[i].picture.match('default')) {
-          results[i] = {
-            ...results[i],
+        if (
+          studentRecords[i].picture &&
+          !studentRecords[i].picture.match('default')
+        ) {
+          studentRecords[i] = {
+            ...studentRecords[i],
             picture: await this.dataUrlToObjectUrl(
               await this.file.readFromMobile({
                 type: 'image',
-                path: results[i].picture,
+                path: studentRecords[i].picture,
               })
             ),
           };
-        } else if (results[i].picture && results[i].picture.match('default')) {
-          results[i] = {
-            ...results[i],
-            picture: await this.dataUrlToObjectUrl(results[i].picture),
+        } else if (
+          studentRecords[i].picture &&
+          studentRecords[i].picture.match('default')
+        ) {
+          studentRecords[i] = {
+            ...studentRecords[i],
+            picture: await this.dataUrlToObjectUrl(studentRecords[i].picture),
           };
         }
       } catch (error) {
-        results[i].picture = '';
+        studentRecords[i].picture = '';
       }
     }
+
+    return studentRecords;
+  }
+  /**
+   *
+   * @param date
+   */
+  async getAllActiveStudents(date: ICalendar) {
+    let students: (IStudent & LokiObj)[];
+    try {
+      students = studentsColl.find({
+        isActive: {
+          $eq: true,
+        },
+      });
+    } catch (error) {
+      const studentsColl =
+        (await this.initializeDatabase()) as Collection<IStudent>;
+      students = studentsColl.find({ isActive: { $eq: true } });
+    }
+    this.deleteInvalidCharacters();
+    const results = await this.getRecords({ students, date });
 
     return results;
   }

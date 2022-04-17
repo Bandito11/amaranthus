@@ -128,7 +128,7 @@ export class ExportPage {
           fileName: fileName,
         });
       }
-      if (this.dateControl=== 'day') {
+      if (this.dateControl === 'day') {
         xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.day,
           records: this.students,
@@ -155,7 +155,7 @@ export class ExportPage {
           color: 'success',
         });
         await toast.present();
-        return
+        return;
       }
       await loading.dismiss();
       handleError('Error creating the file');
@@ -218,9 +218,9 @@ export class ExportPage {
           await loading.dismiss();
           let message;
           if (this.language === 'spanish') {
-            message = `¡El archivo ha sido creado en ${path}!`
+            message = `¡El archivo ha sido creado en ${path}!`;
           } else {
-            message = `The file was created on ${path}!`
+            message = `The file was created on ${path}!`;
           }
           const toast = await this.toastController.create({
             message,
@@ -228,7 +228,7 @@ export class ExportPage {
             color: 'success',
           });
           await toast.present();
-          await this.modal.dismiss()
+          await this.modal.dismiss();
         } catch (error) {
           // If FileProvider err
           await loading.dismiss();
@@ -239,7 +239,7 @@ export class ExportPage {
           });
           await toast.present();
         }
-        return
+        return;
       }
       await loading.dismiss();
       handleError('Error creating the file');
@@ -248,28 +248,27 @@ export class ExportPage {
       await loading.dismiss();
       let message;
       if (this.language === 'spanish') {
-        message = 
-          `Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!`
+        message = `Hubo un error creando el archivo. ¡Por favor vuelva a crear el archivo!`;
       } else {
-        message = 
-          `There was an error while creating the file. Please try again later!`
+        message = `There was an error while creating the file. Please try again later!`;
       }
-          const toast = await this.toastController.create({
-            message,
-            duration: 2000,
-            color: 'success',
-          });
-          await toast.present();
-          await this.modal.dismiss()
+      const toast = await this.toastController.create({
+        message,
+        duration: 2000,
+        color: 'success',
+      });
+      await toast.present();
+      await this.modal.dismiss();
     }
   }
 
-  /**
-   *
-   *
-   * @memberof ExportPage
-   */
-  async exportAsCSV() {
+/**
+ *
+ *
+ * @returns
+ * @memberof ExportPage
+ */
+async exportAsCSV() {
     let csvResponse;
     if (this.dateControl === 'month') {
       this.date = this.date.slice(0, 7);
@@ -309,9 +308,9 @@ export class ExportPage {
           await loading.dismiss();
           let message;
           if (this.language === 'spanish') {
-            message = `¡El archivo ha sido creado en ${path}!`
+            message = `¡El archivo ha sido creado en ${path}!`;
           } else {
-            message = `The file was created on ${path}!`
+            message = `The file was created on ${path}!`;
           }
           const toast = await this.toastController.create({
             message,
@@ -319,13 +318,13 @@ export class ExportPage {
             color: 'success',
           });
           await toast.present();
-          await this.modal.dismiss()
+          await this.modal.dismiss();
         } catch (error) {
           // If FileProvider err
           await loading.dismiss();
           this.modal.dismiss(error);
         }
-        return
+        return;
       }
       await loading.dismiss();
       handleError('Error creating the file');
@@ -344,13 +343,13 @@ export class ExportPage {
     }
   }
 
-  /**
-   *
-   *
-   * @memberof StatsPage
-   * Query can have values of Date
-   */
-  getRecordsByDate(opts: { query: string; date: string }) {
+/**
+ *
+ *
+ * @param {{ query: string; date: string }} opts
+ * @memberof ExportPage
+ */
+getRecordsByDate(opts: { query: string; date: string }) {
     try {
       const dateVal = opts.date.split('-');
       let date: ICalendar;
@@ -375,8 +374,6 @@ export class ExportPage {
       if (records['length']) {
         this.students = [...records];
       } else {
-        // TODO:  implement an alert message if it fails message should say no students
-        // can be retrieved.
         handleError(`No records were found`);
       }
     } catch (error) {

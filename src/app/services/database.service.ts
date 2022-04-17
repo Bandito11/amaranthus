@@ -12,6 +12,17 @@ export class DatabaseService {
     await this.db.initializeDatabase();
   }
 
+  async getStudent(query) {
+    let students: IStudent[] = await this.db.getStudent(query)
+    students = await this.db.getProfilePictures(students)
+    return students;
+  }
+
+   async getStudentWithRecord(opts:{query: string, date: ICalendar}){
+    const student = await this.db.getStudentWithRecord(opts);
+    return student;
+  }
+
   async getAllActiveStudents(date: ICalendar) {
     const students = await this.db.getAllActiveStudents(date);
 

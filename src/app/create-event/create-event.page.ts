@@ -20,7 +20,6 @@ import { handleError } from '../common/handleError';
 export class CreateEventPage implements OnInit {
   logo;
   students: IStudent[];
-  STUDENTS: IStudent[];
   studentIds: string[];
   eventName;
   startDate;
@@ -106,6 +105,7 @@ export class CreateEventPage implements OnInit {
       notAdded: ` no fue añadido al evento.`,
     },
   };
+  unfilteredStudents: any;
 
   constructor(
     public navCtrl: NavController,
@@ -117,15 +117,21 @@ export class CreateEventPage implements OnInit {
     private toastController: ToastController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.logo = '';
+    this.students = [];
     this.studentIds = [];
-    this.getStudents();
     const currentDate = new Date();
     this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
       currentDate.getMonth() + 1
     )}-${addZeroInFront(currentDate.getDate())}`;
-    this.endDate = ``;
+    this.endDate = false;
+    try {
+      this.students = await this.dbService.getAllStudents(true);
+      this.unfilteredStudents = this.students;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   ionViewWillEnter() {
@@ -140,14 +146,15 @@ export class CreateEventPage implements OnInit {
     });
   }
 
-  resetEndDate() {
-    this.endDate = '';
+  async searchStudent(event) {
+    const query = event;
+    query
+      ? (this.students = [...(await this.dbService.getStudent(query))])
+      : (this.students = [...this.unfilteredStudents]);
   }
 
-  addAll() {
-    for (const student of this.STUDENTS) {
-      // this.addToEvent(student.id);
-    }
+  resetEndDate() {
+    this.endDate = '';
   }
 
   async createNewEvent(eventData) {
@@ -172,7 +179,6 @@ export class CreateEventPage implements OnInit {
         return;
       }
       if (!eventData.name) {
-        let opts: ISimpleAlertOptions;
         if (this.language === 'spanish') {
           message = '¡Tienes que escribir un nombre para el evento!';
         } else {
@@ -254,6 +260,7 @@ export class CreateEventPage implements OnInit {
                     color: 'success',
                   });
                   toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
                   message = 'Evento ya existe.';
 
@@ -284,11 +291,11 @@ export class CreateEventPage implements OnInit {
                     color: 'success',
                   });
                   toast.present();
+                  await this.modalCtrl.dismiss();
                 } catch (error) {
                   message = 'Event already exits! ';
                   handleError(error);
                 }
-                await this.modalCtrl.dismiss();
                 return false;
               },
             },
@@ -299,42 +306,5 @@ export class CreateEventPage implements OnInit {
     } catch (error) {
       handleError(error);
     }
-  }
-
-  async getStudents() {
-    try {
-      const students = await this.dbService.getAllStudents(true);
-      this.students = students;
-      this.STUDENTS = students;
-    } catch (error) {
-      this.students = [];
-      this.STUDENTS = [];
-    }
-  }
-
-  private initializeStudentsList() {
-    this.students = [...this.STUDENTS];
-  }
-
-  search(event) {
-    const query = event.target.value;
-    query ? this.filterStudentsList(query) : this.initializeStudentsList();
-  }
-
-  private filterStudentsList(query: string) {
-    const students = [...this.STUDENTS];
-    let fullName: string;
-    const newQuery = students.filter((student) => {
-      fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      if (
-        student.id === query ||
-        student.firstName.toLowerCase().includes(query.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(query.toLowerCase()) ||
-        fullName === query.toLowerCase()
-      ) {
-        return student;
-      }
-    });
-    this.students = [...newQuery];
   }
 }

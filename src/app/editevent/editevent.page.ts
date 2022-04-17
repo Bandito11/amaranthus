@@ -111,6 +111,7 @@ export class EditEventPage implements OnInit {
       delete: 'Borrar',
     },
   };
+  unfilteredStudents: any;
 
   constructor(
     private navCtrl: NavController,
@@ -123,10 +124,16 @@ export class EditEventPage implements OnInit {
     private toastController: ToastController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getStudents();
     this.id = this.navParams.get('id');
     this.getEventProfile(this.id);
+    try {
+      this.students = await this.dbService.getAllStudents(true);
+      this.unfilteredStudents = this.students;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   ionViewWillEnter() {
@@ -141,6 +148,13 @@ export class EditEventPage implements OnInit {
     });
   }
 
+  async searchStudent(event) {
+    const query = event;
+    query
+      ? (this.students = [...(await this.dbService.getStudent(query))])
+      : (this.students = [...this.unfilteredStudents]);
+  }
+
   addAll() {
     for (const student of this.STUDENTS) {
       this.addToEvent(student.id);
@@ -152,8 +166,8 @@ export class EditEventPage implements OnInit {
     try {
       this.event = await this.dbService.getEvent(id);
       this.infiniteDates = this.event.infiniteDates;
+      this.imgSrc = this.event.logo;
       this.logo = this.event.logo;
-      this.imgSrc = this.logo;
       this.eventName = this.event.name;
       this.startDate = this.event.startDate;
       this.endDate = this.event.endDate;
@@ -234,7 +248,7 @@ export class EditEventPage implements OnInit {
         startDate: '',
         members: [...members],
         endDate: '',
-        infiniteDates: this.infiniteDates,
+        infiniteDates: eventData.infiniteDates,
       };
       if (!this.event.infiniteDates) {
         this.event = {

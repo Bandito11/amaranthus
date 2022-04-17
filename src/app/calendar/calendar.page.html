@@ -7,15 +7,14 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding id="calendar">
+<ion-content class="ion-padding" id="calendar">
   <calendar-component
     [language]="language"
     (getDate)="getDate($event)"
   ></calendar-component>
   <h4>{{currentDate}}</h4>
   <ion-searchbar
-    [(ngModel)]="search"
-    (ionInput)="searchStudent()"
+    (ionInput)="searchStudent($event)"
     type="search"
   >
   </ion-searchbar>

@@ -14,32 +14,28 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage {
-  @ViewChild('notes', { static: true }) notesElement: ElementRef;
-
   currentDate: string;
   students: IRecord[];
   homeURL = '/tabs/tabs/calendar';
   private unfilteredStudents: IRecord[];
   date: ICalendar;
   timer;
-
   toggle: string;
-  search: string;
   event;
   studentIds: string[];
   language;
-  htmlControls = {
-    attended: '',
-    absence: '',
-    present: ``,
-    absent: '',
-    class: '',
-    phone: '',
+  htmlControls: {
+    attended: string;
+    absence: string;
+    present: string;
+    absent: string;
+    class: string;
+    phone: string;
     toolbar: {
-      title: '',
-    },
-    name: '',
-    ofile: '',
+      title: string;
+    };
+    name: string;
+    profile: string;
   };
 
   LANGUAGE = {
@@ -53,6 +49,7 @@ export class CalendarPage {
       phone: 'Teléfono: ',
       toolbar: {
         title: 'Calendario',
+        profile: 'Perfil',
       },
       name: 'Nombre: ',
     },
@@ -66,6 +63,7 @@ export class CalendarPage {
       phone: 'Phone: ',
       toolbar: {
         title: 'Calendar',
+        profile: 'Profile',
       },
       name: 'Name: ',
     },
@@ -75,7 +73,9 @@ export class CalendarPage {
     private route: ActivatedRoute,
     private storage: Storage,
     private dbService: DatabaseService
-  ) {}
+  ) {
+    this.htmlControls = this.LANGUAGE['english'];
+  }
 
   async ionViewWillEnter() {
     this.timer = 0;
@@ -140,7 +140,6 @@ export class CalendarPage {
    * @param date
    */
   getDate(date: ICalendar) {
-    this.search = '';
     this.date = date;
     const currentDay = date.day;
     const currentYear = date.year;
@@ -156,19 +155,15 @@ export class CalendarPage {
     this.getStudentsRecords(date);
   }
 
-  searchStudent() {
-    const query = this.search;
-    query ? this.filterStudentsList(query) : this.initializeStudentsList();
-  }
-
-  private initializeStudentsList() {
-    this.students = [...this.unfilteredStudents];
-  }
-
-  private filterStudentsList(query: string) {
-    const students = <any>this.unfilteredStudents;
-    this.students = <any>(
-      filterStudentsList({ query: query, students: students })
-    );
+  async searchStudent(event) {
+    const query = event.target.value;
+    query
+      ? (this.students = [
+          ...(await this.dbService.getStudentWithRecord({
+            query,
+            date: this.date,
+          })),
+        ])
+      : this.getStudentsRecords(this.date);
   }
 }
