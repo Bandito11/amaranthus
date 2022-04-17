@@ -9,18 +9,15 @@
 
 <ion-content class="ion-padding">
   <app-event-form
+  [event]="event"
   [students]="students"
   [studentIds]="studentIds"
   [htmlControls]="htmlControls"
   [imgSrc]="imgSrc"
-  [logo]="logo"
   [language]="language"
-  [eventName]="eventName"
-  [startDate]="startDate"
-  [endDate]="endDate"
-  [infiniteDates]="infiniteDates"
   (eventData)="editEvent($event)"
   (queryData)="searchStudent($event)"
+  (deleteEventData)="deleteEvent($event)"
 ></app-event-form>
 </ion-content>
 

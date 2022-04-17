@@ -5,7 +5,9 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="goToCreateEvent()">{{htmlControls.toolbar.buttons.add}}</ion-button>
+      <ion-button (click)="goToCreateEvent()"
+        >{{htmlControls.toolbar.buttons.add}}</ion-button
+      >
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -13,22 +15,33 @@
 <ion-content class="ion-padding">
   <ion-item>
     <ion-label>{{htmlControls.sort}}</ion-label>
-    <ion-select interface="popover" multiple="false" placeholder="None" #sort (ionChange)="sortData(sort.value)">
-      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
+    <ion-select
+      interface="popover"
+      multiple="false"
+      placeholder="None"
+      #sort
+      (ionChange)="sortData(sort.value)"
+    >
+      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}"
+        >{{option}}</ion-select-option
+      >
     </ion-select>
   </ion-item>
-  <ion-card *ngFor="let event of events" (click)="goToEventProfile(event.$loki)">
-    <img [src]="event.logo"/>
+  <ion-card
+    *ngFor="let event of events"
+    (click)="goToEventProfile(event.$loki)"
+  >
+    <img [src]="event.logo" />
     <ion-card-content>
-      <ion-card-title>
-        {{event.name}}
-      </ion-card-title>
+      <ion-card-title> {{event.name}} </ion-card-title>
       <div *ngIf="!event.infiniteDates; else: infiniteDatesIsTrue">
         <h3><span>{{htmlControls.start}}</span> {{event.startDate}}</h3>
-        <h3 *ngIf="event.endDate"><span>{{htmlControls.end}}</span> {{event.endDate}}</h3>
+        <h3 *ngIf="event.endDate">
+          <span>{{htmlControls.end}}</span> {{event.endDate}}
+        </h3>
         <!-- <br> -->
-        <p><span>{{htmlControls.attended}}</span> {{event.totalAttendance}}</p>
-        <p><span>{{htmlControls.absence}}</span> {{event.totalAbsence}}</p>
+        <p><span>{{htmlControls.attended}}</span> {{event.attendance}}</p>
+        <p><span>{{htmlControls.absence}}</span> {{event.absence}}</p>
         <p><span>{{htmlControls.members}}</span> {{event.totalMembers}}</p>
       </div>
       <ng-template #infiniteDatesIsTrue>
@@ -36,5 +49,4 @@
       </ng-template>
     </ion-card-content>
   </ion-card>
-
 </ion-content>

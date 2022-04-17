@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IStudent, IEvent, } from '../common/models';
+import { Component, Input, OnInit } from '@angular/core';
+import { IStudent, IEvent } from '../common/models';
 import {
   NavController,
   NavParams,
@@ -19,17 +19,11 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./editevent.page.scss'],
 })
 export class EditEventPage implements OnInit {
-  id;
-  logo;
+  @Input() id;
   students: IStudent[];
-  STUDENTS: IStudent[];
   studentIds: string[];
-  eventName;
-  startDate;
-  endDate;
   hasEndDate;
-  event: IEvent;
-  infiniteDates: boolean;
+   event: IEvent;
   language;
   imgSrc;
 
@@ -115,7 +109,6 @@ export class EditEventPage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private navParams: NavParams,
     public platform: Platform,
     private modalCtrl: ModalController,
     private dbService: DatabaseService,
@@ -125,15 +118,9 @@ export class EditEventPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.getStudents();
-    this.id = this.navParams.get('id');
-    this.getEventProfile(this.id);
-    try {
-      this.students = await this.dbService.getAllStudents(true);
-      this.unfilteredStudents = this.students;
-    } catch (error) {
-      handleError(error);
-    }
+    this.event = {infiniteDates: false, logo: '', name: '', startDate: '', endDate: '', members: []};
+    await this.getStudents();
+    await this.getEventProfile(this.id);
   }
 
   ionViewWillEnter() {
@@ -156,29 +143,24 @@ export class EditEventPage implements OnInit {
   }
 
   addAll() {
-    for (const student of this.STUDENTS) {
-      this.addToEvent(student.id);
-    }
+    // for (const student of this.STUDENTS) {
+    //   this.addToEvent(student.id);
+    // }
   }
 
   async getEventProfile(id) {
     this.studentIds = [];
     try {
       this.event = await this.dbService.getEvent(id);
-      this.infiniteDates = this.event.infiniteDates;
       this.imgSrc = this.event.logo;
-      this.logo = this.event.logo;
-      this.eventName = this.event.name;
-      this.startDate = this.event.startDate;
-      this.endDate = this.event.endDate;
-      this.studentIds = this.event.members.map((member) => member.id);
+      try {
+        this.studentIds = this.event.members.map((member) => member.id);
+      } catch (error) {
+        this.studentIds = [];
+      }
     } catch (error) {
       handleError(error);
     }
-  }
-
-  resetEndDate() {
-    this.endDate = '';
   }
 
   async editEvent(eventData) {
@@ -262,7 +244,7 @@ export class EditEventPage implements OnInit {
           endDate: eventData.endDate,
         };
       } else if (!eventData.hasEndDate) {
-        this.resetEndDate();
+        eventData.endDate = '';
       }
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({
@@ -276,7 +258,7 @@ export class EditEventPage implements OnInit {
                 try {
                   let message;
                   await alert.dismiss();
-                  this.dbService.updateEvent(this.event);
+                  await this.dbService.updateEvent(this.event);
                   message = `${eventData.name} fue editado exitosamente.`;
 
                   const toast = await this.toastController.create({
@@ -311,7 +293,7 @@ export class EditEventPage implements OnInit {
                 let message;
                 await alert.dismiss();
                 try {
-                  this.dbService.updateEvent(this.event);
+                  await this.dbService.updateEvent(this.event);
 
                   message = `${eventData.name} was edited successfully.`;
                   const toast = await this.toastController.create({
@@ -339,39 +321,10 @@ export class EditEventPage implements OnInit {
 
   async getStudents() {
     try {
-      const students = await this.dbService.getAllStudents(true);
-      this.students = students;
-      this.STUDENTS = students;
+      this.students = await this.dbService.getAllStudents(true);
     } catch (error) {
       this.students = [];
-      this.STUDENTS = [];
     }
-  }
-
-  private initializeStudentsList() {
-    this.students = [...this.STUDENTS];
-  }
-
-  search(event) {
-    const query = event.target.value;
-    query ? this.filterStudentsList(query) : this.initializeStudentsList();
-  }
-
-  private filterStudentsList(query: string) {
-    const students = [...this.STUDENTS];
-    let fullName: string;
-    const newQuery = students.filter((student) => {
-      fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-      if (
-        student.id === query ||
-        student.firstName.toLowerCase().includes(query.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(query.toLowerCase()) ||
-        fullName === query.toLowerCase()
-      ) {
-        return student;
-      }
-    });
-    this.students = [...newQuery];
   }
 
   addToEvent(id) {
@@ -406,11 +359,11 @@ export class EditEventPage implements OnInit {
     return false;
   }
 
-  async removeEvent() {
+  async deleteEvent(event: IEvent) {
     if (this.language === 'spanish') {
       const alert = await this.alertCtrl.create({
         header: '¡Advertencia!',
-        message: `¿Estás seguro que quieres borrar el evento ${this.eventName}?`,
+        message: `¿Estás seguro que quieres borrar el evento ${event.name}?`,
         buttons: [
           { text: 'No' },
           {
@@ -419,7 +372,7 @@ export class EditEventPage implements OnInit {
               let message;
               await alert.dismiss();
               try {
-                this.dbService.removeEvent(this.event);
+                this.dbService.removeEvent(event);
 
                 message = '¡El evento se borro exitosamente!';
                 const toast = await this.toastController.create({
@@ -443,7 +396,7 @@ export class EditEventPage implements OnInit {
     } else {
       const alert = await this.alertCtrl.create({
         header: 'Warning!',
-        message: `Are you sure you want to delete ${this.eventName} event?`,
+        message: `Are you sure you want to delete ${event.name} event?`,
         buttons: [
           { text: 'No' },
           {
@@ -452,7 +405,7 @@ export class EditEventPage implements OnInit {
               let message;
               await alert.dismiss();
               try {
-                this.dbService.removeEvent(this.event);
+                this.dbService.removeEvent(event);
 
                 message = 'Event was removed successfully!';
 
@@ -462,9 +415,11 @@ export class EditEventPage implements OnInit {
                   color: 'success',
                 });
                 await toast.present();
-                this.navCtrl
-                  .navigateRoot('/tabs/tabs/home/events')
-                  .then(() => this.modalCtrl.dismiss());
+                // this.navCtrl
+                //   .navigateRoot('/tabs/tabs/home/events')
+                //   .then(() => this.modalCtrl.dismiss());
+                 await this.modalCtrl.dismiss()
+                 await this.navCtrl.pop();
               } catch (error) {
                 handleError(error);
               }

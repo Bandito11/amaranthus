@@ -249,13 +249,44 @@ export class AmaranthusDBProvider {
     }
   }
 
+  async sortData({ prop, date }) {
+    studentView.removeFilters();
+    if (prop === 'name') {
+      studentView
+        .applySort((a, b) => {
+          if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) {
+            return -1;
+          }
+          if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        })
+        .applySort((a, b) => {
+          if (a.lastName.toLowerCase() < b.lastName.toLowerCase()) {
+            return -1;
+          }
+          if (a.lastName.toLowerCase() > b.lastName.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        });
+    } else {
+      studentView.applySimpleSort(prop);
+    }
+
+    const students = studentView.data({ removeMeta: true });
+    const studentRecords = await this.getRecords({ date, students });
+    return studentRecords;
+  }
+
   studentExists(id) {
     return studentsColl.findOne({
       id: id,
     });
   }
 
-  updateEventMembers(opts: { name: string; member: { id: any } }) {
+  async updateEventMembers(opts: { name: string; member: { id: any } }) {
     const results = eventsColl.findOne({
       name: opts.name,
     });
@@ -266,6 +297,25 @@ export class AmaranthusDBProvider {
       ...results,
       members: members,
     };
+    if (members.length > 0) {
+      if (typeof event.logo === 'object') {
+        event.logo = await this.cameraTools.readAsBase64(
+          (event.logo as any).changingThisBreaksApplicationSecurity
+        );
+      }
+      if (event.logo) {
+        const { name, data } = this.getPictureName({
+          name: event.name,
+          picture: event.logo,
+        });
+        await this.file.writeToMobile({
+          fileName: name,
+          data,
+          type: 'image',
+        });
+        event.logo = name;
+      }
+    }
     eventsColl.update(event);
   }
 
@@ -275,6 +325,11 @@ export class AmaranthusDBProvider {
       name: event.name,
     });
     if (!exists) {
+      if (typeof formattedEvent.logo === 'object') {
+        formattedEvent.logo = await this.cameraTools.readAsBase64(
+          (formattedEvent.logo as any).changingThisBreaksApplicationSecurity
+        );
+      }
       if (formattedEvent.logo) {
         const { name, data } = this.getPictureName({
           name: formattedEvent.name,
@@ -296,6 +351,11 @@ export class AmaranthusDBProvider {
       const results = eventsColl.get(event.$loki);
       if (results) {
         if (results.logo) {
+          if (typeof event.logo === 'object') {
+            event.logo = await this.cameraTools.readAsBase64(
+              (event.logo as any).changingThisBreaksApplicationSecurity
+            );
+          }
           const { name, data } = this.getPictureName({
             name: event.name,
             picture: event.logo,
@@ -324,9 +384,57 @@ export class AmaranthusDBProvider {
         event: results.name,
       });
       records.forEach((record) => recordsColl.remove(record));
+      if (results.logo) {
+        this.file.deleteFile(results.logo);
+      }
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  async sortEventData(prop: any) {
+    eventsView.removeFilters();
+    switch (prop) {
+      case 'Name':
+        eventsView.applySort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          }
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        });
+        break;
+      case 'Date':
+        eventsView.applySort((a, b) => {
+          if (a.startDate < b.startDate) {
+            return -1;
+          }
+          if (a.startDate > b.startDate) {
+            return 1;
+          }
+          return 0;
+        });
+        break;
+      default:
+        eventsView.removeFilters();
+    }
+    const results = eventsView.data({ removeMeta: true });
+    for (let i = 0; i < results.length; i++) {
+      if (results[i].logo) {
+        results[i] = {
+          ...results[i],
+          logo: await this.dataUrlToObjectUrl(
+            await this.file.readFromMobile({
+              type: 'image',
+              path: results[i].logo,
+            })
+          ),
+        };
+      }
+    }
+    return results;
   }
 
   async getEvents(): Promise<IEvent[]> {
@@ -395,7 +503,7 @@ export class AmaranthusDBProvider {
     return students;
   }
 
-  async getStudent(query:string) {
+  async getStudent(query: string) {
     const fullName = query.split(' ');
     if (fullName.length > 1 && fullName[1]) {
       const firstName =
@@ -416,25 +524,49 @@ export class AmaranthusDBProvider {
     const resultsById = studentsColl.find({
       id: query.trim(),
     });
-    const capitalizeFirstLetter =
-     ( query[0].toUpperCase() + query.slice(1, query.length) ).trim();
     const resultsByFirstName = studentsColl.find({
-      firstName: { $contains: capitalizeFirstLetter },
+      firstName: { $contains: query },
     });
     const resultsByLastName = studentsColl.find({
-      lastName: { $contains: capitalizeFirstLetter },
+      lastName: { $contains: query },
       $loki: { $nin: resultsByFirstName.map((student) => student.$loki) },
     });
     return [...resultsById, ...resultsByFirstName, ...resultsByLastName];
   }
 
+  async getStudentsRecords(date: ICalendar) {
+    const results = studentsColl.data;
+    const studentRecords = await this.getRecords({ date, students: results });
+    return studentRecords;
+  }
+
   async getStudentWithRecord(opts: { query: string; date: ICalendar }) {
     const results = await this.getStudent(opts.query);
-    const studentRecords = await this.getRecords({
-      date: opts.date,
-      students: results,
+    try {
+      const studentRecords = await this.getRecords({
+        date: opts.date,
+        students: results,
+      });
+      return studentRecords;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getStudentByGender({ gender, date }) {
+    const students = studentsColl.find({
+      gender,
+      isActive: true,
     });
-    return studentRecords;
+    if (students) {
+      try {
+        const studentRecords = await this.getRecords({ students, date });
+        return studentRecords;
+      } catch (error) {
+        throw error;
+      }
+    }
+    return [];
   }
 
   checkIfStudentExists(opts: { id: string }) {
@@ -460,6 +592,12 @@ export class AmaranthusDBProvider {
     const value = this.checkIfStudentExists({ id: student.id });
     if (value === false) {
       const formattedStudent = trimText(student);
+      if (typeof formattedStudent.picture === 'object') {
+        formattedStudent.picture = await this.cameraTools.readAsBase64(
+          (formattedStudent.picture as any)
+            .changingThisBreaksApplicationSecurity
+        );
+      }
       if (!formattedStudent.picture.match('default')) {
         const { name, data } = this.getPictureName({
           name: `${formattedStudent.id}-${formattedStudent.firstName}${formattedStudent.lastName}`,
@@ -504,6 +642,11 @@ export class AmaranthusDBProvider {
       ...results,
       ...formattedStudent,
     };
+    if (typeof results.picture === 'object') {
+      results.picture = await this.cameraTools.readAsBase64(
+        (results.picture as any).changingThisBreaksApplicationSecurity
+      );
+    }
     if (!results.picture.match('default')) {
       const { name, data } = this.getPictureName(results);
       await this.file.writeToMobile({
@@ -526,7 +669,7 @@ export class AmaranthusDBProvider {
 
     const records = recordsColl.find({
       id: {
-        $eq: student.id,
+        $eq: students.id,
       },
     });
     if (records['length']) {
@@ -544,6 +687,9 @@ export class AmaranthusDBProvider {
       notes.forEach((note) => {
         notesColl.remove(note);
       });
+    }
+    if (!students.picture.match('default')) {
+      this.file.deleteFile(students.picture);
     }
   }
 
@@ -1082,6 +1228,25 @@ export class AmaranthusDBProvider {
     return students;
   }
 
+  async getStudentByClass(opts: { class: string; date: ICalendar }) {
+    const students = studentsColl.find({
+      class: opts.class,
+      isActive: true,
+    });
+    if (students) {
+      try {
+        const studentRecords = await this.getRecords({
+          students,
+          date: opts.date,
+        });
+        return studentRecords;
+      } catch (error) {
+        handleError(error);
+        throw new Error(error);
+      }
+    }
+  }
+
   getQueriedRecordsByDate(opts: { event?: string; date: ICalendar }) {
     try {
       return this.getAllStudentsRecords(opts);
@@ -1125,6 +1290,8 @@ export class AmaranthusDBProvider {
       }
       return newStudent;
     }) as unknown as (IStudent & IRecord)[]; // got results
+
+    //Set Picture to ObjectUrl
     for (let i = 0; i < studentRecords.length; i++) {
       try {
         if (
@@ -1153,9 +1320,35 @@ export class AmaranthusDBProvider {
         studentRecords[i].picture = '';
       }
     }
-
+    if (!studentRecords) {
+      return [];
+    }
     return studentRecords;
   }
+
+  /**
+   *
+   * @param date
+   */
+  async getAllInActiveStudents(date: ICalendar) {
+    let students: (IStudent & LokiObj)[];
+    try {
+      students = studentsColl.find({
+        isActive: {
+          $eq: false,
+        },
+      });
+    } catch (error) {
+      const studentsColl =
+        (await this.initializeDatabase()) as Collection<IStudent>;
+      students = studentsColl.find({ isActive: { $eq: true } });
+    }
+    this.deleteInvalidCharacters();
+    const results = await this.getRecords({ students, date });
+
+    return results;
+  }
+
   /**
    *
    * @param date

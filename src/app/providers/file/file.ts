@@ -94,6 +94,13 @@ export class FileProvider {
     return result.data;
   }
 
+  async deleteFile( path: string ) {
+    await Filesystem.deleteFile({
+      path: `AttendanceLog/${path}`,
+      directory: Directory.Library,
+    });
+  }
+
   /**
    *
    *

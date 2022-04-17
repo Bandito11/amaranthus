@@ -1,9 +1,8 @@
 import { MESESLABELS, DIASHEADER } from './../common/constants';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { IRecord, ICalendar } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
-import { filterStudentsList } from 'src/app/common/search';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
@@ -16,8 +15,7 @@ import { DatabaseService } from '../services/database.service';
 export class CalendarPage {
   currentDate: string;
   students: IRecord[];
-  homeURL = '/tabs/tabs/calendar';
-  private unfilteredStudents: IRecord[];
+  homeURL ;
   date: ICalendar;
   timer;
   toggle: string;
@@ -37,36 +35,29 @@ export class CalendarPage {
     name: string;
     profile: string;
   };
-
-  LANGUAGE = {
+  LANGUAGE: {
     spanish: {
-      profile: 'Perfil',
-      attended: 'Asistió',
-      absence: 'Ausente',
-      present: ` está presente hoy.`,
-      absent: ' está ausente hoy.',
-      class: 'Clase: ',
-      phone: 'Teléfono: ',
-      toolbar: {
-        title: 'Calendario',
-        profile: 'Perfil',
-      },
-      name: 'Nombre: ',
-    },
+      profile: string;
+      attended: string;
+      absence: string;
+      present: string;
+      absent: string;
+      class: string;
+      phone: string;
+      toolbar: { title: string; profile: string };
+      name: string;
+    };
     english: {
-      profile: 'Profile',
-      attended: 'Attended',
-      absence: 'Absent',
-      present: `'s is present today!`,
-      absent: `'s is absent today`,
-      class: 'Class: ',
-      phone: 'Phone: ',
-      toolbar: {
-        title: 'Calendar',
-        profile: 'Profile',
-      },
-      name: 'Name: ',
-    },
+      profile: string;
+      attended: string;
+      absence: string;
+      present: string;
+      absent: string;
+      class: string;
+      phone: string;
+      toolbar: { title: string; profile: string };
+      name: string;
+    };
   };
 
   constructor(
@@ -74,6 +65,38 @@ export class CalendarPage {
     private storage: Storage,
     private dbService: DatabaseService
   ) {
+    this.homeURL = '/tabs/tabs/calendar'
+    this.LANGUAGE = {
+      spanish: {
+        profile: 'Perfil',
+        attended: 'Asistió',
+        absence: 'Ausente',
+        present: ` está presente hoy.`,
+        absent: ' está ausente hoy.',
+        class: 'Clase: ',
+        phone: 'Teléfono: ',
+        toolbar: {
+          title: 'Calendario',
+          profile: 'Perfil',
+        },
+        name: 'Nombre: ',
+      },
+      english: {
+        profile: 'Profile',
+        attended: 'Attended',
+        absence: 'Absent',
+        present: `'s is present today!`,
+        absent: `'s is absent today`,
+        class: 'Class: ',
+        phone: 'Phone: ',
+        toolbar: {
+          title: 'Calendar',
+          profile: 'Profile',
+        },
+        name: 'Name: ',
+      },
+    };
+
     this.htmlControls = this.LANGUAGE['english'];
   }
 
@@ -110,7 +133,6 @@ export class CalendarPage {
       month: opts.month + 1,
     };
     this.students = [];
-    this.unfilteredStudents = [];
     try {
       const records = await this.dbService.getStudentsRecordsByDate({
         date: date,
@@ -125,10 +147,8 @@ export class CalendarPage {
           }
         }
         this.students = list;
-        this.unfilteredStudents = list;
       } else {
         this.students = records;
-        this.unfilteredStudents = records;
       }
     } catch (error) {
       handleError(error);

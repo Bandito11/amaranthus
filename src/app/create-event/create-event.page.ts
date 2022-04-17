@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IStudent, ISimpleAlertOptions, IEvent } from '../common/models';
+import { IStudent, IEvent } from '../common/models';
 import {
   NavController,
   Platform,
@@ -18,18 +18,13 @@ import { handleError } from '../common/handleError';
   styleUrls: ['./create-event.page.scss'],
 })
 export class CreateEventPage implements OnInit {
-  logo;
   students: IStudent[];
   studentIds: string[];
-  eventName;
-  startDate;
-  endDate;
   hasEndDate;
-  infiniteDates: boolean;
   currentDate = new Date();
   language;
   imgSrc;
-
+  event: IEvent;
   htmlControls = {
     toolbar: {
       title: '',
@@ -118,14 +113,14 @@ export class CreateEventPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.logo = '';
+    this.event = {infiniteDates: false, logo: '', name: '', startDate: '', endDate: '', members: []};
     this.students = [];
     this.studentIds = [];
     const currentDate = new Date();
-    this.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
+    this.event.startDate = `${currentDate.getFullYear()}-${addZeroInFront(
       currentDate.getMonth() + 1
     )}-${addZeroInFront(currentDate.getDate())}`;
-    this.endDate = false;
+    this.hasEndDate = false;
     try {
       this.students = await this.dbService.getAllStudents(true);
       this.unfilteredStudents = this.students;
@@ -151,10 +146,6 @@ export class CreateEventPage implements OnInit {
     query
       ? (this.students = [...(await this.dbService.getStudent(query))])
       : (this.students = [...this.unfilteredStudents]);
-  }
-
-  resetEndDate() {
-    this.endDate = '';
   }
 
   async createNewEvent(eventData) {
@@ -239,7 +230,7 @@ export class CreateEventPage implements OnInit {
           };
         }
       } else if (!eventData.hasEndDate) {
-        this.resetEndDate();
+        eventData.endDate = '';
       }
       if (this.language === 'spanish') {
         const alert = await this.alertCtrl.create({

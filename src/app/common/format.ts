@@ -1,6 +1,9 @@
 import { MONTHSLABELS } from './constants';
 import { IStudent, IEvent } from './models';
 
+export const capitalizeFirstLetter = (word) =>
+  (word[0].toUpperCase() + word.slice(1, word.length)).trim();
+
 export function trimEvent(event: IEvent) {
   const formattedEvent: IEvent = {
     ...event,

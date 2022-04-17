@@ -1,5 +1,5 @@
 <div id="event-form">
-  <div *ngIf="logo; else noLogo" class="logo-image">
+  <div *ngIf="event.logo; else noLogo" class="logo-image">
     <img [src]="imgSrc" alt="A picture for the logo for the event" />
   </div>
   <ng-template #noLogo>
@@ -17,13 +17,13 @@
       type="text"
       #name
       placeholder="{{ htmlControls.placeholder }}"
-      [(ngModel)]="eventName"
+      [(ngModel)]="event.name"
     ></ion-input>
     <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
   </ion-item>
 
   <!--Start Date Control-->
-  <div *ngIf="!infiniteDates; else noStartDate">
+  <div *ngIf="!event.infiniteDates; else noStartDate">
     <ion-item>
       <ion-label>{{ htmlControls.start }}</ion-label>
       <ion-datetime
@@ -31,7 +31,7 @@
         displayFormat="MMMM DD YYYY"
         pickerFormat="MMMM DD YYYY"
         max="2050-12-31"
-        [(ngModel)]="startDate"
+        [(ngModel)]="event.startDate"
       ></ion-datetime>
     </ion-item>
   </div>
@@ -43,7 +43,7 @@
   </ng-template>
 
   <!--End Date Control-->
-  <ion-item *ngIf="!infiniteDates; else checkDisabled">
+  <ion-item *ngIf="!event.infiniteDates; else checkDisabled">
     <ion-label>{{ htmlControls.hasEnd }}</ion-label>
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
   </ion-item>
@@ -53,7 +53,7 @@
       <ion-checkbox disabled="true"></ion-checkbox>
     </ion-item>
   </ng-template>
-  <div *ngIf="!infiniteDates">
+  <div *ngIf="!event.infiniteDates">
     <ion-item *ngIf="hasEndDate">
       <ion-label>{{ htmlControls.end }}</ion-label>
       <ion-datetime
@@ -61,20 +61,19 @@
         displayFormat="MMMM DD YYYY"
         pickerFormat="MMMM DD YYYY"
         max="2050-12-31"
-        [(ngModel)]="endDate"
+        [(ngModel)]="event.endDate"
       ></ion-datetime>
       <ion-icon
         id="form-icon"
         name="warning"
-        *ngIf="!this.endDate && hasEndDate"
+        *ngIf="!event.endDate && hasEndDate"
       ></ion-icon>
     </ion-item>
-
   </div>
   <ion-item>
     <ion-label>{{ htmlControls.run }}</ion-label>
     <ion-checkbox
-      [(ngModel)]="infiniteDates"
+      [(ngModel)]="event.infiniteDates"
       color="primary"
       checked="false"
     ></ion-checkbox>
@@ -99,6 +98,14 @@
       ></app-event-students-list>
     </cdk-virtual-scroll-viewport>
   </ion-list>
-  
+
   <ion-button expand="full" (click)="submit()">Submit</ion-button>
+  <ion-button
+    expand="full"
+    color="secondary"
+    (click)="deleteEvent()"
+    *ngIf="!this.create"
+  >
+    Delete</ion-button
+  >
 </div>
