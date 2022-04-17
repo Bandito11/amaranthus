@@ -19,7 +19,6 @@
       </ion-label>
     </ion-tab-button>
 
-    <!--WaÎs TablePage in v3-->
     <ion-tab-button tab="stats">
       <ion-icon name="stats-chart-sharp"></ion-icon>
       <ion-label
@@ -54,23 +53,28 @@
   <!--Tablet View-->
   <ion-tab-bar *ngIf="this.viewIsLarge" slot="top" color="primary">
     <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
       <ion-label> {{htmlControls.home}} </ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="calendar">
+      <ion-icon name="calendar"></ion-icon>
       <ion-label> {{htmlControls.calendar}} </ion-label>
     </ion-tab-button>
 
     <!--WaÎs TablePage in v3-->
     <ion-tab-button tab="stats">
+      <ion-icon name="stats-chart-sharp"></ion-icon>
       <ion-label> {{htmlControls.stats}} </ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="settings">
+      <ion-icon name="cog"></ion-icon>
       <ion-label> {{htmlControls.settings}} </ion-label>
     </ion-tab-button>
 
     <ion-tab-button tab="login">
+      <ion-icon name="log-in"></ion-icon>
       <ion-label> {{htmlControls.login}} </ion-label>
     </ion-tab-button>
   </ion-tab-bar>

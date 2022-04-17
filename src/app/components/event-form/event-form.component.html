@@ -100,13 +100,15 @@
   </ion-list>
 
   <ion-button expand="full" (click)="submit()">Submit</ion-button>
+  <ion-button expand="full" color="secondary" (click)="addAll()"
+    >Add All</ion-button
+  >
   <ion-button
     expand="full"
-    color="secondary"
+    color="tertiary"
     (click)="deleteEvent()"
     *ngIf="!this.create"
   >
     Delete</ion-button
   >
-  <ion-button expand="full" color="tertiary" (click)="addAll()">Add All</ion-button>
 </div>

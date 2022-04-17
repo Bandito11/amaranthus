@@ -1,4 +1,4 @@
-import { Platform } from '@ionic/angular';
+import { IonTabBar, Platform } from '@ionic/angular';
 import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
@@ -10,7 +10,6 @@ declare const window: Window;
   styleUrls: ['./tabs.page.scss'],
 })
 export class TabsPage implements DoCheck, OnInit {
-  @ViewChild('tabBar') tabBarElement;
 
   counter = 0;
   viewIsLarge: boolean;
