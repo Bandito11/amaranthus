@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IStudent, IEvent } from '../common/models';
 import {
   NavController,
-  NavParams,
   Platform,
   ModalController,
   AlertController,
@@ -105,7 +104,7 @@ export class EditEventPage implements OnInit {
       delete: 'Borrar',
     },
   };
-  unfilteredStudents: any;
+  
 
   constructor(
     private navCtrl: NavController,
@@ -139,14 +138,9 @@ export class EditEventPage implements OnInit {
     const query = event;
     query
       ? (this.students = [...(await this.dbService.getStudent(query))])
-      : (this.students = [...this.unfilteredStudents]);
+      : this.getStudents();
   }
 
-  addAll() {
-    // for (const student of this.STUDENTS) {
-    //   this.addToEvent(student.id);
-    // }
-  }
 
   async getEventProfile(id) {
     this.studentIds = [];
@@ -327,11 +321,6 @@ export class EditEventPage implements OnInit {
     }
   }
 
-  addToEvent(id) {
-    if (this.studentIds.indexOf(id) === -1) {
-      this.studentIds = [...this.studentIds, id];
-    }
-  }
 
   removeFromEvent(id) {
     const newStudentIds = [

@@ -100,7 +100,6 @@ export class CreateEventPage implements OnInit {
       notAdded: ` no fue añadido al evento.`,
     },
   };
-  unfilteredStudents: any;
 
   constructor(
     public navCtrl: NavController,
@@ -113,7 +112,14 @@ export class CreateEventPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.event = {infiniteDates: false, logo: '', name: '', startDate: '', endDate: '', members: []};
+    this.event = {
+      infiniteDates: false,
+      logo: '',
+      name: '',
+      startDate: '',
+      endDate: '',
+      members: [],
+    };
     this.students = [];
     this.studentIds = [];
     const currentDate = new Date();
@@ -121,12 +127,7 @@ export class CreateEventPage implements OnInit {
       currentDate.getMonth() + 1
     )}-${addZeroInFront(currentDate.getDate())}`;
     this.hasEndDate = false;
-    try {
-      this.students = await this.dbService.getAllStudents(true);
-      this.unfilteredStudents = this.students;
-    } catch (error) {
-      handleError(error);
-    }
+    await this.getStudents();
   }
 
   ionViewWillEnter() {
@@ -141,11 +142,19 @@ export class CreateEventPage implements OnInit {
     });
   }
 
+  async getStudents() {
+    try {
+      this.students = await this.dbService.getAllStudents(true);
+    } catch (error) {
+      this.students = [];
+    }
+  }
+
   async searchStudent(event) {
     const query = event;
     query
       ? (this.students = [...(await this.dbService.getStudent(query))])
-      : (this.students = [...this.unfilteredStudents]);
+      : this.getStudents();
   }
 
   async createNewEvent(eventData) {

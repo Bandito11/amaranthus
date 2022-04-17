@@ -75,6 +75,18 @@ export class EventFormComponent implements OnInit {
     this.studentIds = [...studentIds];
   }
 
+  addAll() {
+    for (const student of this.students) {
+      this.addToEvent(student.id);
+    }
+  }
+
+  addToEvent(id) {
+    if (this.studentIds.indexOf(id) === -1) {
+      this.studentIds = [...this.studentIds, id];
+    }
+  }
+  
   async submit() {
     if (typeof this.event.logo === 'object') {
       this.event.logo = await this.cameraTools.readAsBase64(
