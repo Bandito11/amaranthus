@@ -33,11 +33,6 @@ export class StudentFormComponent implements OnInit {
   }
 
   async submit() {
-    if (typeof this.student.picture === 'object') {
-      this.student.picture = await this.cameraTools.readAsBase64(
-        (this.student.picture as any).changingThisBreaksApplicationSecurity
-      );
-    }
     this.student = {
       ...this.student,
       isActive: this.student.isActive,

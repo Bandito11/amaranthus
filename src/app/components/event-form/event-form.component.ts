@@ -15,17 +15,14 @@ export class EventFormComponent implements OnInit {
   @Input() htmlControls;
   @Input() imgSrc;
   @Input() create: boolean;
-  @Input() logo;
+  @Input() event: IEvent;
   @Input() language;
   @Input() students: IStudent[];
   @Input() studentIds: string[];
-  @Input() eventName;
-  @Input() startDate;
-  @Input() endDate;
-  @Input() infiniteDates: boolean;
 
   @Output() eventData = new EventEmitter<IEvent>();
   @Output() queryData = new EventEmitter<string>();
+@Output() deleteEventData = new EventEmitter<IEvent>();
 
   hasEndDate;
   monthNames;
@@ -46,7 +43,7 @@ export class EventFormComponent implements OnInit {
       this.monthNames =
         'January,February,March,April,May,June,July,August,September,October,November,December';
     }
-    if (this.endDate) {
+    if (this.event.endDate) {
       this.hasEndDate = true;
     }
   }
@@ -56,14 +53,14 @@ export class EventFormComponent implements OnInit {
   }
 
   resetEndDate() {
-    this.endDate = '';
+    this.event.endDate = '';
   }
 
   async getPicture() {
     try {
       const image = await this.cameraTools.takePicture();
       this.imgSrc = this.sanitizer.bypassSecurityTrustUrl(image.webPath);
-      this.logo = await this.cameraTools.readAsBase64(image.webPath);
+      this.event.logo = await this.cameraTools.readAsBase64(image.webPath);
     } catch (error) {
       handleError(error);
     }
@@ -71,7 +68,7 @@ export class EventFormComponent implements OnInit {
 
   resetPicture() {
     this.imgSrc = '';
-    this.logo = this.imgSrc;
+    this.event.logo = this.imgSrc;
   }
 
   assignStudentId(studentIds) {
@@ -79,22 +76,26 @@ export class EventFormComponent implements OnInit {
   }
 
   async submit() {
-    if (typeof this.logo === 'object') {
-      this.logo = await this.cameraTools.readAsBase64(
-        this.logo.changingThisBreaksApplicationSecurity
+    if (typeof this.event.logo === 'object') {
+      this.event.logo = await this.cameraTools.readAsBase64(
+        this.event.logo.changingThisBreaksApplicationSecurity
       );
     }
     const event = {
-      name: this.eventName,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      infiniteDates: this.infiniteDates,
-      logo: this.logo,
+      name: this.event.name,
+      startDate: this.event.startDate,
+      endDate: this.event.endDate,
+      infiniteDates: this.event.infiniteDates,
+      logo: this.event.logo,
       members: [],
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
     };
     
     this.eventData.emit(event);
+  }
+
+  deleteEvent(){
+    this.deleteEventData.emit(this.event)
   }
 }

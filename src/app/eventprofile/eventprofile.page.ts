@@ -147,6 +147,7 @@ export class EventProfilePage implements OnInit {
     this.event = { ...event };
     const members = [];
     this.studentIds = [];
+    try {
     for (const member of this.event.members) {
       this.studentIds = [...this.studentIds, member.id];
       const student = await this.dbService.getStudentById(member.id);
@@ -195,6 +196,9 @@ export class EventProfilePage implements OnInit {
           });
         }
       }
+    }
+    } catch (error) {
+     // I dont know what to do here
     }
     this.eventControls = {
       ...event,
@@ -288,7 +292,7 @@ export class EventProfilePage implements OnInit {
       this.event.members[member.index].absence = member.absence;
     }
     try {
-      this.dbService.updateEvent(this.event);
+      await this.dbService.updateEvent(this.event);
       const language = await this.storage.get('language');
       if (language === 'spanish') {
         const toast = await this.toastController.create({

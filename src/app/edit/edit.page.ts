@@ -1,5 +1,5 @@
 import { DomSanitizer } from '@angular/platform-browser';
-import { OnInit, Component } from '@angular/core';
+import { OnInit, Component, Input } from '@angular/core';
 import { IStudent } from '../common/models';
 import {
   AlertController,
@@ -29,6 +29,7 @@ export class EditPage implements OnInit {
   imgSrc;
 
   // HTML values
+  @Input() id: string;
   student: IStudent = {
     id: '',
     firstName: '',
@@ -147,6 +148,7 @@ export class EditPage implements OnInit {
       delete: 'Borrar',
     },
   };
+  
 
   constructor(
     public dbService: DatabaseService,
@@ -161,7 +163,7 @@ export class EditPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.student = { ...this.student, id: this.navParams.get('id') };
+    this.student = { ...this.student, id: this.id };
     try {
       const student = await this.getStudentFromDB(this.student);
       if (student) {

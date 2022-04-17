@@ -3,7 +3,6 @@ import { ModalController, NavController, Platform } from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, IRecord } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
-import { sortStudentsbyId, sortStudentsName } from 'src/app/common/search';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
@@ -17,7 +16,6 @@ export class HomePage implements OnInit {
   @ViewChild('filter', { static: true }) filterElement;
 
   students: (IStudent & IRecord)[];
-  private unfilteredStudents: (IStudent & IRecord)[];
   selectOptions;
   filterOptions: string[];
   date: ICalendar;
@@ -106,7 +104,6 @@ export class HomePage implements OnInit {
       year: currentDate.getFullYear(),
     };
     this.students = [];
-    this.unfilteredStudents = [];
     this.getStudents();
   }
 
@@ -139,7 +136,6 @@ export class HomePage implements OnInit {
     };
     try {
       this.students = await this.dbService.getAllActiveStudents(date);
-      this.unfilteredStudents = [...this.students];
     } catch (error) {
       this.students = [];
       handleError(error);
@@ -183,104 +179,82 @@ export class HomePage implements OnInit {
     return options;
   }
 
-  filterByClass(option: string) {
-    let newQuery = [];
+  async filterByClass(option: string) {
     switch (option) {
       case 'Male':
-      case 'Female':
-      case 'Undisclosed':
-        const gender = option.toLowerCase();
-        newQuery = this.unfilteredStudents.filter((student) => {
-          if (student.gender === gender) {
-            return student;
-          }
-        });
-        this.students = [...newQuery];
-        break;
       case 'Masculino':
-        this.filterByClass('Male');
+        this.students = await this.dbService.getStudentByGender({
+          gender: 'male',
+          date: this.date,
+        });
         break;
+      case 'Female':
       case 'Femenino':
-        this.filterByClass('Female');
+        this.students = await this.dbService.getStudentByGender({
+          gender: 'female',
+          date: this.date,
+        });
+
         break;
+      case 'Undisclosed':
       case 'No revelado':
-        this.filterByClass('Undisclosed');
+        this.students = await this.dbService.getStudentByGender({
+          gender: 'undisclosed',
+          date: this.date,
+        });
         break;
       case 'Todos':
-        this.filterByClass('All');
-        break;
       case 'All':
-        this.initializeStudentsList();
+        this.students = await this.dbService.getAllStudentRecords(this.date);
         break;
       case 'Activo':
-        this.filterByClass('Active');
-        break;
-      case 'Inactivo':
-        this.filterByClass('Not Active');
-        break;
       case 'Active':
-        newQuery = this.unfilteredStudents.filter((student) => {
-          if (student.isActive) {
-            return student;
-          }
-        });
-        this.students = [...newQuery];
+        await this.getStudents();
         break;
       case 'Not Active':
-        newQuery = this.unfilteredStudents.filter((student) => {
-          if (!student.isActive) {
-            return student;
-          }
-        });
-        this.students = [...newQuery];
-        break;
-      case 'All':
-        this.initializeStudentsList();
+      case 'Inactivo':
+        this.students = await this.dbService.getAllInActiveStudents(this.date);
+        console.log(this.students);
         break;
       default:
-        newQuery = this.unfilteredStudents.filter((student) => {
-          if (student.class === option) {
-            return student;
-          }
+        //FIXME: Filter by student.class
+        this.students = await this.dbService.getStudentByClass({
+          date: this.date,
+          class: option,
         });
-        this.students = [...newQuery];
     }
-  }
-
-  private initializeStudentsList() {
-    this.students = [...this.unfilteredStudents];
   }
 
   async searchStudent(event) {
     const query = event.target.value;
     query
-      ? (this.students = [...await this.dbService.getStudentWithRecord({
-          query,
-          date: this.date,
-        })])
+      ? (this.students = [
+          ...(await this.dbService.getStudentWithRecord({
+            query,
+            date: this.date,
+          })),
+        ])
       : this.getStudents();
   }
 
-  sortData(option: string) {
+  async sortData(option: string) {
     switch (option) {
       case 'ID':
-        this.sortStudentsbyId();
+        this.students = await this.dbService.sortStudentData({
+          date: this.date,
+          prop: 'id',
+        });
         break;
       case 'Name':
       case 'Nombre':
-        this.sortStudentsName();
+        this.students = await this.dbService.sortStudentData({
+          date: this.date,
+          prop: 'name',
+        });
         break;
       default:
-        this.initializeStudentsList();
+      // this.initializeStudentsList();
     }
-  }
-
-  private sortStudentsbyId() {
-    this.students = <any>sortStudentsbyId(this.students);
-  }
-
-  private sortStudentsName() {
-    this.students = <any>sortStudentsName(this.students);
   }
 
   async goToCreate() {

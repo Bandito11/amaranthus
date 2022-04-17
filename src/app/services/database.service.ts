@@ -6,25 +6,53 @@ import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-d
   providedIn: 'root',
 })
 export class DatabaseService {
+
+  async sortEventData(prop) {
+    return await this.db.sortEventData(prop);
+  }
+
+  async sortStudentData(prop) {
+    return await this.db.sortData(prop);
+  }
+  async getStudentByClass(opts: { class: string; date: ICalendar }) {
+    const students = this.db.getStudentByClass(opts);
+    return students;
+  }
   constructor(private db: AmaranthusDBProvider) {}
 
   async initializeDatabase() {
     await this.db.initializeDatabase();
   }
 
+  async getAllStudentRecords(date: ICalendar) {
+    const records = await this.db.getStudentsRecords(date);
+    return records;
+  }
+
   async getStudent(query) {
-    let students: IStudent[] = await this.db.getStudent(query)
-    students = await this.db.getProfilePictures(students)
+    let students: IStudent[] = await this.db.getStudent(query);
+    students = await this.db.getProfilePictures(students);
     return students;
   }
 
-   async getStudentWithRecord(opts:{query: string, date: ICalendar}){
+  async getStudentByGender({ gender, date }) {
+    const students = this.db.getStudentByGender({ gender, date });
+    return students;
+  }
+
+  async getStudentWithRecord(opts: { query: string; date: ICalendar }) {
     const student = await this.db.getStudentWithRecord(opts);
     return student;
   }
 
   async getAllActiveStudents(date: ICalendar) {
     const students = await this.db.getAllActiveStudents(date);
+
+    return students;
+  }
+
+  async getAllInActiveStudents(date: ICalendar) {
+    const students = await this.db.getAllInActiveStudents(date);
 
     return students;
   }
@@ -94,8 +122,8 @@ export class DatabaseService {
     this.db.insertEvent(event);
   }
 
-  updateEvent(event: IEvent) {
-    this.db.updateEvent(event);
+  async updateEvent(event: IEvent) {
+    await this.db.updateEvent(event);
   }
 
   removeEvent(event: IEvent) {
@@ -128,8 +156,8 @@ export class DatabaseService {
     this.db.insertOrUpdateRecord(opts);
   }
 
-  updateEventMembers(opts: { name: string; member: { id: any } }) {
-    this.db.updateEventMembers(opts);
+  async updateEventMembers(opts: { name: string; member: { id: any } }) {
+    await this.db.updateEventMembers(opts);
   }
 
   checkIfUserExists(opts: { username: string; password }) {
