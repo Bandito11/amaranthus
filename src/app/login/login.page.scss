@@ -1,15 +1,26 @@
 #clientlogin {
-  div {
-    $base-padding: 5em;
-    padding-left:  $base-padding;
-    padding-right:  $base-padding;
+  ion-item {
+    $base-padding: 1em;
+    padding-top:  $base-padding;
+    padding-bottom:  $base-padding;
   }
 
-  @media screen and (orientation: landscape) { 
-    div {
-    $base-padding: 12em;
+  @media screen and (min-width: 768px) {
+  div {
+    $base-padding: 10em;
     padding-left:  $base-padding;
     padding-right:  $base-padding;
+    padding-top: $base-padding - 7em;
+  }
+  }
+  
+
+  @media screen and (min-width: 768px) and (orientation: landscape) { 
+    div {
+    $base-padding: 16em;
+    padding-left:  $base-padding;
+    padding-right:  $base-padding;
+    padding-top: $base-padding - 13em;
   }
   }
 }
