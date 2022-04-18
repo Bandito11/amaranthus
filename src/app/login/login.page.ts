@@ -1,5 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { AlertController, NavController, ModalController } from '@ionic/angular';
+import {
+  AlertController,
+  NavController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { ISimpleAlertOptions } from '../common/models';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
@@ -18,38 +23,41 @@ export class LoginPage {
       title: '',
       buttons: {
         cancel: '',
-        password: ''
-      }
+        password: '',
+      },
     },
     id: '',
     phone: '',
-    submit: ''
+    submit: '',
+    placeholder: '',
   };
   LANGUAGE = {
     english: {
       toolbar: {
         title: 'Enter Form',
         buttons: {
-          cancel: 'Cancel',
-          password: 'Set Password'
-        }
+          cancel: 'Close',
+          password: 'Set Password',
+        },
       },
-      id: 'ID or Full Name with a space in between',
+      id: 'ID, Phone Number or Full Name with a space in between',
       phone: 'Phone Number',
-      submit: 'Submit'
+      submit: 'Submit',
+      placeholder: 'My credentials',
     },
     spanish: {
       toolbar: {
         title: 'Forma de Entrada',
         buttons: {
-          cancel: 'Cancelar',
-          password: 'Contraseña'
-        }
+          cancel: 'Cerrar',
+          password: 'Contraseña',
+        },
       },
-      id: 'Id o nombre completo con espacio entre medio',
+      id: 'Id, número de telefono o nombre completo con espacio entre medio',
       phone: 'Teléfono',
-      submit: 'Someter'
-    }
+      submit: 'Someter',
+      placeholder: 'Mis credenciales',
+    },
   };
   language: any;
 
@@ -58,11 +66,12 @@ export class LoginPage {
     private dbService: DatabaseService,
     public navCtrl: NavController,
     private modalCtrl: ModalController,
-    private storage: Storage
-  ) { }
+    private storage: Storage,
+    private toastController: ToastController
+  ) {}
 
   ionViewWillEnter() {
-    this.storage.get('language').then(value => {
+    this.storage.get('language').then((value) => {
       if (value) {
         this.language = value;
         this.htmlControls = this.LANGUAGE[value];
@@ -73,7 +82,6 @@ export class LoginPage {
     });
   }
 
-
   async cancel() {
     if (this.language === 'spanish') {
       const alert = await this.alertCtrl.create({
@@ -83,14 +91,14 @@ export class LoginPage {
           {
             name: 'password',
             type: 'password',
-            placeholder: 'Contraseña'
-          }
+            placeholder: 'Contraseña',
+          },
         ],
         buttons: [
           {
             text: 'Cancelar',
             role: 'cancel',
-            cssClass: 'secondary'
+            cssClass: 'secondary',
           },
           {
             text: 'Ok',
@@ -98,9 +106,9 @@ export class LoginPage {
               if (val['password'] === this.modalVal) {
                 this.modalCtrl.dismiss();
               }
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     } else {
@@ -111,14 +119,14 @@ export class LoginPage {
           {
             name: 'password',
             type: 'password',
-            placeholder: 'Password'
-          }
+            placeholder: 'Password',
+          },
         ],
         buttons: [
           {
             text: 'Cancel',
             role: 'cancel',
-            cssClass: 'secondary'
+            cssClass: 'secondary',
           },
           {
             text: 'Ok',
@@ -126,85 +134,63 @@ export class LoginPage {
               if (val['password'] === this.modalVal) {
                 this.modalCtrl.dismiss();
               }
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     }
-
   }
-  checkUser(opts: { username, password }) {
-    let options: ISimpleAlertOptions;
-    if (!opts.username) {
+
+  async checkUser(credentials) {
+    let message;
+    if (!credentials) {
       if (this.language === 'spanish') {
-        options = {
-          header: 'Error',
-          message: `El campo de Usuario no puede estar vacio.`
-        };
+        message = `El campo no puede estar vacio.`;
       } else {
-        options = {
-          header: 'Error',
-          message: `Username field can't be empty.`
-        };
+        message = `Username field can't be empty.`;
       }
-    }
-    if (!opts.password) {
-      if (this.language === 'spanish') {
-        options = {
-          header: 'Error',
-          message: `El campo de Contraseña no puede estar vacio.`
-        };
-      } else {
-        options = {
-          header: 'Error',
-          message: `El campo de Contraseña no puede estar vacio.`
-        };
-      }
-      this.showSimpleAlert(options);
+      const toast = await this.toastController.create({
+        message,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
+      });
+      await toast.present();
       return;
     }
     try {
-      const user = this.dbService.checkIfUserExists(opts);
+      const user = this.dbService.checkIfUserExists(credentials);
       if (this.language === 'spanish') {
-        options = {
-          header: '¡Éxito!',
-          message: `¡${user} esta presente hoy!`
-        };
+        message = `¡${user} esta presente hoy!`;
       } else {
-        options = {
-          header: 'Success!',
-          message: `${user} is present today!`
-        };
+        message = `${user} is present today!`;
       }
+      const toast = await this.toastController.create({
+        message,
+        duration: 2500,
+        position: 'top',
+        color: 'success',
+      });
+      await toast.present();
     } catch (error) {
       if (this.language === 'spanish') {
-        options = {
-          header: '¡Error!',
-          message: `El usuario no existe! Por favor, compruebe que sus entradas fueron escritas correctamente y vuelva a intentarlo
+        message = `El usuario no existe! Por favor, compruebe que sus entradas fueron escritas correctamente y vuelva a intentarlo
           Si se usó el nombre, verifique que haya un espacio entre el nombre y el apellido y
-          Compruebe el uso correcto de mayúsculas.`
-        };
+          Compruebe el uso correcto de mayúsculas.`;
       } else {
-        options = {
-          header: 'Error!',
-          message: `User does not exist! Please check that your entries were written correctly and try again!
+        message = `User does not exist! Please check that your entries were written correctly and try again!
           If the name was used please check that there is one space between the first name and last name and
-          check for correct capitalization.`
-        };
+          check for correct capitalization.`;
       }
-    }
-    this.showSimpleAlert(options);
-  }
-
-  private async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl
-      .create({
-        header: options.header,
-        message: options.message,
-        buttons: options.buttons
+      const toast = await this.toastController.create({
+        message,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
       });
-    alert.present();
+      await toast.present();
+    }
   }
 
   async goToLogin() {
@@ -219,14 +205,14 @@ export class LoginPage {
           {
             name: 'password',
             type: 'password',
-            placeholder: 'Password'
-          }
+            placeholder: 'Password',
+          },
         ],
         buttons: [
           {
             text: 'Cancel',
             role: 'cancel',
-            cssClass: 'secondary'
+            cssClass: 'secondary',
           },
           {
             text: 'Ok',
@@ -235,13 +221,13 @@ export class LoginPage {
                 const modal = await this.modalCtrl.create({
                   component: LoginPage,
                   backdropDismiss: false,
-                  componentProps: { modalVal: val.password }
+                  componentProps: { modalVal: val.password },
                 });
                 modal.present();
               }
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     } else {
@@ -255,14 +241,14 @@ export class LoginPage {
           {
             name: 'password',
             type: 'password',
-            placeholder: 'Password'
-          }
+            placeholder: 'Password',
+          },
         ],
         buttons: [
           {
             text: 'Cancel',
             role: 'cancel',
-            cssClass: 'secondary'
+            cssClass: 'secondary',
           },
           {
             text: 'Ok',
@@ -271,17 +257,15 @@ export class LoginPage {
                 const modal = await this.modalCtrl.create({
                   component: LoginPage,
                   backdropDismiss: false,
-                  componentProps: { modalVal: val.password }
+                  componentProps: { modalVal: val.password },
                 });
                 modal.present();
               }
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     }
-
   }
-
 }

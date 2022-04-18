@@ -106,27 +106,22 @@ export class AmaranthusDBProvider {
     studentsColl.findAndRemove({ id: { $containsAny: '%' } });
   }
 
-  checkIfUserExists(opts: { username: string; password }) {
+  checkIfUserExists(credentials: string) {
     let checkUser = studentsColl.findOne({
-      id: {
-        $eq: opts.username,
-      },
-      phoneNumber: {
-        $eq: opts.password,
-      },
+      $or: [
+        {
+          id: credentials,
+        },
+        {
+          phoneNumber: credentials,
+        },
+      ],
     });
     if (!checkUser) {
-      const fullName = opts.username.split(' ');
+      const fullName = credentials.split(' ');
       checkUser = studentsColl.findOne({
-        firstName: {
-          $eq: fullName[0],
-        },
-        lastName: {
-          $eq: fullName[1],
-        },
-        phoneNumber: {
-          $eq: opts.password,
-        },
+        firstName: fullName[0],
+        lastName: fullName[1],
       });
     }
     if (checkUser) {
@@ -138,7 +133,7 @@ export class AmaranthusDBProvider {
       };
       this.addAttendance({ date: date, id: checkUser.id });
     } else {
-      throw new Error('User not in database.');
+      throw 'User not in database.';
     }
     return checkUser.firstName;
   }

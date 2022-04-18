@@ -15,20 +15,20 @@
 </ion-header>
 
 <ion-content class="ion-padding" id="clientlogin">
-  <div id="card">
+  <div>
     <img src="assets/cartoon-desk.jpg" alt="A cluttered desk">
-    <form #clientLoginForm (ngSubmit)="checkUser({username: username.value, password: password.value} )">
-      <ion-item>
+    <form #clientLoginForm (ngSubmit)="checkUser(credentials.value)">
+      <ion-item lines="none">
         <ion-label position="stacked">{{htmlControls.id}}</ion-label>
-        <ion-input #username type="text" value=""></ion-input>
+        <ion-input #credentials type="text" placeholder="{{htmlControls.placeholder}}"></ion-input>
       </ion-item>
 
-      <ion-item>
+      <!-- <ion-item>
         <ion-label position="stacked">{{htmlControls.phone}}</ion-label>
         <ion-input #password type="password"></ion-input>
-      </ion-item>
+      </ion-item> -->
 
-      <ion-button type="submit" full large>{{htmlControls.submit}}</ion-button>
+      <ion-button type="submit" expand="full">{{htmlControls.submit}}</ion-button>
     </form>
   </div>
 </ion-content>
