@@ -1,5 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController, NavController, Platform } from '@ionic/angular';
+import {
+  IonContent,
+  ModalController,
+  NavController,
+  Platform,
+} from '@ionic/angular';
 import { CreatePage } from 'src/app/create/create.page';
 import { IStudent, ICalendar, IRecord } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
@@ -12,8 +17,8 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  @ViewChild('sort', { static: true }) sortElement;
-  @ViewChild('filter', { static: true }) filterElement;
+  @ViewChild('sort') sortElement;
+  @ViewChild('filter') filterElement;
 
   students: (IStudent & IRecord)[];
   selectOptions;

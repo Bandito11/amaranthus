@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" id="calendar">
+<ion-content #calendarContent class="ion-padding" id="calendar" scrollY="false">
   <calendar-component
     [language]="language"
     (getDate)="getDate($event)"
@@ -21,7 +21,7 @@
   <cdk-virtual-scroll-viewport
     itemSize="56"
     minBufferPx="900"
-    maxBufferPx="1350"
+    maxBufferPx="1500"
   >
     <app-user-item
       *cdkVirtualFor="let student of students"
