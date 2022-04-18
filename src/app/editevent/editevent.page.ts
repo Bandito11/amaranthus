@@ -259,6 +259,7 @@ export class EditEventPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
 
                   await toast.present();
@@ -294,6 +295,7 @@ export class EditEventPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss(this.id);
@@ -368,6 +370,7 @@ export class EditEventPage implements OnInit {
                   message,
                   duration: 2000,
                   color: 'success',
+                  position: 'top'
                 });
                 await toast.present();
                 this.navCtrl
@@ -402,6 +405,7 @@ export class EditEventPage implements OnInit {
                   message,
                   duration: 2000,
                   color: 'success',
+                  position: 'top'
                 });
                 await toast.present();
                 // this.navCtrl

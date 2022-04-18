@@ -202,6 +202,7 @@ export class CreatePage implements OnInit {
                       message,
                       duration: 2000,
                       color: 'success',
+                      position: 'top'
                     });
                     toast.present();
 
@@ -240,6 +241,7 @@ export class CreatePage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   toast.present();
 

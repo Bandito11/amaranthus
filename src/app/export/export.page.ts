@@ -153,6 +153,7 @@ export class ExportPage {
 
           duration: 2000,
           color: 'success',
+          position: 'top'
         });
         await toast.present();
         return;
@@ -226,6 +227,7 @@ export class ExportPage {
             message,
             duration: 2000,
             color: 'success',
+            position: 'top'
           });
           await toast.present();
           await this.modal.dismiss();
@@ -236,6 +238,7 @@ export class ExportPage {
             message: error,
             duration: 2000,
             color: 'danger',
+            position: 'top'
           });
           await toast.present();
         }
@@ -256,6 +259,7 @@ export class ExportPage {
         message,
         duration: 2000,
         color: 'success',
+        position: 'top'
       });
       await toast.present();
       await this.modal.dismiss();
@@ -316,6 +320,7 @@ async exportAsCSV() {
             message,
             duration: 2000,
             color: 'success',
+            position: 'top'
           });
           await toast.present();
           await this.modal.dismiss();

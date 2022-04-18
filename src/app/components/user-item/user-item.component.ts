@@ -48,6 +48,7 @@ export class UserItemComponent {
         message,
         duration: 2000,
         color: 'success',
+        position: 'top'
       });
       toast.present();
       this.student.attendance = attended;
@@ -73,6 +74,7 @@ export class UserItemComponent {
         message,
         duration: 2000,
         color: 'success',
+        position: 'top'
       });
       toast.present();
       this.student.attendance = !absent;

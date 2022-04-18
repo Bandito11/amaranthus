@@ -93,7 +93,6 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    //TODO: Create a way to restore purchases for mobile
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       this.storage.set('boughtMasterKey', true);
     }

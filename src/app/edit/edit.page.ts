@@ -306,6 +306,7 @@ export class EditPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss();
@@ -341,6 +342,7 @@ export class EditPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss();

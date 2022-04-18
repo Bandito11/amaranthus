@@ -258,6 +258,7 @@ export class CreateEventPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   toast.present();
                   await this.modalCtrl.dismiss();
@@ -289,6 +290,7 @@ export class CreateEventPage implements OnInit {
                     message,
                     duration: 2000,
                     color: 'success',
+                    position: 'top'
                   });
                   toast.present();
                   await this.modalCtrl.dismiss();

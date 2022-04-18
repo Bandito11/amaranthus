@@ -299,6 +299,7 @@ export class EventProfilePage implements OnInit {
           message: 'Asistencia actualizada',
           duration: 3000,
           color: 'success',
+          position: 'top'
         });
         await toast.present();
       } else {
@@ -306,6 +307,7 @@ export class EventProfilePage implements OnInit {
           message: 'Attendance updated',
           duration: 3000,
           color: 'success',
+          position: 'top'
         });
         await toast.present();
       }

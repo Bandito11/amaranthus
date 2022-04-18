@@ -170,7 +170,7 @@ export class LoginPage {
         message,
         duration: 2500,
         position: 'top',
-        color: 'success',
+        color: 'success'
       });
       await toast.present();
     } catch (error) {
@@ -187,7 +187,7 @@ export class LoginPage {
         message,
         duration: 2000,
         position: 'top',
-        color: 'danger',
+        color: 'danger'
       });
       await toast.present();
     }

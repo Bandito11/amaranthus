@@ -10,11 +10,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 import { CreatePageModule } from './create/create.module';
 import { ExportPageModule } from './export/export.module';
-import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
 import { EditEventPageModule } from './editevent/editevent.module';
 import { StatsPageModule } from './stats/stats.module';
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
 
 @NgModule({
     declarations: [AppComponent],
@@ -31,7 +31,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
         IonicStorageModule.forRoot()
     ],
     providers: [
-        InAppPurchase,
+        InAppPurchase2,
         Market,
         EmailComposer,
         FileOpener,
