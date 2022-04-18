@@ -160,8 +160,8 @@ export class DatabaseService {
     await this.db.updateEventMembers(opts);
   }
 
-  checkIfUserExists(opts: { username: string; password }) {
-    return this.db.checkIfUserExists(opts);
+  checkIfUserExists(credentials:string) {
+    return this.db.checkIfUserExists(credentials);
   }
 
   getAllNotesById(id: string) {
