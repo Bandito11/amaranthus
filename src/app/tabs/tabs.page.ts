@@ -85,7 +85,7 @@ export class TabsPage implements DoCheck, OnInit {
       this.platform.is('ipad') ||
       this.platform.is('desktop')
     ) {
-      this.viewIsLarge = window.matchMedia('(min-width: 992px)').matches;
+      this.viewIsLarge = window.matchMedia('(min-width: 768px)').matches;
     }
   }
 
