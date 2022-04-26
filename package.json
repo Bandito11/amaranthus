@@ -48,7 +48,7 @@
     "cordova-plugin-market": "^1.2.0",
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-purchase": "^11.0.0",
-    "cordova-sqlite-storage": "^6.0.0",
+    "cordova-sqlite-storage": "^5.1.0",
     "lokijs": "^1.5.12",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",

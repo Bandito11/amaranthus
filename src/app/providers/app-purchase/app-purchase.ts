@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppPurchaseProvider {
 
-  constructor() {
+  constructor(private store: InAppPurchase2) {
   }
 
   /**
@@ -15,7 +16,7 @@ export class AppPurchaseProvider {
     throw new Error('Method not implemented.');
   }
 
-  restoreiOSPurchase(): Promise<string> {
+  restoreiOSPurchase() {
     throw new Error('Method not implemented.');
   }
   /**
@@ -29,6 +30,9 @@ export class AppPurchaseProvider {
    * Return an array of products.
    */
   getProducts(){
+    const products = this.store.get('master.key')
+    alert(products)
+    console.log(products)
     throw new Error('Method not implemented.');
   }
 }

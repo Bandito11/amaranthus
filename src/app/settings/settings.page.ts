@@ -115,6 +115,7 @@ export class SettingsPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.iap.getProducts();
     this.bought = await this.storage.get('boughtMasterKey');
     this.products = [];
     this.isAndroid = this.platform.is('android');

@@ -11,7 +11,11 @@ import { DatabaseService } from './services/database.service';
   templateUrl: 'app.component.html',
 })
 export class AppComponent {
-  constructor(private platform: Platform, private dbService: DatabaseService, private store: InAppPurchase2) {
+  constructor(
+    private platform: Platform,
+    private dbService: DatabaseService,
+    private store: InAppPurchase2
+  ) {
     this.dbService.initializeDatabase();
     this.initializeApp();
   }
@@ -21,8 +25,12 @@ export class AppComponent {
       if (this.platform.is('mobile') && this.platform.is('android')) {
         StatusBar.setBackgroundColor({ color: '#e60000' });
       }
-      if (this.platform.is('mobile')){
-        
+      if (this.platform.is('capacitor') && this.platform.is('ios')) {
+        this.store.register({
+          id: 'master.key',
+          type: this.store.NON_CONSUMABLE,
+        });
+        this.store.refresh();
       }
 
       await SplashScreen.hide();
