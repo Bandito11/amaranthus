@@ -13,7 +13,8 @@
     "electron-serve": "ionic build --configuration production && cordova run electron --nobuild",
     "electron-build": "ionic build --configuration production && cordova build electron --release",
     "electron-store": "ionic build --configuration production && cordova build electron --store",
-    "postinstall": "jetifier"
+    "postinstall": "jetifier",
+    "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy"
   },
   "private": true,
   "dependencies": {
@@ -42,13 +43,12 @@
     "@ionic/angular": "^5.9.3",
     "@ionic/pwa-elements": "^3.1.1",
     "@ionic/storage": "2.3.0",
-    "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-email-composer": "^0.9.2",
     "cordova-plugin-file-opener2": "^3.0.5",
     "cordova-plugin-market": "^1.2.0",
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-purchase": "^11.0.0",
-    "cordova-sqlite-storage": "^5.1.0",
+    "cordova-sqlite-storage": "^6.0.0",
     "lokijs": "^1.5.12",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
