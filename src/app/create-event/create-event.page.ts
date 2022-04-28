@@ -256,9 +256,9 @@ export class CreateEventPage implements OnInit {
                   message = `${eventData.name} fue creado.`;
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
-                    position: 'top'
+                    position: 'top',
                   });
                   toast.present();
                   await this.modalCtrl.dismiss();
@@ -288,9 +288,9 @@ export class CreateEventPage implements OnInit {
                   message = `${eventData.name} was created.`;
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
-                    position: 'top'
+                    position: 'top',
                   });
                   toast.present();
                   await this.modalCtrl.dismiss();

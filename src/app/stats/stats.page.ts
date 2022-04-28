@@ -92,7 +92,6 @@ export class StatsPage implements OnInit {
 
   constructor(
     private dbService: DatabaseService,
-    private toastController: ToastController,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
     private storage: Storage

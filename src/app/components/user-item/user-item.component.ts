@@ -46,9 +46,9 @@ export class UserItemComponent {
       }
       const toast = await this.toastController.create({
         message,
-        duration: 2000,
+        duration: 1000,
         color: 'success',
-        position: 'top'
+        position: 'top',
       });
       toast.present();
       this.student.attendance = attended;
@@ -72,9 +72,9 @@ export class UserItemComponent {
       }
       const toast = await this.toastController.create({
         message,
-        duration: 2000,
+        duration: 1000,
         color: 'success',
-        position: 'top'
+        position: 'top',
       });
       toast.present();
       this.student.attendance = !absent;

@@ -7,8 +7,9 @@ export async function handleError(error: any) {
     console.error(error);
     const toast = await toastController.create({
       message: error,
-      duration: 2000,
+      duration: 1000,
       color: 'danger',
+      position: 'top',
     });
 
     toast.present();
@@ -19,8 +20,9 @@ export async function handleError(error: any) {
         console.error(error[key]);
         const toast = await toastController.create({
           message: error[key],
-          duration: 2000,
+          duration: 1000,
           color: 'danger',
+          position: 'top',
         });
         toast.present();
         writeSecretFile(error[key]);

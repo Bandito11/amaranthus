@@ -213,7 +213,6 @@ export class HomePage implements OnInit {
       case 'Not Active':
       case 'Inactivo':
         this.students = await this.dbService.getAllInActiveStudents(this.date);
-        console.log(this.students);
         break;
       default:
         //FIXME: Filter by student.class

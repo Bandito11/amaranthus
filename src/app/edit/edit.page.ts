@@ -148,7 +148,6 @@ export class EditPage implements OnInit {
       delete: 'Borrar',
     },
   };
-  
 
   constructor(
     public dbService: DatabaseService,
@@ -213,8 +212,9 @@ export class EditPage implements OnInit {
                 this.dbService.removeStudent(opts);
                 const toast = await toastController.create({
                   message,
-                  duration: 2000,
+                  duration: 1000,
                   color: 'success',
+                  position: 'top',
                 });
                 await toast.present();
                 this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
@@ -247,8 +247,9 @@ export class EditPage implements OnInit {
                 this.dbService.removeStudent(opts);
                 const toast = await toastController.create({
                   message,
-                  duration: 2000,
+                  duration: 1000,
                   color: 'success',
+                  position: 'top',
                 });
                 await toast.present();
                 await this.modalCtrl.dismiss().then(() => this.navCtrl.pop());
@@ -304,9 +305,9 @@ export class EditPage implements OnInit {
 
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
-                    position: 'top'
+                    position: 'top',
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss();
@@ -340,9 +341,9 @@ export class EditPage implements OnInit {
                   message = `${opts.firstName} ${opts.lastName} record was edited.`;
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
-                    position: 'top'
+                    position: 'top',
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss();
@@ -359,5 +360,4 @@ export class EditPage implements OnInit {
       }
     }
   }
-
 }

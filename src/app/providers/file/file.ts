@@ -57,7 +57,6 @@ export class FileProvider {
         // FIXME: process.env.USERPROFILE is supposed to be the user's home directory
         // path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
       }
-      console.log(path, ' ', opts.data);
       return path + ' ' + opts.data;
     });
   }
