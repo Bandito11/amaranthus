@@ -27,8 +27,73 @@
   .pad {
     padding-bottom: 1em;
   }
+  
   cdk-virtual-scroll-viewport {
-    height: 100%;
+    height: 41%;
     width: 100%;
+  }
+  @media screen and (min-width: 667px) and (orientation: landscape) {
+    cdk-virtual-scroll-viewport {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 668px) {
+    cdk-virtual-scroll-viewport {
+      height: 58%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 844px) {
+    cdk-virtual-scroll-viewport {
+      height: 57%;
+      width: 100%;
+    }
+  }
+
+  // iPad screens
+  @media screen and (min-height: 1024px) {
+    cdk-virtual-scroll-viewport {
+      height: 65%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-width: 1024px) and (orientation: landscape) {
+    cdk-virtual-scroll-viewport {
+      height: 50%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 1180px) {
+    cdk-virtual-scroll-viewport {
+      height: 70%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-width: 1180px) and (orientation: landscape) {
+    cdk-virtual-scroll-viewport {
+      height: 55%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 1366px) {
+    cdk-virtual-scroll-viewport {
+      height: 74%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-width: 1366px) and (orientation: landscape) {
+    cdk-virtual-scroll-viewport {
+      height: 90%;
+      width: 100%;
+    }
+  }
+
+  // Desktop screens
+  @media screen and (min-width: 1367px) {
+    cdk-virtual-scroll-viewport {
+      height: 62%;
+      width: 100%;
+    }
   }
 }

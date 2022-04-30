@@ -1,21 +1,24 @@
 import { MESESLABELS, DIASHEADER } from './../common/constants';
-import { Component } from '@angular/core';
+import { Component, DoCheck, ViewChild } from '@angular/core';
 import { IRecord, ICalendar } from 'src/app/common/models';
 import { handleError } from 'src/app/common/handleError';
 import { MONTHSLABELS, WEEKDAYSHEADER } from 'src/app/common/constants';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
+import { IonContent } from '@ionic/angular';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.page.html',
   styleUrls: ['./calendar.page.scss'],
 })
-export class CalendarPage {
+export class CalendarPage implements DoCheck {
+  @ViewChild('calendarContent') calendarContent: IonContent;
+
   currentDate: string;
   students: IRecord[];
-  homeURL ;
+  homeURL;
   date: ICalendar;
   timer;
   toggle: string;
@@ -60,12 +63,29 @@ export class CalendarPage {
     };
   };
 
+  ngDoCheck() {
+    const matchesMediaQuery = window.matchMedia(
+      '(max-width:1023px) and (orientation:landscape)'
+    ).matches;
+    if (matchesMediaQuery) {
+      try {
+        this.calendarContent.scrollY = true;
+      } catch (error) {}
+    } else {
+      try {
+        if (this.calendarContent.scrollY) {
+          this.calendarContent.scrollY = false;
+        }
+      } catch (error) {}
+    }
+  }
+
   constructor(
     private route: ActivatedRoute,
     private storage: Storage,
     private dbService: DatabaseService
   ) {
-    this.homeURL = '/tabs/tabs/calendar'
+    this.homeURL = '/tabs/tabs/calendar';
     this.LANGUAGE = {
       spanish: {
         profile: 'Perfil',
