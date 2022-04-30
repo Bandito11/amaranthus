@@ -1,6 +1,6 @@
 {
   "name": "attendance-log-tracker",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "author": "Esteban Morales",
   "homepage": "https://attendancelogtracker.com/",
   "scripts": {
