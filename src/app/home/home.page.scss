@@ -9,12 +9,16 @@
       width: 100%;
     }
   }
-  @media screen and (min-height: 668px) {
+
+   // Android Screens
+   @media screen and (min-height: 740px) {
     cdk-virtual-scroll-viewport {
-      height: 81%;
+      height: 76%;
       width: 100%;
     }
   }
+
+
 
   // iPad screens
   @media screen and (min-height: 768px) {
@@ -23,6 +27,31 @@
       width: 100%;
     }
   }
+
+  //iPhone
+  @media screen and (min-height: 780px) {
+    cdk-virtual-scroll-viewport {
+      height: 76%;
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-height: 844px) {
+    cdk-virtual-scroll-viewport {
+      height: 79%;
+      width: 100%;
+    }
+  }
+
+  // Android Screens
+  @media screen and (min-height: 851px) {
+    cdk-virtual-scroll-viewport {
+      height: 80%;
+      width: 100%;
+    }
+  }
+
+    // iPad screens
   @media screen and (min-width: 1024px) and (orientation: landscape) {
     cdk-virtual-scroll-viewport {
       height: 80%;

@@ -61,7 +61,7 @@ export class HomePage implements OnInit {
       filter: 'Filter by: ',
       class: 'Class: ',
       phone: 'Phone: ',
-      attended: 'Attended',
+      attended: 'Present',
       absence: 'Absent',
       profile: 'Profile',
       present: `'s present today!`,
