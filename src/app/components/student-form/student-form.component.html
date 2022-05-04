@@ -12,7 +12,7 @@
     }}</ion-button>
     <ion-item>
       <ion-label stacked>ID</ion-label>
-      <ion-input type="text" #id [(ngModel)]="student.id"></ion-input>
+      <ion-input #id [(ngModel)]="student.id"></ion-input>
       <ion-icon
         id="form-icon"
         item-right
@@ -22,7 +22,11 @@
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.firstName }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.firstName"></ion-input>
+      <ion-input
+        autofocus="true"
+        autocomplete="name"
+        [(ngModel)]="student.firstName"
+      ></ion-input>
       <ion-icon
         id="form-icon"
         item-right
@@ -32,11 +36,17 @@
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.initial }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.initial"></ion-input>
+      <ion-input
+        autocomplete="additional-name"
+        [(ngModel)]="student.initial"
+      ></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.lastName }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.lastName"></ion-input>
+      <ion-input
+        autocomplete="family-name"
+        [(ngModel)]="student.lastName"
+      ></ion-input>
       <ion-icon
         id="form-icon"
         item-right
@@ -68,53 +78,50 @@
     <h5 id="optional">{{ htmlControls.optional }}</h5>
     <ion-item>
       <ion-label stacked>{{ htmlControls.address }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.address"></ion-input>
+      <ion-input
+        autocomplete="street-address"
+        [(ngModel)]="student.address"
+      ></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.phone }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.phoneNumber"></ion-input>
+      <ion-input type="tel" [(ngModel)]="student.phoneNumber"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.city }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.town"></ion-input>
+      <ion-input [(ngModel)]="student.town"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.state }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.state"></ion-input>
+      <ion-input [(ngModel)]="student.state"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.class }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.class"></ion-input>
+      <ion-input [(ngModel)]="student.class"></ion-input>
     </ion-item>
     <h6>{{ htmlControls.father }}</h6>
     <ion-item>
       <ion-label stacked>{{ htmlControls.name }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.fatherName"></ion-input>
+      <ion-input [(ngModel)]="student.fatherName"></ion-input>
     </ion-item>
     <h6>{{ htmlControls.mother }}</h6>
     <ion-item>
       <ion-label stacked>{{ htmlControls.name }}</ion-label>
-      <ion-input type="text" [(ngModel)]="student.motherName"></ion-input>
+      <ion-input [(ngModel)]="student.motherName"></ion-input>
     </ion-item>
     <h6>{{ htmlControls.emergency.title }}</h6>
     <ion-item>
       <ion-label stacked>{{ htmlControls.name }}</ion-label>
-      <ion-input
-        type="text"
-        [(ngModel)]="student.emergencyContactName"
-      ></ion-input>
+      <ion-input [(ngModel)]="student.emergencyContactName"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.emergency.relationship }}</ion-label>
-      <ion-input
-        type="text"
-        [(ngModel)]="student.emergencyRelationship"
-      ></ion-input>
+      <ion-input [(ngModel)]="student.emergencyRelationship"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>{{ htmlControls.phone }}</ion-label>
       <ion-input
-        type="text"
+        type="tel"
         [(ngModel)]="student.emergencyContactPhoneNumber"
       ></ion-input>
     </ion-item>

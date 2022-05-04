@@ -3,21 +3,11 @@
   "version": "1.0.8",
   "description": "Landing page for attendance log app",
   "dependencies": {
-    "firebase": "^4.8.2"
   },
   "devDependencies": {
-    "@types/gulp": "^4.0.6",
-    "del": "^4.1.1",
-    "gulp": "^4.0.2",
-    "gulp-nodemon": "^2.4.2",
-    "gulp-shell": "^0.7.0",
-    "gulp-typescript": "^5.0.1",
-    "nodemon": "^1.19.1",
-    "typescript": "^3.5.1"
   },
   "scripts": {
     "start": "firebase serve",
-    "dev": "gulp",
     "deploy": "firebase deploy"
   },
   "author": "Esteban Morales",

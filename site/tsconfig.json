@@ -14,18 +14,18 @@
         "module": "es2015",
         "moduleResolution": "node",
         "sourceMap": true,
-        "target": "es5",
+        "target": "ESNext",
         "typeRoots": [
             "../node_modules/@types"
         ]
     },
     "include": [
-        "src/**/*.ts"
+        "public/**/*.ts"
     ],
     "exclude": [
         "node_modules",
-        "src/**/*.spec.ts",
-        "src/**/__tests__/*.ts"
+        "public/**/*.spec.ts",
+        "public/**/__tests__/*.ts"
     ],
     "compileOnSave": false,
     "atom": {
