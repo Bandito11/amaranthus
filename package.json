@@ -10,9 +10,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electron-serve": "ionic build --configuration production && cordova run electron --nobuild",
-    "electron-build": "ionic build --configuration production && cordova build electron --release",
-    "electron-store": "ionic build --configuration production && cordova build electron --store",
     "postinstall": "jetifier",
     "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy"
   },
