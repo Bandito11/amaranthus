@@ -35,7 +35,6 @@ export class NotesComponent implements OnInit {
   }
 
   async onSubmit(notesForm: NgForm) {
-    console.log(notesForm.value);
     const currentDate = new Date();
     const newNote: INote = {
       id: this.id,

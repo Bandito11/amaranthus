@@ -10,12 +10,17 @@
     <param name="ios-package" value="FileOpener2"/>
   </feature>
 
-  <feature name="PaymentsPlugin">
-    <param name="ios-package" value="PaymentsPlugin"/>
-  </feature>
-
   <feature name="Market">
     <param name="ios-package" value="CDVMarket"/>
+  </feature>
+
+  <feature name="NetworkStatus">
+    <param name="ios-package" value="CDVConnection"/>
+  </feature>
+
+  <feature name="InAppPurchase">
+    <param name="ios-package" value="InAppPurchase"/>
+    <param name="onload" value="true"/>
   </feature>
 
   <feature name="SQLitePlugin">

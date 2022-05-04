@@ -151,8 +151,9 @@ export class ExportPage {
         const toast = await this.toastController.create({
           message,
 
-          duration: 2000,
+          duration: 1000,
           color: 'success',
+          position: 'top',
         });
         await toast.present();
         return;
@@ -224,8 +225,9 @@ export class ExportPage {
           }
           const toast = await this.toastController.create({
             message,
-            duration: 2000,
+            duration: 1000,
             color: 'success',
+            position: 'top',
           });
           await toast.present();
           await this.modal.dismiss();
@@ -234,8 +236,9 @@ export class ExportPage {
           await loading.dismiss();
           const toast = await this.toastController.create({
             message: error,
-            duration: 2000,
+            duration: 1000,
             color: 'danger',
+            position: 'top',
           });
           await toast.present();
         }
@@ -254,21 +257,22 @@ export class ExportPage {
       }
       const toast = await this.toastController.create({
         message,
-        duration: 2000,
+        duration: 1000,
         color: 'success',
+        position: 'top',
       });
       await toast.present();
       await this.modal.dismiss();
     }
   }
 
-/**
- *
- *
- * @returns
- * @memberof ExportPage
- */
-async exportAsCSV() {
+  /**
+   *
+   *
+   * @returns
+   * @memberof ExportPage
+   */
+  async exportAsCSV() {
     let csvResponse;
     if (this.dateControl === 'month') {
       this.date = this.date.slice(0, 7);
@@ -314,8 +318,9 @@ async exportAsCSV() {
           }
           const toast = await this.toastController.create({
             message,
-            duration: 2000,
+            duration: 1000,
             color: 'success',
+            position: 'top',
           });
           await toast.present();
           await this.modal.dismiss();
@@ -343,13 +348,13 @@ async exportAsCSV() {
     }
   }
 
-/**
- *
- *
- * @param {{ query: string; date: string }} opts
- * @memberof ExportPage
- */
-getRecordsByDate(opts: { query: string; date: string }) {
+  /**
+   *
+   *
+   * @param {{ query: string; date: string }} opts
+   * @memberof ExportPage
+   */
+  getRecordsByDate(opts: { query: string; date: string }) {
     try {
       const dateVal = opts.date.split('-');
       let date: ICalendar;

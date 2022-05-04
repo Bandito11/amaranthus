@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IProductGet, ISimpleAlertOptions } from '../common/models';
-import { LoadingController, Platform, AlertController } from '@ionic/angular';
+import { LoadingController, Platform, ToastController } from '@ionic/angular';
 import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
 import { Market } from '@ionic-native/market/ngx';
-import { stateAndroid } from '../common/constants';
 import { Storage } from '@ionic/storage';
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
+import { IAPProduct } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
+import { productKey } from '../common/constants';
+import { handleError } from '../common/handleError';
 
 @Component({
   selector: 'app-settings',
@@ -13,10 +14,8 @@ import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
-  products: IProductGet[] = [];
+  products: IAPProduct[];
   noProducts = true;
-  isIos: boolean;
-  isAndroid: boolean;
   bought: boolean;
   languages: { language: string; controls: string }[];
   language;
@@ -26,17 +25,15 @@ export class SettingsPage implements OnInit {
         title: 'Configuración',
       },
       buy: '¡Comprar por solo ',
-      restoreAndroid: 'Restaurar',
-      restoreiOS: 'Restaurar',
+      restore: 'Restaurar',
       rate: {
         title:
           '¡Si te gusta la aplicación por favor considera calificarla con 5 estrellas!',
-        rateiOS: 'Lanzar App Store',
-        rateAndroid: 'Lanzar Play Store',
+        iOS: 'Lanzar App Store',
+        Android: 'Lanzar Play Store',
       },
       feedback: {
         title: 'Comentarios',
-        // tslint:disable-next-line: max-line-length
         message:
           '¿Tienes algún problema o simplemente quieres darme algún comentario sobre cómo mejorar la aplicación? Envíame un correo electrónico y le responderé en unos días.',
         button: '¡Mandar correo electronico!',
@@ -54,8 +51,7 @@ export class SettingsPage implements OnInit {
         title: 'Settings',
       },
       buy: 'Buy now for only ',
-      restoreAndroid: 'Restore Purchases',
-      restoreiOS: 'Restore Purchases',
+      restore: 'Restore Purchases',
       rate: {
         title: 'If you like the app please consider rating it 5 stars!',
         iOS: 'Open App Store ',
@@ -63,7 +59,6 @@ export class SettingsPage implements OnInit {
       },
       feedback: {
         title: 'Feedback',
-        // tslint:disable-next-line: max-line-length
         message:
           'Have any issues or just want to give me some feedback on how to make the app better? Just sent me an email and I will answer accordingly!',
         button: 'Send email!',
@@ -83,8 +78,7 @@ export class SettingsPage implements OnInit {
       title: '',
     },
     buy: '',
-    restoreAndroid: '',
-    restoreiOS: '',
+    restore: '',
     rate: {
       title: '',
       iOS: '',
@@ -94,10 +88,6 @@ export class SettingsPage implements OnInit {
       title: '',
       message: '',
       button: '',
-    },
-    masterKey: {
-      title: '',
-      description: '',
     },
     language: {
       title: '',
@@ -111,9 +101,33 @@ export class SettingsPage implements OnInit {
     public storage: Storage,
     public platform: Platform,
     public iap: AppPurchaseProvider,
-    public alertCtrl: AlertController,
+    public toastController: ToastController,
     public market: Market
   ) {}
+
+  async ngOnInit() {
+    this.bought = await this.storage.get(productKey);
+    this.languages = [
+      {
+        language: 'english',
+        controls: 'English',
+      },
+      {
+        language: 'spanish',
+        controls: 'Español',
+      },
+    ];
+    this.language = 'english';
+    const value = await this.storage.get('language');
+    if (value === 'spanish') {
+      this.language = 'spanish';
+    }
+    this.htmlControls = this.LANGUAGE[this.language];
+    this.setTextArea();
+
+    this.iap.getProducts();
+    this.products = this.iap.products;
+  }
 
   setTextArea() {
     if (this.language === 'spanish') {
@@ -143,94 +157,14 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.languages = [
-      {
-        language: 'english',
-        controls: 'English',
-      },
-      {
-        language: 'spanish',
-        controls: 'Español',
-      },
-    ];
-    this.language = 'english';
-    this.storage.get('language').then((value) => {
-      if (value === 'spanish') {
-        this.language = 'spanish';
-      }
-      this.htmlControls = this.LANGUAGE[this.language];
-      if (value === 'spanish') {
-        this.htmlControls = {
-          ...this.htmlControls,
-          masterKey: {
-            title: 'La Llave Maestra!',
-            description: 'Elimina el límite de 10 usuarios a la base de datos.',
-          },
-        };
-      } else {
-        this.htmlControls = {
-          ...this.htmlControls,
-          masterKey: {
-            title: 'The Master Key!',
-            description: 'Unlock limit of 10 users to database.',
-          },
-        };
-      }
-      this.setTextArea();
-    });
-    if (this.platform.is('ios')) {
-      this.isIos = true;
-    } else if (this.platform.is('android')) {
-      this.isAndroid = true;
-    }
-    this.storage.get('boughtMasterKey').then((boughtMasterKey) => {
-      if (boughtMasterKey) {
-        this.bought = true;
-      } else {
-        this.bought = false;
-      }
-    });
-    if (!this.platform.is('desktop')) {
-      this.getProducts();
-    }
-  }
-
   async setLanguage(language: string) {
-    this.storage.set('language', language);
+    await this.storage.set('language', language);
     const loading = await this.loadingController.create({
       translucent: true,
       spinner: 'dots',
     });
     await loading.present();
     location.reload();
-
-    await loading.onDidDismiss();
-
-    if (language === 'spanish') {
-      this.language = 'spanish';
-    } else {
-      this.language = 'english';
-    }
-    this.setTextArea();
-    this.htmlControls = this.LANGUAGE[this.language];
-    if (language === 'spanish') {
-      this.htmlControls = {
-        ...this.htmlControls,
-        masterKey: {
-          title: 'La Llave Maestra!',
-          description: 'Elimina el límite de 10 usuarios a la base de datos.',
-        },
-      };
-    } else {
-      this.htmlControls = {
-        ...this.htmlControls,
-        masterKey: {
-          title: 'The Master Key!',
-          description: 'Unlock limit of 10 users to database.',
-        },
-      };
-    }
   }
 
   openMarketPage() {
@@ -266,125 +200,61 @@ export class SettingsPage implements OnInit {
     this.emailComposer.open(email);
   }
 
-  getProducts() {
-    this.iap
-      .getProducts()
-      .then((products) => {
-        this.noProducts = false;
-        this.products = [...products];
-        this.storage.set('products', products);
-      })
-      .catch((err) => {
-        this.showSimpleAlert({
-          buttons: ['OK'],
-          header: 'Error!',
-          message: err,
-        }).then((_) => (this.noProducts = false));
-      });
-  }
-
   async restorePurchases() {
     const loading = await this.loadingController.create({
-      message: 'Restoring Purchases!',
+      translucent: true,
+      spinner: 'dots',
     });
-    loading.present();
-    if (this.platform.is('android')) {
-      this.iap
-        .restoreAndroidPurchase()
-        .then((products) => {
-          products.forEach((product) => {
-            const receipt = JSON.parse(product.receipt);
-            if (
-              product.productId === 'master.key' &&
-              stateAndroid[receipt.purchaseState] === ('ACTIVE' || 0)
-            ) {
-              this.storage.set('boughtMasterKey', true);
-              this.bought = true;
-              const options: ISimpleAlertOptions = {
-                header: 'Information',
-                message: 'Restored the purchase!',
-                buttons: ['OK'],
-              };
-              this.showSimpleAlert(options);
-            }
-          });
-          loading.dismiss();
-        })
-        .catch((_) => {
-          this.showSimpleAlert({
-            buttons: ['OK'],
-            header: 'Error!',
-            message: `No receipts available in the App Store!`,
-          });
-          loading.dismiss();
-        });
-    } else if (this.platform.is('ios')) {
-      this.iap
-        .restoreiOSPurchase()
-        .then((receipt) => {
-          if (receipt) {
-            const options: ISimpleAlertOptions = {
-              header: 'Information',
-              message: 'Restored the purchase!',
-              buttons: ['OK'],
-            };
-            this.storage.set('boughtMasterKey', true);
-            this.bought = true;
-            this.showSimpleAlert(options);
-          } else {
-            const options: ISimpleAlertOptions = {
-              header: 'Information',
-              message: `No receipts available in the App Store!`,
-              buttons: ['OK'],
-            };
-            this.showSimpleAlert(options);
-          }
-          loading.dismiss();
-        })
-        .catch((_) => {
-          this.showSimpleAlert({
-            buttons: ['OK'],
-            header: 'Error!',
-            message: 'No receipts available in the App Store!',
-          });
-          loading.dismiss();
-        });
+    await loading.present();
+    try {
+      await this.iap.checkIfOwned();
+      this.bought = await this.storage.get(productKey);
+    } catch (error) {
+      handleError(error);
+      return;
     }
+    let message = '';
+    let color = '';
+    if (this.bought) {
+      color = 'success';
+      if (this.language === 'spanish') {
+        message = 'Se verificó la compra y se desbloqueó el producto';
+      } else {
+        message = `The purchase was verified and the product was unlocked.`;
+      }
+    } else {
+      color = 'danger';
+      if (this.language === 'spanish') {
+        message = 'No tienes ninguna compra.';
+      } else {
+        message = `You don't have any purchases.`;
+      }
+    }
+    await loading.dismiss();
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 1000,
+      position: 'top',
+      color: color,
+    });
+    toast.present();
   }
 
-  async buyProduct(opts: { productTitle: string; productId: string }) {
+  async buyProduct(product: IAPProduct) {
     const loading = await this.loadingController.create({
-      message: `Buying ${opts.productTitle}!`,
+      translucent: true,
+      spinner: 'dots',
     });
-    loading.present();
-    this.iap
-      .buy(opts.productId)
-      .then((product) => {
-        this.showSimpleAlert({
-          buttons: ['OK'],
-          header: 'Success!',
-          message: `${product.transactionId} was successfully bought.`,
-        });
-        this.storage.set('boughtMasterKey', true);
-        this.bought = true;
-        loading.dismiss();
-      })
-      .catch((err) => {
-        this.showSimpleAlert({
-          buttons: ['OK'],
-          header: 'Error!',
-          message: err,
-        });
-        loading.dismiss();
-      });
-  }
-
-  public async showSimpleAlert(options: ISimpleAlertOptions) {
-    const alert = await this.alertCtrl.create({
-      header: options.header,
-      message: options.message,
-      buttons: options.buttons,
-    });
-    alert.present();
+    await loading.present();
+    try {
+      await this.iap.buy(product);
+    } catch (error) {
+      if (error) {
+        handleError(error);
+      }
+      await loading.dismiss();
+      return;
+    }
+    await loading.dismiss();
   }
 }

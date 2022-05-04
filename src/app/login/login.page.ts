@@ -152,7 +152,7 @@ export class LoginPage {
       }
       const toast = await this.toastController.create({
         message,
-        duration: 2000,
+        duration: 1000,
         position: 'top',
         color: 'danger',
       });
@@ -185,7 +185,7 @@ export class LoginPage {
       }
       const toast = await this.toastController.create({
         message,
-        duration: 2000,
+        duration: 1000,
         position: 'top',
         color: 'danger',
       });

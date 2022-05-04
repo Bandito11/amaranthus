@@ -1,76 +1,100 @@
-import { InAppPurchase } from '@ionic-native/in-app-purchase/ngx';
-import { Injectable } from '@angular/core';
-import { IProductRestore, IProductBought, IProductGet } from 'src/app/common/models';
+import { ApplicationRef, Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import {
+  IAPProduct,
+  InAppPurchase2,
+} from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
+import { productKey } from 'src/app/common/constants';
+import { handleError } from 'src/app/common/handleError';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppPurchaseProvider {
-
-  constructor(private iap: InAppPurchase) {
+  products: IAPProduct[];
+  constructor(
+    private store: InAppPurchase2,
+    private storage: Storage,
+    private platform: Platform,
+    private ref: ApplicationRef
+  ) {
+    this.products = [];
+    this.platform.ready().then(() => {
+      this.registerProducts();
+      this.setListeners();
+      this.store.ready(() => {
+        this.products = this.store.products;
+        this.ref.tick();
+      });
+    });
   }
 
-  handleError(err) {
-    let message = '';
-    try {
-      // tslint:disable-next-line:forin
-      for (const prop in err) {
-        try {
-          message += `${err[prop]} `;
-        } catch (error) { }
+  getProducts() {
+    if (this.products.length < 1) {
+      const product = this.store.get('master.key');
+      if (!product['error']) {
+        this.store.refresh();
+        this.products.push(product);
       }
-    } catch (error) {
-      message = err;
     }
-    return message;
+  }
+
+  registerProducts() {
+    this.store.register({
+      id: 'master.key',
+      type: this.store.NON_CONSUMABLE,
+    });
+    this.store.refresh();
+  }
+
+  setListeners() {
+    // this.store.when('product').cancelled(() => {
+    //   reject();
+    // });
+    // this.store.when('product').error((error) => {
+    //   handleError(error);
+    // });
+    this.store
+      .when('product')
+      .approved(async (value: IAPProduct) => {
+        if (value.id === 'master.key') {
+          await this.storage.set(productKey, true);
+        }
+        this.ref.tick();
+        return value.verify();
+      })
+      .verified((value) => value.finish());
+
+    this.store
+      .when('master.key')
+      .owned(async () => await this.storage.set(productKey, true));
   }
 
   /**
    * Restore purchase
    */
-  restoreAndroidPurchase(): Promise<IProductRestore[]> {
-    return new Promise((resolve, reject) => {
-      this.iap.restorePurchases()
-        .then(purchased => resolve(purchased))
-        .catch(err => {
-          const message = this.handleError(err);
-          reject(message);
-        });
-    });
+  async checkIfOwned() {
+    this.store.refresh();
   }
 
-  restoreiOSPurchase(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.iap.getReceipt()
-        .then(receipt => resolve(receipt))
-        .catch(error => reject(error));
-    });
-  }
   /**
    * Buy Product
    */
-  buy(productId: string): Promise<IProductBought> {
-    return new Promise((resolve, reject) => {
-      this.iap.buy(productId)
-        .then(product => resolve(product))
-        .catch(err => {
-          const message = this.handleError(err);
-          reject(message);
-        });
-    });
-  }
-
-  /**
-   * Return an array of products.
-   */
-  getProducts(): Promise<IProductGet[]> {
-    return new Promise((resolve, reject) => {
-      this.iap.getProducts(['master.key'])
-        .then(products => resolve(products))
-        .catch(err => {
-          const message = this.handleError(err);
-          reject(message);
-        });
-    });
+  async buy(product: IAPProduct) {
+    // return new Promise((resolve, reject) => {
+    // this.store.when(product).cancelled(() => {
+    //   reject();
+    // });
+    // this.store.when(product).error((error) => {
+    //   resolve(error);
+    // });
+    // this.store.when(product).approved(async (value: IAPProduct) => {
+    //   await this.storage.set(productKey, true);
+    //   resolve('bought');
+    //   value.finish();
+    // });
+    this.store.order(product).error((error) => handleError(error));
+    // });
   }
 }

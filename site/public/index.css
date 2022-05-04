@@ -1,0 +1,35 @@
+header {
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+  height: 3em;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+.image-link img {
+  width: 25%;
+}
+
+.share {
+  padding: 10px;
+  display: inherit;
+  font-size: 15pt;
+}
+
+.share a {
+    padding-left: 1em;
+    font-size: 15pt;
+}
+
+.share .last {
+    padding-right:1em;
+}
+
+footer img {
+    width: 20%;
+}
+

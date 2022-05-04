@@ -22,7 +22,7 @@ export class EditEventPage implements OnInit {
   students: IStudent[];
   studentIds: string[];
   hasEndDate;
-   event: IEvent;
+  event: IEvent;
   language;
   imgSrc;
 
@@ -104,7 +104,6 @@ export class EditEventPage implements OnInit {
       delete: 'Borrar',
     },
   };
-  
 
   constructor(
     private navCtrl: NavController,
@@ -117,7 +116,14 @@ export class EditEventPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.event = {infiniteDates: false, logo: '', name: '', startDate: '', endDate: '', members: []};
+    this.event = {
+      infiniteDates: false,
+      logo: '',
+      name: '',
+      startDate: '',
+      endDate: '',
+      members: [],
+    };
     await this.getStudents();
     await this.getEventProfile(this.id);
   }
@@ -140,7 +146,6 @@ export class EditEventPage implements OnInit {
       ? (this.students = [...(await this.dbService.getStudent(query))])
       : this.getStudents();
   }
-
 
   async getEventProfile(id) {
     this.studentIds = [];
@@ -257,8 +262,9 @@ export class EditEventPage implements OnInit {
 
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
+                    position: 'top',
                   });
 
                   await toast.present();
@@ -292,8 +298,9 @@ export class EditEventPage implements OnInit {
                   message = `${eventData.name} was edited successfully.`;
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
+                    position: 'top',
                   });
                   await toast.present();
                   await this.modalCtrl.dismiss(this.id);
@@ -320,7 +327,6 @@ export class EditEventPage implements OnInit {
       this.students = [];
     }
   }
-
 
   removeFromEvent(id) {
     const newStudentIds = [
@@ -366,8 +372,9 @@ export class EditEventPage implements OnInit {
                 message = '¡El evento se borro exitosamente!';
                 const toast = await this.toastController.create({
                   message,
-                  duration: 2000,
+                  duration: 1000,
                   color: 'success',
+                  position: 'top',
                 });
                 await toast.present();
                 this.navCtrl
@@ -400,15 +407,16 @@ export class EditEventPage implements OnInit {
 
                 const toast = await this.toastController.create({
                   message,
-                  duration: 2000,
+                  duration: 1000,
                   color: 'success',
+                  position: 'top',
                 });
                 await toast.present();
                 // this.navCtrl
                 //   .navigateRoot('/tabs/tabs/home/events')
                 //   .then(() => this.modalCtrl.dismiss());
-                 await this.modalCtrl.dismiss()
-                 await this.navCtrl.pop();
+                await this.modalCtrl.dismiss();
+                await this.navCtrl.pop();
               } catch (error) {
                 handleError(error);
               }

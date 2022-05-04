@@ -1,5 +1,5 @@
 declare const process;
-
+export const productKey = 'boughtMasterKey';
 export const MONTHSLABELS = [
   'January',
   'February',
@@ -12,7 +12,7 @@ export const MONTHSLABELS = [
   'September',
   'October',
   'November',
-  'December'
+  'December',
 ];
 
 export enum MONTHS {
@@ -27,7 +27,7 @@ export enum MONTHS {
   'September',
   'October',
   'November',
-  'December'
+  'December',
 }
 
 export const MESESLABELS = [
@@ -42,7 +42,7 @@ export const MESESLABELS = [
   'Septiembre',
   'Octubre',
   'Noviembre',
-  'Diciembre'
+  'Diciembre',
 ];
 
 export enum MESES {
@@ -57,9 +57,8 @@ export enum MESES {
   'Septiembre',
   'Octubre',
   'Noviembre',
-  'Diciembre'
+  'Diciembre',
 }
-
 
 const RELEASEDATE = 2017;
 let YEARS = [RELEASEDATE];
@@ -71,18 +70,10 @@ export const YEARLABELS = [...YEARS];
 
 export enum recordType {
   month = 'month',
-  day = 'day'
+  day = 'day',
 }
 
-export const WEEKDAYSLABELS = [
-  'Sun',
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
-  'Sat'
-];
+export const WEEKDAYSLABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const WEEKDAYSHEADER = [
   'Sunday',
@@ -91,18 +82,10 @@ export const WEEKDAYSHEADER = [
   'Wednesday',
   'Thursday',
   'Friday',
-  'Saturday'
+  'Saturday',
 ];
 
-export const DIASLABELS = [
-  'Dom',
-  'Lun',
-  'Mar',
-  'Mie',
-  'Jue',
-  'Vie',
-  'Sab'
-];
+export const DIASLABELS = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
 
 export const DIASHEADER = [
   'Domingo',
@@ -111,10 +94,5 @@ export const DIASHEADER = [
   'Miércoles',
   'Jueves',
   'Viernes',
-  'Sábado'
+  'Sábado',
 ];
-export enum stateAndroid {
-  ACTIVE,
-  CANCELLED,
-  REFUNDED
-}

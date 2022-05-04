@@ -61,7 +61,7 @@ export class HomePage implements OnInit {
       filter: 'Filter by: ',
       class: 'Class: ',
       phone: 'Phone: ',
-      attended: 'Attended',
+      attended: 'Present',
       absence: 'Absent',
       profile: 'Profile',
       present: `'s present today!`,
@@ -98,7 +98,6 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    //TODO: Create a way to restore purchases for mobile
     if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       this.storage.set('boughtMasterKey', true);
     }
@@ -219,7 +218,6 @@ export class HomePage implements OnInit {
       case 'Not Active':
       case 'Inactivo':
         this.students = await this.dbService.getAllInActiveStudents(this.date);
-        console.log(this.students);
         break;
       default:
         //FIXME: Filter by student.class

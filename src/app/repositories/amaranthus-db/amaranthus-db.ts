@@ -15,6 +15,7 @@ import { Storage } from '@ionic/storage';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { FileProvider } from 'src/app/providers/file/file';
 import { DomSanitizer } from '@angular/platform-browser';
+import { productKey } from 'src/app/common/constants';
 
 /**
  * Collections use on db
@@ -613,13 +614,11 @@ export class AmaranthusDBProvider {
 
   async insertStudent(student: IStudent) {
     if (studentsColl.data.length > 9) {
-      const boughtMasterKey = await this.storage.get('boughtMasterKey');
+      const boughtMasterKey = await this.storage.get(productKey);
       if (boughtMasterKey === true) {
         await this.insertStudentIntoDB(student);
       } else {
-        throw new Error(
-          `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`
-        );
+        throw `Reached the limit of 10 persons in database. If you want to get rid of this limit please consider buying the app!`;
       }
     } else {
       await this.insertStudentIntoDB(student);

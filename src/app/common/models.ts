@@ -96,30 +96,3 @@ export interface ICalendar {
   month: number;
   year: number;
 }
-
-export interface IProductGet {
-  id: any;
-  title: string;
-  description: string;
-  currency: string;
-  price: any;
-  priceAsDecimal: any;
-}
-
-export interface IProductBought {
-  transactionId: any;
-  receipt: string;
-  signature: string;
-  productType: string;
-}
-
-export interface IProductRestore {
-  productId: any;
-  state: string | number;
-  transactionId: any;
-  type: string;
-  date: string;
-  productType: string;
-  receipt;
-  signature: string;
-}

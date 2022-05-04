@@ -10,12 +10,16 @@
     <param name="android-package" value="io.github.pwlin.cordova.plugins.fileopener2.FileOpener2"/>
   </feature>
 
-  <feature name="InAppBillingV3">
-    <param name="android-package" value="com.alexdisler.inapppurchases.InAppBillingV3"/>
-  </feature>
-
   <feature name="Market">
     <param name="android-package" value="com.xmartlabs.cordova.market.Market"/>
+  </feature>
+
+  <feature name="NetworkStatus">
+    <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager"/>
+  </feature>
+
+  <feature name="InAppBillingPlugin">
+    <param name="android-package" value="cc.fovea.PurchasePlugin"/>
   </feature>
 
   <feature name="SQLitePlugin">

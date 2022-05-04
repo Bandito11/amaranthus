@@ -1,4 +1,9 @@
-import { ModalController, AlertController, Platform, ToastController } from '@ionic/angular';
+import {
+  ModalController,
+  AlertController,
+  Platform,
+  ToastController,
+} from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
 import { IStudent } from '../common/models';
 import { trimText } from '../common/format';
@@ -200,8 +205,9 @@ export class CreatePage implements OnInit {
 
                     const toast = await this.toastController.create({
                       message,
-                      duration: 2000,
+                      duration: 1000,
                       color: 'success',
+                      position: 'top',
                     });
                     toast.present();
 
@@ -238,8 +244,9 @@ export class CreatePage implements OnInit {
 
                   const toast = await this.toastController.create({
                     message,
-                    duration: 2000,
+                    duration: 1000,
                     color: 'success',
+                    position: 'top',
                   });
                   toast.present();
 
