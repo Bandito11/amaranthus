@@ -1,35 +1,56 @@
+ body{
+   margin: 0;
+   padding: 0;
+ }
 header {
-  padding: 5px;
   display: flex;
   justify-content: space-between;
-  height: 3em;
+  padding: 5px;
+  /* height: 3em; */
 }
 
 img {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
 
 .image-link img {
-  width: 25%;
+  width: 30pt;
 }
 
 .share {
-  padding: 10px;
+  padding: 12pt;
   display: inherit;
-  font-size: 15pt;
+  font-size: 14pt;
 }
 
 .share a {
-    padding-left: 1em;
-    font-size: 15pt;
+  padding-left: 10px;
 }
 
-.share .last {
-    padding-right:1em;
+.facebook-logo {
+  color: blue;
 }
 
-footer img {
-    width: 20%;
+.twitter-logo {
+  color: lightblue;
 }
 
+section {
+  padding: 10pt;
+}
+
+.presentation img {
+  width: 100pt;
+  height: auto;
+  padding-right: 5pt;
+}
+.presentation-images {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-left: 5pt;
+  margin-right: 5pt;
+  /* justify-content: space-between; */
+}
