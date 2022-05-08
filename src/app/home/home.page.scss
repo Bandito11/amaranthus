@@ -51,10 +51,9 @@
     }
   }
 
-    // iPad screens
-  @media screen and (min-width: 1024px) and (orientation: landscape) {
+  @media screen and (min-height: 1024px) {
     cdk-virtual-scroll-viewport {
-      height: 80%;
+      height: 83%;
       width: 100%;
     }
   }
@@ -67,20 +66,6 @@
   @media screen and (min-height: 1366px) {
     cdk-virtual-scroll-viewport {
       height: 89%;
-      width: 100%;
-    }
-  }
-  @media screen and (min-width: 1366px) and (orientation: landscape) {
-    cdk-virtual-scroll-viewport {
-      height: 85%;
-      width: 100%;
-    }
-  } 
-  
-  // Desktop screens
-  @media screen and (min-width: 1367px) {
-    cdk-virtual-scroll-viewport {
-      height: 82%;
       width: 100%;
     }
   }
