@@ -150,8 +150,11 @@ export class EditEventPage implements OnInit {
   async getEventProfile(id) {
     this.studentIds = [];
     try {
-      this.event = await this.dbService.getEvent(id);
+      this.event = {...await this.dbService.getEvent(id)};
       this.imgSrc = this.event.logo;
+      if(this.event.endDate){
+        this.hasEndDate = true;
+      }
       try {
         this.studentIds = this.event.members.map((member) => member.id);
       } catch (error) {
