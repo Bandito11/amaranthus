@@ -35,7 +35,7 @@ export class FileProvider {
         return results;
       }
       if (this.platform.is('desktop')) {
-        return await this.writeToDesktop(opts);
+        return this.writeToDesktop(opts);
       }
     } catch (error) {
       throw error;
@@ -48,7 +48,6 @@ export class FileProvider {
    * @memberof FileProvider
    */
   writeToDesktop(opts: { fileName: string; data: any }) {
-    return new Promise((_, reject) => {
       let path = ``;
       if (navigator.userAgent.match('Macintosh')) {
         //FIXME: process.env.HOME is supposed to be the user's home directory
@@ -58,7 +57,6 @@ export class FileProvider {
         // path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
       }
       return path + ' ' + opts.data;
-    });
   }
 
   /**
