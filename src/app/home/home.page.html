@@ -50,12 +50,22 @@
     minBufferPx="900"
     maxBufferPx="1350"
   >
-    <app-user-item
-      *cdkVirtualFor="let student of students"
-      [student]="student"
-      [htmlControls]="htmlControls"
-      [homeURL]="homeURL"
-      [date]="date"
-    ></app-user-item>
+    <ion-grid>
+      <ion-row>
+        <ion-col
+          size-sm="6"
+          size-lg="4"
+          size-xl="4"
+          *cdkVirtualFor="let student of students"
+        >
+          <app-user-item
+            [student]="student"
+            [htmlControls]="htmlControls"
+            [homeURL]="homeURL"
+            [date]="date"
+          ></app-user-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </cdk-virtual-scroll-viewport>
 </ion-content>
