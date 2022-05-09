@@ -93,14 +93,10 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private storage: Storage,
-    private platform: Platform,
     private dbService: DatabaseService
   ) {}
 
   async ngOnInit() {
-    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
-      this.storage.set('boughtMasterKey', true);
-    }
     const currentDate = new Date();
     this.date = {
       month: currentDate.getMonth(),

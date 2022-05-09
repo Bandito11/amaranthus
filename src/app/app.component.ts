@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar } from '@capacitor/status-bar';
 
@@ -14,7 +13,7 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private dbService: DatabaseService,
-    private store: InAppPurchase2
+    private storage: Storage
   ) {
     this.dbService.initializeDatabase();
     this.initializeApp();
@@ -24,6 +23,9 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       if (this.platform.is('mobile') && this.platform.is('android')) {
         StatusBar.setBackgroundColor({ color: '#e60000' });
+      }
+      if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+        this.storage.set('boughtMasterKey', true);
       }
       await SplashScreen.hide();
     });
