@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar } from '@capacitor/status-bar';
-
+import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { DatabaseService } from './services/database.service';
 
