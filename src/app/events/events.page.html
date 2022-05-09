@@ -27,26 +27,33 @@
       >
     </ion-select>
   </ion-item>
-  <ion-card
-    *ngFor="let event of events"
-    (click)="goToEventProfile(event.$loki)"
-  >
-    <img [src]="event.logo" />
-    <ion-card-content>
-      <ion-card-title> {{event.name}} </ion-card-title>
-      <div *ngIf="!event.infiniteDates; else: infiniteDatesIsTrue">
-        <h3><span>{{htmlControls.start}}</span> {{event.startDate}}</h3>
-        <h3 *ngIf="event.endDate">
-          <span>{{htmlControls.end}}</span> {{event.endDate}}
-        </h3>
-        <!-- <br> -->
-        <p><span>{{htmlControls.attended}}</span> {{event.attendance}}</p>
-        <p><span>{{htmlControls.absence}}</span> {{event.absence}}</p>
-        <p><span>{{htmlControls.members}}</span> {{event.totalMembers}}</p>
-      </div>
-      <ng-template #infiniteDatesIsTrue>
-        <p><span>{{htmlControls.members}}</span> {{event.totalMembers}}</p>
-      </ng-template>
-    </ion-card-content>
-  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="6" *ngFor="let event of events">
+        <ion-card (click)="goToEventProfile(event.$loki)">
+          <img [src]="event.logo" />
+          <ion-card-content>
+            <ion-card-title> {{event.name}} </ion-card-title>
+            <div *ngIf="!event.infiniteDates; else: infiniteDatesIsTrue">
+              <h3><span>{{htmlControls.start}}</span> {{event.startDate}}</h3>
+              <h3 *ngIf="event.endDate">
+                <span>{{htmlControls.end}}</span> {{event.endDate}}
+              </h3>
+              <!-- <br> -->
+              <p><span>{{htmlControls.attended}}</span> {{event.attendance}}</p>
+              <p><span>{{htmlControls.absence}}</span> {{event.absence}}</p>
+              <p>
+                <span>{{htmlControls.members}}</span> {{event.totalMembers}}
+              </p>
+            </div>
+            <ng-template #infiniteDatesIsTrue>
+              <p>
+                <span>{{htmlControls.members}}</span> {{event.totalMembers}}
+              </p>
+            </ng-template>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

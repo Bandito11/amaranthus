@@ -83,23 +83,17 @@
       width: 100%;
     }
   }
-  @media screen and (min-width: 1024px) and (orientation: landscape) {
+  @media screen and (min-height: 1112px) {
     cdk-virtual-scroll-viewport {
-      height: 50%;
+      height: 68%;
       width: 100%;
     }
   }
   @media screen and (min-height: 1366px) {
     cdk-virtual-scroll-viewport {
-      height: 70%;
+      height: 74%;
       width: 100%;
     }
   }
-  @media screen and (min-width: 1366px) and (orientation: landscape) {
-    cdk-virtual-
-    scroll-viewport {
-      height: 90%;
-      width: 100%;
-    }
   }
-}
+
