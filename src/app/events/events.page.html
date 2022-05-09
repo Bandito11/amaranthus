@@ -29,7 +29,7 @@
   </ion-item>
   <ion-grid>
     <ion-row>
-      <ion-col size-sm="6" *ngFor="let event of events">
+      <ion-col size="12" size-sm="6" *ngFor="let event of events">
         <ion-card (click)="goToEventProfile(event.$loki)">
           <img [src]="event.logo" />
           <ion-card-content>
