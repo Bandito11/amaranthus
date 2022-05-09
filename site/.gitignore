@@ -20,3 +20,5 @@ UserInterfaceState.xcuserstate
 **.firebase
 
 dist
+
+firebase-debug.log
