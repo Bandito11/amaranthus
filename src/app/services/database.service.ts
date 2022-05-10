@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ICalendar, IEvent, INote, IStudent } from '../common/models';
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
+import { Injectable } from "@angular/core";
+import { ICalendar, IEvent, INote, IStudent } from "../common/models";
+import { AmaranthusDBProvider } from "../repositories/amaranthus-db/amaranthus-db";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class DatabaseService {
-
   async sortEventData(prop) {
     return await this.db.sortEventData(prop);
   }
@@ -105,12 +104,12 @@ export class DatabaseService {
   }
 
   addAttendance(opts: { date: ICalendar; id: string; event?: string }) {
-    this.db.addAttendance({ date: opts.date, id: opts.id });
+    this.db.addAttendance(opts);
     return true;
   }
 
   addAbsence(opts: { date: ICalendar; id: string; event?: string }) {
-    this.db.addAbsence({ date: opts.date, id: opts.id });
+    this.db.addAbsence(opts);
     return true;
   }
 
@@ -160,7 +159,7 @@ export class DatabaseService {
     await this.db.updateEventMembers(opts);
   }
 
-  checkIfUserExists(credentials:string) {
+  checkIfUserExists(credentials: string) {
     return this.db.checkIfUserExists(credentials);
   }
 
