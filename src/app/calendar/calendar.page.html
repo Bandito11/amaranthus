@@ -29,6 +29,7 @@
           *cdkVirtualFor="let student of students"
         >
           <app-user-item
+            [event]="event"
             [student]="student"
             [htmlControls]="htmlControls"
             [homeURL]="homeURL"
