@@ -12,6 +12,30 @@ import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 import { handleError } from '../common/handleError';
 
+interface IEventControls {
+  toolbar: {
+    title;
+    buttons: {
+      add;
+      create;
+    };
+  };
+  picture;
+  reset;
+  optional;
+  eventName;
+  placeholder;
+  start;
+  hasEnd;
+  end;
+  run;
+  search;
+  studentName;
+  add;
+  remove;
+  added;
+  notAdded;
+}
 @Component({
   selector: 'app-create-event',
   templateUrl: './create-event.page.html',
@@ -25,80 +49,11 @@ export class CreateEventPage implements OnInit {
   language;
   imgSrc;
   event: IEvent;
-  htmlControls = {
-    toolbar: {
-      title: '',
-      buttons: {
-        add: '',
-        create: '',
-      },
-    },
-    picture: '',
-    reset: '',
-    optional: '',
-    eventName: '',
-    placeholder: '',
-    start: '',
-    hasEnd: '',
-    end: '',
-    run: '',
-    search: '',
-    studentName: '',
-    add: '',
-    remove: '',
-    added: '',
-    notAdded: '',
-  };
+  htmlControls: IEventControls;
 
-  LANGUAGE = {
-    english: {
-      toolbar: {
-        title: 'Create Event',
-        buttons: {
-          add: 'Add All',
-          create: 'Create',
-        },
-      },
-      picture: 'Add a Picture',
-      reset: 'Reset',
-      optional: 'Image is not required.',
-      eventName: 'Name',
-      placeholder: 'Write your Event Name',
-      start: 'Start Date:',
-      hasEnd: 'Has End Date?',
-      end: 'End Date:',
-      run: 'Run Indefinitely',
-      search: 'Search by ID or Name',
-      studentName: 'Name: ',
-      add: 'Add',
-      remove: 'Remove',
-      added: ' was added to events list!',
-      notAdded: ` wasn't added to events list!`,
-    },
-    spanish: {
-      toolbar: {
-        title: 'Crear Evento',
-        buttons: {
-          add: 'Añadir todos',
-          create: 'Crear',
-        },
-      },
-      picture: 'Añadir imagen',
-      reset: 'Reiniciar',
-      optional: 'La imagen no es requerido.',
-      eventName: 'Nombre',
-      placeholder: 'Escribe un nombre para el evento',
-      start: 'Inicia en:',
-      hasEnd: '¿Tiene fecha final?',
-      end: 'Termina en:',
-      run: 'Corre indefinidamente',
-      search: 'Busca por ID or nombre',
-      studentName: 'Nombre: ',
-      add: 'Añadir',
-      remove: 'Remover',
-      added: ' fue añadido al evento.',
-      notAdded: ` no fue añadido al evento.`,
-    },
+  LANGUAGE: {
+    english: IEventControls;
+    spanish: IEventControls;
   };
 
   constructor(
@@ -112,6 +67,80 @@ export class CreateEventPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.htmlControls = {
+      toolbar: {
+        title: '',
+        buttons: {
+          add: '',
+          create: '',
+        },
+      },
+      picture: '',
+      reset: '',
+      optional: '',
+      eventName: '',
+      placeholder: '',
+      start: '',
+      hasEnd: '',
+      end: '',
+      run: '',
+      search: '',
+      studentName: '',
+      add: '',
+      remove: '',
+      added: '',
+      notAdded: '',
+    };
+    this.LANGUAGE = {
+      english: {
+        toolbar: {
+          title: 'Create Event',
+          buttons: {
+            add: 'Add All',
+            create: 'Create',
+          },
+        },
+        picture: 'Add a Picture',
+        reset: 'Reset',
+        optional: 'Image is not required.',
+        eventName: 'Name',
+        placeholder: 'Write your Event Name',
+        start: 'Start Date:',
+        hasEnd: 'Has End Date?',
+        end: 'End Date:',
+        run: 'Run Indefinitely',
+        search: 'Search by ID or Name',
+        studentName: 'Name: ',
+        add: 'Add',
+        remove: 'Remove',
+        added: ' was added to events list!',
+        notAdded: ` wasn't added to events list!`,
+      },
+      spanish: {
+        toolbar: {
+          title: 'Crear Evento',
+          buttons: {
+            add: 'Añadir todos',
+            create: 'Crear',
+          },
+        },
+        picture: 'Añadir imagen',
+        reset: 'Reiniciar',
+        optional: 'La imagen no es requerido.',
+        eventName: 'Nombre',
+        placeholder: 'Escribe un nombre para el evento',
+        start: 'Inicia en:',
+        hasEnd: '¿Tiene fecha final?',
+        end: 'Termina en:',
+        run: 'Corre indefinidamente',
+        search: 'Busca por ID or nombre',
+        studentName: 'Nombre: ',
+        add: 'Añadir',
+        remove: 'Remover',
+        added: ' fue añadido al evento.',
+        notAdded: ` no fue añadido al evento.`,
+      },
+    };
     this.event = {
       infiniteDates: false,
       logo: '',

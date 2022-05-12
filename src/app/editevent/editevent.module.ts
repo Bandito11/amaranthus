@@ -11,8 +11,8 @@ import { EditEventPage } from './editevent.page';
 const routes: Routes = [
   {
     path: '',
-    component: EditEventPage
-  }
+    component: EditEventPage,
+  },
 ];
 
 @NgModule({
@@ -21,8 +21,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ComponentsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
-  declarations: [EditEventPage]
+  declarations: [EditEventPage],
 })
 export class EditEventPageModule {}

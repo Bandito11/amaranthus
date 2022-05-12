@@ -5,6 +5,7 @@ import { handleError } from 'src/app/common/handleError';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { IEvent, IStudent } from '../../common/models';
+import { format, parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-event-form',
@@ -46,6 +47,10 @@ export class EventFormComponent implements OnInit {
 
   search(event) {
     this.queryData.emit(event.target.value);
+  }
+
+  formatDate(value: string) {
+    return format(parseISO(value), 'yyyy-MM-dd');
   }
 
   resetEndDate() {
@@ -99,7 +104,7 @@ export class EventFormComponent implements OnInit {
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
     };
-
+console.log(this.event)
     this.eventData.emit(event);
   }
 
