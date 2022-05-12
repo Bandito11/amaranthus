@@ -148,57 +148,57 @@ export class EventProfilePage implements OnInit {
     const members = [];
     this.studentIds = [];
     try {
-    for (const member of this.event.members) {
-      this.studentIds = [...this.studentIds, member.id];
-      const student = await this.dbService.getStudentById(member.id);
-      if (student) {
-        if (this.event.infiniteDates) {
-          let record = this.dbService.getQueriedRecordsByCurrentDate({
-            event: this.event.name,
-            studentId: student.id,
-            day: date.getDate(),
-            month: date.getMonth() + 1,
-            year: date.getFullYear(),
-          });
-          if (!record) {
-            record = {
-              id: '',
-              year: 0,
-              month: 0,
-              day: 0,
-              attendance: false,
-              absence: false,
-            };
+      for (const member of this.event.members) {
+        this.studentIds = [...this.studentIds, member.id];
+        const student = await this.dbService.getStudentById(member.id);
+        if (student) {
+          if (this.event.infiniteDates) {
+            let record = this.dbService.getQueriedRecordsByCurrentDate({
+              event: this.event.name,
+              studentId: student.id,
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            });
+            if (!record) {
+              record = {
+                id: '',
+                year: 0,
+                month: 0,
+                day: 0,
+                attendance: false,
+                absence: false,
+              };
+            }
+            members.push({
+              id: student.id,
+              firstName: student.firstName,
+              initial: student.initial,
+              lastName: student.lastName,
+              phoneNumber: student.phoneNumber,
+              picture: student.picture,
+              class: student.class,
+              attendance: member.attendance,
+              absence: member.absence,
+              record: record,
+            });
+          } else {
+            members.push({
+              id: student.id,
+              firstName: student.firstName,
+              initial: student.initial,
+              lastName: student.lastName,
+              phoneNumber: student.phoneNumber,
+              picture: student.picture,
+              class: student.class,
+              attendance: member.attendance,
+              absence: member.absence,
+            });
           }
-          members.push({
-            id: student.id,
-            firstName: student.firstName,
-            initial: student.initial,
-            lastName: student.lastName,
-            phoneNumber: student.phoneNumber,
-            picture: student.picture,
-            class: student.class,
-            attendance: member.attendance,
-            absence: member.absence,
-            record: record,
-          });
-        } else {
-          members.push({
-            id: student.id,
-            firstName: student.firstName,
-            initial: student.initial,
-            lastName: student.lastName,
-            phoneNumber: student.phoneNumber,
-            picture: student.picture,
-            class: student.class,
-            attendance: member.attendance,
-            absence: member.absence,
-          });
         }
       }
-    }
     } catch (error) {
-     // I dont know what to do here
+      // I dont know what to do here
     }
     this.eventControls = {
       ...event,
@@ -299,7 +299,7 @@ export class EventProfilePage implements OnInit {
           message: 'Asistencia actualizada',
           duration: 3000,
           color: 'success',
-          position: 'top'
+          position: 'top',
         });
         await toast.present();
       } else {
@@ -307,7 +307,7 @@ export class EventProfilePage implements OnInit {
           message: 'Attendance updated',
           duration: 3000,
           color: 'success',
-          position: 'top'
+          position: 'top',
         });
         await toast.present();
       }

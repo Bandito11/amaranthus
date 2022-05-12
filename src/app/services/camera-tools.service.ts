@@ -32,5 +32,4 @@ export class CameraToolsService {
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   }
-
 }
