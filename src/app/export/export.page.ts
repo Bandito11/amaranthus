@@ -39,7 +39,7 @@ export class ExportPage {
       toolbar: {
         title: 'Exportar',
       },
-      header: 'Escoje la fecha',
+      header: 'Escoje el formato de la fecha',
       month: 'Por mes: ',
       day: 'Por día: ',
       date: 'Fecha: ',
@@ -51,7 +51,7 @@ export class ExportPage {
       toolbar: {
         title: 'Export',
       },
-      header: 'Choose date',
+      header: 'Choose date format',
       month: 'By month: ',
       day: 'By day: ',
       date: 'Date',

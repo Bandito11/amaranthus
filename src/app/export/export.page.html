@@ -22,14 +22,14 @@
       </ion-item>
     </ion-radio-group>
 
+    <h2>{{htmlControls.date}}</h2>
+
     <div *ngIf="dateControl === 'month'">
-      <h2>{{htmlControls.date}}</h2>
       <ion-datetime presentation="month-year" [(ngModel)]="date" value="date">
       </ion-datetime>
     </div>
 
     <div *ngIf="dateControl === 'day'">
-      <h2>{{htmlControls.date}}</h2>
       <ion-datetime presentation="date" [(ngModel)]="date" value="date">
       </ion-datetime>
     </div>
