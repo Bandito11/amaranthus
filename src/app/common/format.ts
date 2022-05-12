@@ -28,6 +28,10 @@ export function formatDate(date: string) {
   return formattedDate;
 }
 
+export function formatDateToIso(date: string){
+  
+}
+
 export function trimText(student: IStudent) {
   for (const key in student) {
     if (Object.prototype.hasOwnProperty.call(student, key)) {

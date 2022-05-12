@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
-import { IonicStorageAdapter } from "./adapter";
-import * as Loki from "lokijs";
+import { Injectable } from '@angular/core';
+import { IonicStorageAdapter } from './adapter';
+import * as Loki from 'lokijs';
 import {
   IStudent,
   IRecord,
@@ -8,14 +8,14 @@ import {
   INote,
   IResponse,
   ICalendar,
-} from "src/app/common/models";
-import { trimEvent, trimText } from "src/app/common/format";
-import { handleError } from "src/app/common/handleError";
-import { Storage } from "@ionic/storage";
-import { CameraToolsService } from "src/app/services/camera-tools.service";
-import { FileProvider } from "src/app/providers/file/file";
-import { DomSanitizer } from "@angular/platform-browser";
-import { productKey } from "src/app/common/constants";
+} from 'src/app/common/models';
+import { trimEvent, trimText } from 'src/app/common/format';
+import { handleError } from 'src/app/common/handleError';
+import { Storage } from '@ionic/storage';
+import { CameraToolsService } from 'src/app/services/camera-tools.service';
+import { FileProvider } from 'src/app/providers/file/file';
+import { DomSanitizer } from '@angular/platform-browser';
+import { productKey } from 'src/app/common/constants';
 
 /**
  * Collections use on db
@@ -35,7 +35,7 @@ let notesView: DynamicView<INote>;
 let eventsView: DynamicView<IEvent>;
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AmaranthusDBProvider {
   constructor(
@@ -54,45 +54,45 @@ export class AmaranthusDBProvider {
         autosave: true,
         autoload: true,
         autoloadCallback: () => {
-          studentsColl = amaranthusDB.getCollection<IStudent>("students");
-          recordsColl = amaranthusDB.getCollection<IRecord>("records");
-          eventsColl = amaranthusDB.getCollection<IEvent>("events");
-          notesColl = amaranthusDB.getCollection<INote>("notes");
+          studentsColl = amaranthusDB.getCollection<IStudent>('students');
+          recordsColl = amaranthusDB.getCollection<IRecord>('records');
+          eventsColl = amaranthusDB.getCollection<IEvent>('events');
+          notesColl = amaranthusDB.getCollection<INote>('notes');
           if (!studentsColl) {
-            studentsColl = amaranthusDB.addCollection<IStudent>("students");
+            studentsColl = amaranthusDB.addCollection<IStudent>('students');
           }
           if (!recordsColl) {
-            recordsColl = amaranthusDB.addCollection<IRecord>("records");
+            recordsColl = amaranthusDB.addCollection<IRecord>('records');
           }
           if (!eventsColl) {
-            eventsColl = amaranthusDB.addCollection<IEvent>("events");
+            eventsColl = amaranthusDB.addCollection<IEvent>('events');
           }
           if (!notesColl) {
-            notesColl = amaranthusDB.addCollection<INote>("notes");
+            notesColl = amaranthusDB.addCollection<INote>('notes');
           }
 
-          studentView = studentsColl.getDynamicView("students");
+          studentView = studentsColl.getDynamicView('students');
           if (!studentView) {
-            studentView = studentsColl.addDynamicView("students");
+            studentView = studentsColl.addDynamicView('students');
           }
-          recordsView = recordsColl.getDynamicView("records");
+          recordsView = recordsColl.getDynamicView('records');
           if (!recordsView) {
-            recordsView = recordsColl.addDynamicView("records");
+            recordsView = recordsColl.addDynamicView('records');
           }
-          notesView = notesColl.getDynamicView("notes");
+          notesView = notesColl.getDynamicView('notes');
           if (!notesView) {
-            notesView = notesColl.addDynamicView("notes");
+            notesView = notesColl.addDynamicView('notes');
           }
-          eventsView = eventsColl.getDynamicView("events");
+          eventsView = eventsColl.getDynamicView('events');
           if (!eventsView) {
-            eventsView = eventsColl.addDynamicView("events");
+            eventsView = eventsColl.addDynamicView('events');
           }
           resolve(studentsColl);
         },
       };
       const ionicStorageAdapter = new IonicStorageAdapter();
       lokiOptions.adapter = ionicStorageAdapter;
-      amaranthusDB = new Loki("amaranthus.db", lokiOptions);
+      amaranthusDB = new Loki('amaranthus.db', lokiOptions);
     });
   }
 
@@ -102,9 +102,9 @@ export class AmaranthusDBProvider {
   }
 
   deleteInvalidCharacters() {
-    studentsColl.findAndRemove({ id: { $containsAny: "/" } });
-    studentsColl.findAndRemove({ id: { $containsAny: "#" } });
-    studentsColl.findAndRemove({ id: { $containsAny: "%" } });
+    studentsColl.findAndRemove({ id: { $containsAny: '/' } });
+    studentsColl.findAndRemove({ id: { $containsAny: '#' } });
+    studentsColl.findAndRemove({ id: { $containsAny: '%' } });
   }
 
   checkIfUserExists(credentials: string) {
@@ -119,7 +119,7 @@ export class AmaranthusDBProvider {
       ],
     });
     if (!checkUser) {
-      const fullName = credentials.split(" ");
+      const fullName = credentials.split(' ');
       checkUser = studentsColl.findOne({
         firstName: fullName[0],
         lastName: fullName[1],
@@ -134,17 +134,17 @@ export class AmaranthusDBProvider {
       };
       this.addAttendance({ date: date, id: checkUser.id });
     } else {
-      throw "User not in database.";
+      throw 'User not in database.';
     }
     return checkUser.firstName;
   }
 
   private getPictureName(opts: { name: string; picture: string }) {
     const extension = opts.picture
-      .split(",")[0]
-      .split(":")[1]
-      .split(";")[0]
-      .split("/")[1];
+      .split(',')[0]
+      .split(':')[1]
+      .split(';')[0]
+      .split('/')[1];
     const data = opts.picture;
     const name = `${opts.name}.${extension}`;
     return { name, data };
@@ -190,7 +190,7 @@ export class AmaranthusDBProvider {
     } else {
       response = {
         ...response,
-        error: "Error retrieving notes. Please try again!",
+        error: 'Error retrieving notes. Please try again!',
         data: null,
       };
       return response;
@@ -203,14 +203,14 @@ export class AmaranthusDBProvider {
       .find({
         id: id,
       })
-      .simplesort("day")
-      .simplesort("month")
-      .simplesort("year")
+      .simplesort('day')
+      .simplesort('month')
+      .simplesort('year')
       .data();
     if (results) {
       return results;
     } else {
-      throw new Error("Error retrieving notes. Please try again!");
+      throw new Error('Error retrieving notes. Please try again!');
     }
   }
 
@@ -247,7 +247,7 @@ export class AmaranthusDBProvider {
 
   async sortData({ prop, date }) {
     studentView.removeFilters();
-    if (prop === "name") {
+    if (prop === 'name') {
       studentView
         .applySort((a, b) => {
           if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) {
@@ -294,7 +294,7 @@ export class AmaranthusDBProvider {
       members: members,
     };
     if (members.length > 0) {
-      if (typeof event.logo === "object") {
+      if (typeof event.logo === 'object') {
         event.logo = await this.cameraTools.readAsBase64(
           (event.logo as any).changingThisBreaksApplicationSecurity
         );
@@ -307,7 +307,7 @@ export class AmaranthusDBProvider {
         await this.file.writeToMobile({
           fileName: name,
           data,
-          type: "image",
+          type: 'image',
         });
         event.logo = name;
       }
@@ -321,7 +321,7 @@ export class AmaranthusDBProvider {
       name: event.name,
     });
     if (!exists) {
-      if (typeof formattedEvent.logo === "object") {
+      if (typeof formattedEvent.logo === 'object') {
         formattedEvent.logo = await this.cameraTools.readAsBase64(
           (formattedEvent.logo as any).changingThisBreaksApplicationSecurity
         );
@@ -334,7 +334,7 @@ export class AmaranthusDBProvider {
         await this.file.writeToMobile({
           fileName: name,
           data,
-          type: "image",
+          type: 'image',
         });
         formattedEvent.logo = name;
       }
@@ -347,7 +347,7 @@ export class AmaranthusDBProvider {
       const results = eventsColl.get(event.$loki);
       if (results) {
         if (results.logo) {
-          if (typeof event.logo === "object") {
+          if (typeof event.logo === 'object') {
             event.logo = await this.cameraTools.readAsBase64(
               (event.logo as any).changingThisBreaksApplicationSecurity
             );
@@ -359,7 +359,7 @@ export class AmaranthusDBProvider {
           await this.file.writeToMobile({
             fileName: name,
             data,
-            type: "image",
+            type: 'image',
           });
           event.logo = name;
         }
@@ -374,7 +374,7 @@ export class AmaranthusDBProvider {
 
   removeEvent(event: IEvent) {
     try {
-      const results = eventsColl.get(event["$loki"]);
+      const results = eventsColl.get(event['$loki']);
       eventsColl.remove(results);
       const records = recordsColl.find({
         event: results.name,
@@ -391,7 +391,7 @@ export class AmaranthusDBProvider {
   async sortEventData(prop: any) {
     eventsView.removeFilters();
     switch (prop) {
-      case "Name":
+      case 'Name':
         eventsView.applySort((a, b) => {
           if (a.name.toLowerCase() < b.name.toLowerCase()) {
             return -1;
@@ -402,7 +402,7 @@ export class AmaranthusDBProvider {
           return 0;
         });
         break;
-      case "Date":
+      case 'Date':
         eventsView.applySort((a, b) => {
           if (a.startDate < b.startDate) {
             return -1;
@@ -423,7 +423,7 @@ export class AmaranthusDBProvider {
           ...results[i],
           logo: await this.dataUrlToObjectUrl(
             await this.file.readFromMobile({
-              type: "image",
+              type: 'image',
               path: results[i].logo,
             })
           ),
@@ -436,7 +436,7 @@ export class AmaranthusDBProvider {
   async getEvents(): Promise<IEvent[]> {
     const results: any = eventsColl
       .chain()
-      .simplesort("startDate", true)
+      .simplesort('startDate', true)
       .data();
     for (let i = 0; i < results.length; i++) {
       if (results[i].logo) {
@@ -444,7 +444,7 @@ export class AmaranthusDBProvider {
           ...results[i],
           logo: await this.dataUrlToObjectUrl(
             await this.file.readFromMobile({
-              type: "image",
+              type: 'image',
               path: results[i].logo,
             })
           ),
@@ -461,7 +461,7 @@ export class AmaranthusDBProvider {
         ...results,
         logo: await this.dataUrlToObjectUrl(
           await this.file.readFromMobile({
-            type: "image",
+            type: 'image',
             path: results.logo,
           })
         ),
@@ -473,19 +473,19 @@ export class AmaranthusDBProvider {
   async getProfilePictures(students: IStudent[]) {
     for (let i = 0; i < students.length; i++) {
       try {
-        if (students[i].picture && !students[i].picture.match("default")) {
+        if (students[i].picture && !students[i].picture.match('default')) {
           students[i] = {
             ...students[i],
             picture: await this.dataUrlToObjectUrl(
               await this.file.readFromMobile({
-                type: "image",
+                type: 'image',
                 path: students[i].picture,
               })
             ),
           };
         } else if (
           students[i].picture &&
-          students[i].picture.match("default")
+          students[i].picture.match('default')
         ) {
           students[i] = {
             ...students[i],
@@ -493,14 +493,14 @@ export class AmaranthusDBProvider {
           };
         }
       } catch (error) {
-        students[i].picture = "";
+        students[i].picture = '';
       }
     }
     return students;
   }
 
   async getStudent(query: string) {
-    const fullName = query.split(" ");
+    const fullName = query.split(' ');
     if (fullName.length > 1 && fullName[1]) {
       const firstName =
         fullName[0][0].toUpperCase() + fullName[0].slice(1, fullName[0].length);
@@ -588,13 +588,13 @@ export class AmaranthusDBProvider {
     const value = this.checkIfStudentExists({ id: student.id });
     if (value === false) {
       const formattedStudent = trimText(student);
-      if (typeof formattedStudent.picture === "object") {
+      if (typeof formattedStudent.picture === 'object') {
         formattedStudent.picture = await this.cameraTools.readAsBase64(
           (formattedStudent.picture as any)
             .changingThisBreaksApplicationSecurity
         );
       }
-      if (!formattedStudent.picture.match("default")) {
+      if (!formattedStudent.picture.match('default')) {
         const { name, data } = this.getPictureName({
           name: `${formattedStudent.id}-${formattedStudent.firstName}${formattedStudent.lastName}`,
           picture: formattedStudent.picture,
@@ -602,13 +602,13 @@ export class AmaranthusDBProvider {
         await this.file.writeToMobile({
           fileName: name,
           data,
-          type: "image",
+          type: 'image',
         });
         formattedStudent.picture = name;
       }
       studentsColl.insert(formattedStudent);
     } else {
-      throw new Error("User already exists in the database");
+      throw new Error('User already exists in the database');
     }
   }
 
@@ -639,8 +639,8 @@ export class AmaranthusDBProvider {
       ...results,
       ...formattedStudent,
     };
-    if (!results.picture.match("default")) {
-      if (typeof results.picture === "object") {
+    if (!results.picture.match('default')) {
+      if (typeof results.picture === 'object') {
         results.picture = await this.cameraTools.readAsBase64(
           (results.picture as any).changingThisBreaksApplicationSecurity
         );
@@ -653,7 +653,7 @@ export class AmaranthusDBProvider {
       await this.file.writeToMobile({
         fileName: name,
         data,
-        type: "image",
+        type: 'image',
       });
       results.picture = name;
     }
@@ -673,7 +673,7 @@ export class AmaranthusDBProvider {
         $eq: students.id,
       },
     });
-    if (records["length"]) {
+    if (records['length']) {
       records.forEach((record) => {
         recordsColl.remove(record);
       });
@@ -684,12 +684,12 @@ export class AmaranthusDBProvider {
         $eq: student.id,
       },
     });
-    if (notes["length"]) {
+    if (notes['length']) {
       notes.forEach((note) => {
         notesColl.remove(note);
       });
     }
-    if (!students.picture.match("default")) {
+    if (!students.picture.match('default')) {
       this.file.deleteFile(students.picture);
     }
   }
@@ -700,7 +700,7 @@ export class AmaranthusDBProvider {
     event?: string;
   }): IResponse<null> {
     let response;
-    if (opts["event"] && opts.event) {
+    if (opts['event'] && opts.event) {
       response = this.insertOrUpdateRecord({
         ...opts,
         date: {
@@ -726,7 +726,7 @@ export class AmaranthusDBProvider {
   }
 
   addAttendance(opts: { date: ICalendar; id: string; event?: string }) {
-    if (opts["event"] && opts.event) {
+    if (opts['event'] && opts.event) {
       this.insertOrUpdateRecord({
         ...opts,
         date: {
@@ -764,10 +764,10 @@ export class AmaranthusDBProvider {
       day: opts.date.day,
       attendance: opts.attendance,
       absence: opts.absence,
-      event: "",
+      event: '',
     };
     let results;
-    if (opts.hasOwnProperty("event") && opts.event) {
+    if (opts.hasOwnProperty('event') && opts.event) {
       record.event = opts.event;
       results = recordsColl.findOne({
         id: {
@@ -822,17 +822,17 @@ export class AmaranthusDBProvider {
         $eq: id,
       },
     });
-    if (results.picture && !results.picture.match("default")) {
+    if (results.picture && !results.picture.match('default')) {
       results = {
         ...results,
         picture: await this.dataUrlToObjectUrl(
           await this.file.readFromMobile({
-            type: "image",
+            type: 'image',
             path: results.picture,
           })
         ),
       };
-    } else if (results.picture && results.picture.match("default")) {
+    } else if (results.picture && results.picture.match('default')) {
       results = {
         ...results,
         picture: await this.dataUrlToObjectUrl(results.picture),
@@ -847,10 +847,10 @@ export class AmaranthusDBProvider {
     date?: ICalendar;
   }): IRecord[] {
     switch (opts.query) {
-      case "Date":
+      case 'Date':
         const temp = {
           date: opts.date,
-          event: opts["event"],
+          event: opts['event'],
         };
         return this.getAllStudentsRecords(temp);
       default:
@@ -861,9 +861,9 @@ export class AmaranthusDBProvider {
         };
         let options: any = {
           date: date,
-          event: "",
+          event: '',
         };
-        if (opts["event"]) {
+        if (opts['event']) {
           options = {
             ...options,
             event: opts.event,
@@ -886,7 +886,7 @@ export class AmaranthusDBProvider {
     const records: IRecord[] = students.map((student: IStudent) => {
       let studentRecord;
       let record;
-      if (opts.hasOwnProperty("event") && opts.event) {
+      if (opts.hasOwnProperty('event') && opts.event) {
         record = recordsColl.findOne({
           id: {
             $eq: student.id,
@@ -932,7 +932,7 @@ export class AmaranthusDBProvider {
       if (noteData) {
         studentRecord = { notes: noteData.notes };
       } else {
-        studentRecord = { notes: "" };
+        studentRecord = { notes: '' };
       }
       if (record) {
         if (student.id === record.id) {
@@ -964,14 +964,14 @@ export class AmaranthusDBProvider {
     });
 
     for (let i = 0; i < records.length; i++) {
-      if (records[i].picture && !records[i].picture.match("default")) {
+      if (records[i].picture && !records[i].picture.match('default')) {
         records[i].picture = await this.dataUrlToObjectUrl(
           await this.file.readFromMobile({
-            type: "image",
+            type: 'image',
             path: records[i].picture,
           })
         );
-      } else if (records[i].picture && records[i].picture.match("default")) {
+      } else if (records[i].picture && records[i].picture.match('default')) {
         records[i].picture = await this.dataUrlToObjectUrl(records[i].picture);
       }
     }
@@ -993,7 +993,7 @@ export class AmaranthusDBProvider {
         absence = 0;
         let records;
         if (!opts.date.day) {
-          if (opts.hasOwnProperty("event") && opts.event) {
+          if (opts.hasOwnProperty('event') && opts.event) {
             records = recordsColl.find({
               id: {
                 $eq: student.id,
@@ -1022,7 +1022,7 @@ export class AmaranthusDBProvider {
             });
           }
         } else {
-         if (opts.hasOwnProperty("event") && opts.event) {
+          if (opts.hasOwnProperty('event') && opts.event) {
             records = recordsColl.find({
               id: {
                 $eq: student.id,
@@ -1061,12 +1061,12 @@ export class AmaranthusDBProvider {
           records.map((record: IRecord) => {
             if (opts.date.day) {
               if (record.attendance === true) {
-                attendance = "x";
-                absence = "o";
+                attendance = 'x';
+                absence = 'o';
               }
               if (record.absence === true) {
-                absence = "x";
-                attendance = "o";
+                absence = 'x';
+                attendance = 'o';
               }
             } else {
               if (record.attendance === true) {
@@ -1131,19 +1131,19 @@ export class AmaranthusDBProvider {
 
     for (let i = 0; i < students.length; i++) {
       try {
-        if (students[i].picture && !students[i].picture.match("default")) {
+        if (students[i].picture && !students[i].picture.match('default')) {
           students[i] = {
             ...students[i],
             picture: await this.dataUrlToObjectUrl(
               await this.file.readFromMobile({
-                type: "image",
+                type: 'image',
                 path: students[i].picture,
               })
             ),
           };
         } else if (
           students[i].picture &&
-          students[i].picture.match("default")
+          students[i].picture.match('default')
         ) {
           students[i] = {
             ...students[i],
@@ -1151,7 +1151,7 @@ export class AmaranthusDBProvider {
           };
         }
       } catch (error) {
-        students[i].picture = "";
+        students[i].picture = '';
       }
     }
     return students;
@@ -1196,7 +1196,7 @@ export class AmaranthusDBProvider {
       };
       const noteData = this.getNoteByDate({
         id: student.id,
-        event: "",
+        event: '',
         date: {
           ...opts.date,
           month: opts.date.month - 1,
@@ -1225,20 +1225,20 @@ export class AmaranthusDBProvider {
       try {
         if (
           studentRecords[i].picture &&
-          !studentRecords[i].picture.match("default")
+          !studentRecords[i].picture.match('default')
         ) {
           studentRecords[i] = {
             ...studentRecords[i],
             picture: await this.dataUrlToObjectUrl(
               await this.file.readFromMobile({
-                type: "image",
+                type: 'image',
                 path: studentRecords[i].picture,
               })
             ),
           };
         } else if (
           studentRecords[i].picture &&
-          studentRecords[i].picture.match("default")
+          studentRecords[i].picture.match('default')
         ) {
           studentRecords[i] = {
             ...studentRecords[i],
@@ -1246,7 +1246,7 @@ export class AmaranthusDBProvider {
           };
         }
       } catch (error) {
-        studentRecords[i].picture = "";
+        studentRecords[i].picture = '';
       }
     }
     if (!studentRecords) {
@@ -1309,7 +1309,7 @@ export class AmaranthusDBProvider {
     month: number;
   }): IRecord {
     let recordQuery;
-    if (opts.hasOwnProperty("event") && opts.event) {
+    if (opts.hasOwnProperty('event') && opts.event) {
       recordQuery = recordsColl.findOne({
         id: {
           $eq: opts.studentId,

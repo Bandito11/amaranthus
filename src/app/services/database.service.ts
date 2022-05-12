@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { ICalendar, IEvent, INote, IStudent } from "../common/models";
-import { AmaranthusDBProvider } from "../repositories/amaranthus-db/amaranthus-db";
+import { Injectable } from '@angular/core';
+import { ICalendar, IEvent, INote, IStudent } from '../common/models';
+import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class DatabaseService {
   async sortEventData(prop) {

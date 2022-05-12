@@ -5,6 +5,7 @@ import { handleError } from 'src/app/common/handleError';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
 import { DatabaseService } from 'src/app/services/database.service';
 import { IEvent, IStudent } from '../../common/models';
+import { format, parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-event-form',
@@ -19,13 +20,12 @@ export class EventFormComponent implements OnInit {
   @Input() language;
   @Input() students: IStudent[];
   @Input() studentIds: string[];
-
+  @Input() hasEndDate: boolean;
   @Output() eventData = new EventEmitter<IEvent>();
   @Output() queryData = new EventEmitter<string>();
-@Output() deleteEventData = new EventEmitter<IEvent>();
+  @Output() deleteEventData = new EventEmitter<IEvent>();
 
-  hasEndDate;
-  monthNames;
+  
   unfilteredStudents: IStudent[];
 
   constructor(
@@ -37,19 +37,20 @@ export class EventFormComponent implements OnInit {
 
   async ngOnInit() {
     if (this.language === 'spanish') {
-      this.monthNames =
-        'Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre';
     } else {
-      this.monthNames =
-        'January,February,March,April,May,June,July,August,September,October,November,December';
     }
     if (this.event.endDate) {
       this.hasEndDate = true;
     }
   }
 
+
   search(event) {
     this.queryData.emit(event.target.value);
+  }
+
+  formatDate(value: string) {
+    return format(parseISO(value), 'yyyy-MM-dd');
   }
 
   resetEndDate() {
@@ -86,7 +87,7 @@ export class EventFormComponent implements OnInit {
       this.studentIds = [...this.studentIds, id];
     }
   }
-  
+
   async submit() {
     if (typeof this.event.logo === 'object') {
       this.event.logo = await this.cameraTools.readAsBase64(
@@ -103,11 +104,11 @@ export class EventFormComponent implements OnInit {
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
     };
-    
+console.log(this.event)
     this.eventData.emit(event);
   }
 
-  deleteEvent(){
-    this.deleteEventData.emit(this.event)
+  deleteEvent() {
+    this.deleteEventData.emit(this.event);
   }
 }

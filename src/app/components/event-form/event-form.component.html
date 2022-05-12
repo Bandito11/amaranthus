@@ -23,27 +23,33 @@
   </ion-item>
 
   <!--Start Date Control-->
-  <div *ngIf="!event.infiniteDates; else noStartDate">
-    <ion-item>
-      <ion-label>{{ htmlControls.start }}</ion-label>
-      <ion-datetime
-        monthNames="{{ monthNames }}"
-        displayFormat="MMMM DD YYYY"
-        pickerFormat="MMMM DD YYYY"
-        max="2050-12-31"
-        [(ngModel)]="event.startDate"
-      ></ion-datetime>
-    </ion-item>
-  </div>
+  <ion-item *ngIf="!event.infiniteDates && event.startDate; else noStartDate">
+    <ion-label>{{ htmlControls.start }} {{ event.startDate }}</ion-label>
+    <ion-button fill="clear" id="open-start-date">
+      <ion-icon icon="calendar"></ion-icon>
+    </ion-button>
+    <ion-modal trigger="open-start-date">
+      <ng-template>
+        <ion-datetime
+          #startDate
+          presentation="date"
+          max="2050-12-31"
+          (ionChange)="event.startDate = formatDate(startDate.value)"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
   <ng-template #noStartDate>
     <ion-item>
-      <ion-label fixed>{{ htmlControls.start }}</ion-label>
-      <ion-input disabled></ion-input>
+      <ion-label>{{ htmlControls.start }}</ion-label>
+      <ion-button fill="clear" id="open-start-date" disabled="true">
+        <ion-icon icon="calendar"></ion-icon>
+      </ion-button>
     </ion-item>
   </ng-template>
 
   <!--End Date Control-->
-  <ion-item *ngIf="!event.infiniteDates; else checkDisabled">
+  <ion-item *ngIf="!event.infiniteDates && event.startDate; else checkDisabled">
     <ion-label>{{ htmlControls.hasEnd }}</ion-label>
     <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
   </ion-item>
@@ -53,23 +59,22 @@
       <ion-checkbox disabled="true"></ion-checkbox>
     </ion-item>
   </ng-template>
-  <div *ngIf="!event.infiniteDates">
-    <ion-item *ngIf="hasEndDate">
-      <ion-label>{{ htmlControls.end }}</ion-label>
-      <ion-datetime
-        monthNames="{{ monthNames }}"
-        displayFormat="MMMM DD YYYY"
-        pickerFormat="MMMM DD YYYY"
-        max="2050-12-31"
-        [(ngModel)]="event.endDate"
-      ></ion-datetime>
-      <ion-icon
-        id="form-icon"
-        name="warning"
-        *ngIf="!event.endDate && hasEndDate"
-      ></ion-icon>
-    </ion-item>
-  </div>
+  <ion-item *ngIf="!event.infiniteDates && hasEndDate">
+    <ion-label>{{ htmlControls.end }} {{ event.endDate }}</ion-label>
+    <ion-button fill="clear" id="open-end-date">
+      <ion-icon icon="calendar"></ion-icon>
+    </ion-button>
+    <ion-modal trigger="open-end-date">
+      <ng-template>
+        <ion-datetime
+          #endDate
+          presentation="date"
+          max="2050-12-31"
+          (ionChange)="event.endDate = formatDate(endDate.value)"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
   <ion-item>
     <ion-label>{{ htmlControls.run }}</ion-label>
     <ion-checkbox

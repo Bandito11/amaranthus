@@ -22,49 +22,17 @@
       </ion-item>
     </ion-radio-group>
 
-    <ion-item *ngIf="dateControl === 'month'">
-      <ion-label>{{htmlControls.date}}</ion-label>
-      <ion-datetime
-        *ngIf="language == 'spanish'"
-        monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
-        [(ngModel)]="date"
-        value="date"
-        displayFormat="MMMM, YYYY"
-        pickerFormat="MMMM YYYY"
-      >
-      </ion-datetime>
-      <ion-datetime
-        *ngIf="language == 'english'"
-        monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
-        [(ngModel)]="date"
-        value="date"
-        displayFormat="MMMM, YYYY"
-        pickerFormat="MMMM YYYY"
-      >
-      </ion-datetime>
-    </ion-item>
+    <h2>{{htmlControls.date}}</h2>
 
-    <ion-item *ngIf="dateControl === 'day'">
-      <ion-label>{{htmlControls.date}}</ion-label>
-      <ion-datetime
-        *ngIf="language == 'spanish'"
-        monthNames="Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre"
-        [(ngModel)]="date"
-        value="date"
-        displayFormat="MMMM DD, YYYY"
-        pickerFormat="MMMM DD YYYY"
-      >
+    <div *ngIf="dateControl === 'month'">
+      <ion-datetime presentation="month-year" [(ngModel)]="date" value="date">
       </ion-datetime>
-      <ion-datetime
-        *ngIf="language == 'english'"
-        monthNames="January,February,March,April,May,June,July,August,September,October,November,December"
-        [(ngModel)]="date"
-        value="date"
-        displayFormat="MMMM DD, YYYY"
-        pickerFormat="MMMM DD YYYY"
-      >
+    </div>
+
+    <div *ngIf="dateControl === 'day'">
+      <ion-datetime presentation="date" [(ngModel)]="date" value="date">
       </ion-datetime>
-    </ion-item>
+    </div>
 
     <ion-button
       fill="solid"
