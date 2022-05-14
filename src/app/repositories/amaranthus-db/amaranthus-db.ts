@@ -9,7 +9,12 @@ import {
   IResponse,
   ICalendar,
 } from 'src/app/common/models';
-import { trimEvent, trimText } from 'src/app/common/format';
+import {
+  formatDateToIso as formatDateToISO,
+  getFullName,
+  trimEvent,
+  trimText,
+} from 'src/app/common/format';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
 import { CameraToolsService } from 'src/app/services/camera-tools.service';
@@ -843,38 +848,34 @@ export class AmaranthusDBProvider {
 
   getQueriedRecords(opts: {
     event?: string;
-    query: string;
     date?: ICalendar;
-  }): IRecord[] {
-    switch (opts.query) {
-      case 'Date':
-        const temp = {
-          date: opts.date,
-          event: opts['event'],
-        };
-        return this.getAllStudentsRecords(temp);
-      default:
-        const date: ICalendar = {
-          year: new Date().getFullYear(),
-          month: new Date().getMonth() + 1,
-          day: null,
-        };
-        let options: any = {
-          date: date,
-          event: '',
-        };
-        if (opts['event']) {
-          options = {
-            ...options,
-            event: opts.event,
-          };
-        }
-        try {
-          return this.getAllStudentsRecords(options);
-        } catch (error) {
-          return error;
-        }
+    studentIds?: string[];
+  }) {
+    let data = {
+      date: undefined,
+      ...opts,
+    };
+    if (!data.date) {
+      data.date = {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: null,
+      };
     }
+    const records = this.getAllStudentsRecords(data);
+    if (records['length'] && opts.studentIds) {
+      if (opts.studentIds.length > 0) {
+        let list = [];
+        for (const id of opts.studentIds) {
+          const found = records.find((student) => id === student.id);
+          if (found) {
+            list = [...list, found];
+          }
+        }
+        return list;
+      }
+    }
+    return records;
   }
 
   async getStudentsRecordsByDate(opts: { date: ICalendar; event?: string }) {
@@ -1344,5 +1345,69 @@ export class AmaranthusDBProvider {
       });
     }
     return recordQuery;
+  }
+
+  getAttendancePerDay(opts: {
+    date: ICalendar;
+    studentIds: string[];
+    event: string;
+  }) {
+    // student records
+    // date student1 student2 etc
+    // date1 attendance attendance etc
+    // date atetndance attendance etc
+
+    // 1ero: array de fechas por mes
+    // 2do: crear headers por nombre de estudiante. traer arrays de fullnames
+    // 3ero: crear record por orden de estudiante y fecha [fecha, asistencia-estudiante1, asistencia-estudiante2, ...etc]
+    const records = [];
+    const studentNames = [];
+    const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (opts.date.month === 2) {
+      if (
+        (opts.date.year % 4 === 0 && opts.date.year % 100 !== 0) ||
+        opts.date.year % 400 === 0
+      ) {
+        monthLength[1] = 29;
+      }
+    }
+    for (let i = 1; i <= monthLength[opts.date.month - 1]; i++) {
+      const studentRecord = [];
+      opts.studentIds.forEach((studentId) => {
+        const student = studentsColl.findOne({ id: studentId });
+        let record = recordsColl.findOne({
+          id: studentId,
+          year: opts.date.year,
+          month: opts.date.month,
+          day: i,
+          event: opts.event,
+        });
+        if (!record) {
+          record = {
+            attendance: null,
+            absence: null,
+          } as IRecord & LokiObj;
+        }
+        studentRecord.push(record);
+        if (studentNames.length < opts.studentIds.length) {
+          const fullName = getFullName(student);
+          studentNames.push(fullName);
+        }
+      });
+
+      const date = formatDateToISO({
+        day: i,
+        year: opts.date.year,
+        month: opts.date.month,
+      });
+      records.push({ date, record: studentRecord });
+    }
+
+    const attendancePerDay = {
+      names: studentNames,
+      records: records,
+    };
+
+    return attendancePerDay;
   }
 }

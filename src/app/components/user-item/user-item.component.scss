@@ -5,8 +5,11 @@
   }
   .user-items-buttons {
     margin-top: 15px;
-    display: flex;
+    display: flexbox;
+    flex-direction: row;
+    justify-items: left;
   }
+
   
   .label {
     font-weight: bolder;

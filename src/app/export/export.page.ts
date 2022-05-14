@@ -1,4 +1,3 @@
-import { AmaranthusDBProvider } from '../repositories/amaranthus-db/amaranthus-db';
 import { Component } from '@angular/core';
 import {
   LoadingController,
@@ -14,6 +13,7 @@ import { handleError } from '../common/handleError';
 import { ICalendar } from '../common/models';
 import { addZeroInFront } from '../common/validation';
 import { Storage } from '@ionic/storage';
+import { DatabaseService } from '../services/database.service';
 
 @Component({
   selector: 'app-export',
@@ -22,48 +22,25 @@ import { Storage } from '@ionic/storage';
 })
 export class ExportPage {
   language;
-  htmlControls = {
+  htmlControls: {
     toolbar: {
-      title: '',
-    },
-    header: '',
-    month: '',
-    day: '',
-    date: '',
-    texttab: '',
-    csv: '',
-    xlsx: '',
+      title: string;
+    };
+    header: string;
+    month: string;
+    day: string;
+    perMonth: string;
+    date: string;
+    texttab: string;
+    csv: string;
+    xlsx: string;
   };
-  LANGUAGE = {
-    spanish: {
-      toolbar: {
-        title: 'Exportar',
-      },
-      header: 'Escoje el formato de la fecha',
-      month: 'Por mes: ',
-      day: 'Por día: ',
-      date: 'Fecha: ',
-      texttab: 'Exportar como texto delimitado',
-      csv: 'Exportar como CSV',
-      xlsx: 'Exportar como XLSX',
-    },
-    english: {
-      toolbar: {
-        title: 'Export',
-      },
-      header: 'Choose date format',
-      month: 'By month: ',
-      day: 'By day: ',
-      date: 'Date',
-      texttab: 'Export as Text Tab Delimited',
-      csv: 'Export as CSV',
-      xlsx: 'Export as XLSX',
-    },
-  };
+  LANGUAGE;
   students = [];
-  event;
+  event: string;
   date: string;
   dateControl;
+  recordsPerMonth: { names: any[]; records: any[]; };
 
   constructor(
     private loading: LoadingController,
@@ -72,13 +49,54 @@ export class ExportPage {
     private textTab: TextTabDelimitedProvider,
     private file: FileProvider,
     private xlsx: XLSXProvider,
-    private db: AmaranthusDBProvider,
+    private dbService: DatabaseService,
     private storage: Storage,
     private toastController: ToastController
   ) {}
 
   ngOnInit() {
-    this.dateControl = 'month';
+    this.dateControl = 'perMonth';
+    this.htmlControls = {
+      toolbar: {
+        title: '',
+      },
+      header: '',
+      month: '',
+      day: '',
+      perMonth: '',
+      date: '',
+      texttab: '',
+      csv: '',
+      xlsx: '',
+    };
+    this.LANGUAGE = {
+      spanish: {
+        toolbar: {
+          title: 'Exportar',
+        },
+        header: 'Escoje como exportar la data',
+        month: 'Asistencia total por mes: ',
+        day: 'Asistencia total por día: ',
+        perMonth: 'Asistencia por mes: ',
+        date: 'Fecha: ',
+        texttab: 'Exportar como texto delimitado',
+        csv: 'Exportar como CSV',
+        xlsx: 'Exportar como XLSX',
+      },
+      english: {
+        toolbar: {
+          title: 'Export',
+        },
+        header: 'Choose how to export your data',
+        month: 'Total attendance per month: ',
+        day: 'Total attendace per day: ',
+        perMonth: 'Attendance per month: ',
+        date: 'Date',
+        texttab: 'Export as Text Tab Delimited',
+        csv: 'Export as CSV',
+        xlsx: 'Export as XLSX',
+      },
+    };
   }
 
   ionViewWillEnter() {
@@ -108,11 +126,11 @@ export class ExportPage {
   async exportAsXLSX() {
     let xlsxData;
     let message = 'Creating the File...';
-    if (this.dateControl === 'month') {
+    if (this.dateControl === 'month' || this.dateControl === 'perMonth') {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.xlsx`;
-    this.getRecordsByDate({ query: 'Date', date: this.date });
+    this.getRecordsByDate(this.date);
     if (this.language === 'spanish') {
       message = 'Creando el archivo...';
     }
@@ -121,6 +139,13 @@ export class ExportPage {
     });
     await loading.present();
     try {
+      if (this.dateControl === 'perMonth') {
+        xlsxData = await this.xlsx.exportAttendancePerMonth({
+          type: recordType.perMonth,
+          data: this.recordsPerMonth,
+          fileName: fileName,
+        });
+      }
       if (this.dateControl === 'month') {
         xlsxData = await this.xlsx.exportXLSXToFile({
           type: recordType.month,
@@ -185,7 +210,7 @@ export class ExportPage {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.txt`;
-    this.getRecordsByDate({ query: 'Date', date: this.date });
+    this.getRecordsByDate(this.date);
     let message = 'Creating the File...';
     if (this.language === 'spanish') {
       message = 'Creando el archivo...';
@@ -195,6 +220,13 @@ export class ExportPage {
     });
     await loading.present();
     try {
+      if (this.dateControl === 'perMonth') {
+        textTabResponse = await this.textTab.exportAttendancePerMonth({
+          type: recordType.perMonth,
+          data: this.recordsPerMonth,
+          fileName: fileName,
+        });
+      }
       if (this.dateControl === 'month') {
         textTabResponse = await this.textTab.exportTextTabDelimited({
           type: recordType.month,
@@ -278,7 +310,7 @@ export class ExportPage {
       this.date = this.date.slice(0, 7);
     }
     const fileName = `AttendanceLog-${this.date}.csv`;
-    this.getRecordsByDate({ query: 'Date', date: this.date });
+    this.getRecordsByDate(this.date);
     let message = 'Creating the File...';
     if (this.language === 'spanish') {
       message = 'Creando el archivo...';
@@ -288,6 +320,13 @@ export class ExportPage {
     });
     await loading.present();
     try {
+      if (this.dateControl === 'perMonth') {
+        csvResponse = await this.csv.exportAttendancePerMonth({
+          type: recordType.perMonth,
+          data: this.recordsPerMonth,
+          fileName: fileName,
+        });
+      }
       if (this.dateControl === 'month') {
         csvResponse = await this.csv.exportCSV({
           type: recordType.month,
@@ -354,27 +393,39 @@ export class ExportPage {
    * @param {{ query: string; date: string }} opts
    * @memberof ExportPage
    */
-  getRecordsByDate(opts: { query: string; date: string }) {
+  getRecordsByDate(date: string) {
     try {
-      const dateVal = opts.date.split('-');
-      let date: ICalendar;
+      const dateVal = date.split('-');
+      let localDate: ICalendar;
       if (dateVal.length === 2) {
-        date = {
+        localDate = {
           year: parseInt(dateVal[0]),
           month: parseInt(dateVal[1]),
           day: null,
         };
       } else {
-        date = {
+        localDate = {
           year: parseInt(dateVal[0]),
           month: parseInt(dateVal[1]),
           day: parseInt(dateVal[2]),
         };
       }
-      const records = this.db.getQueriedRecords({
+      if (this.dateControl === 'perMonth') {
+        const students = this.dbService.getAllStudentsRecords({
+          event: this.event,
+          date: localDate,
+        });
+        const studentIds = students.map((student) => student.id);
+        this.recordsPerMonth = this.dbService.getAttendancePerDay({
+          date: localDate,
+          studentIds,
+          event: this.event,
+        });
+        return;
+      }
+      const records = this.dbService.getQueriedRecords({
         event: this.event,
-        query: opts.query,
-        date: date,
+        date: localDate,
       });
       if (records['length']) {
         this.students = [...records];

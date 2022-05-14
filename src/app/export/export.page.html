@@ -12,6 +12,11 @@
     <ion-radio-group [(ngModel)]="dateControl" name="dateControl">
       <ion-list-header> {{htmlControls.header}} </ion-list-header>
       <ion-item>
+        <ion-label>{{htmlControls.perMonth}}</ion-label>
+        <ion-radio value="perMonth"></ion-radio>
+      </ion-item>
+      
+      <ion-item>
         <ion-label>{{htmlControls.month}}</ion-label>
         <ion-radio value="month"></ion-radio>
       </ion-item>
@@ -23,6 +28,11 @@
     </ion-radio-group>
 
     <h2>{{htmlControls.date}}</h2>
+
+    <div *ngIf="dateControl === 'perMonth'">
+      <ion-datetime presentation="month-year" [(ngModel)]="date" value="date">
+      </ion-datetime>
+    </div>
 
     <div *ngIf="dateControl === 'month'">
       <ion-datetime presentation="month-year" [(ngModel)]="date" value="date">
