@@ -67,4 +67,48 @@ export class CSVProvider {
     }
     return csv;
   }
+
+  async exportAttendancePerMonth(opts: {
+    type: string;
+    data: { names: any[]; records: any[] };
+    fileName: string;
+  }) {
+    let language;
+    try {
+      language = await this.storage.get('language');
+    } catch (error) {
+      throw error;
+    }
+    let records = [];
+    let headers = ['Date'];
+    opts.data.names.forEach((name) => {
+      headers.push(name);
+    });
+    opts.data.records.forEach((record) => {
+      let newRecord = [record.date];
+      record.record.forEach((data) => {
+        if (data.attendance) {
+          newRecord.push('o');
+        } else {
+          newRecord.push('x');
+        }
+      });
+      records.push(newRecord);
+    });
+    const data = [headers, ...records];
+   
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
+    const csv = XLSX.utils.sheet_to_csv(ws);
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+      const hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+      hiddenElement.target = '_blank';
+
+      //provide the name for the CSV file to be downloaded
+      hiddenElement.download = `${opts.fileName}.csv`;
+      hiddenElement.click();
+    }
+    return csv;
+  }
+
 }

@@ -99,7 +99,7 @@ export class DatabaseService {
     return this.db.getAllStudentsRecords(opts);
   }
 
-  getQueriedRecords(opts: { event?: string; query: string; date?: ICalendar }) {
+  getQueriedRecords(opts: { event?: string;  date?: ICalendar, studentIds?: string[]}) {
     return this.db.getQueriedRecords(opts);
   }
 
@@ -165,5 +165,13 @@ export class DatabaseService {
 
   getAllNotesById(id: string) {
     return this.db.getAllNotesById(id);
+  }
+
+  getAttendancePerDay(opts: {
+    date: ICalendar;
+    studentIds: string[];
+    event: string;
+  }) {
+    return this.db.getAttendancePerDay(opts);
   }
 }

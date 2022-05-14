@@ -71,6 +71,7 @@ export const YEARLABELS = [...YEARS];
 export enum recordType {
   month = 'month',
   day = 'day',
+  perMonth = 'perMonth'
 }
 
 export const WEEKDAYSLABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

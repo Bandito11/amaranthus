@@ -216,7 +216,6 @@ export class HomePage implements OnInit {
         this.students = await this.dbService.getAllInActiveStudents(this.date);
         break;
       default:
-        //FIXME: Filter by student.class
         this.students = await this.dbService.getStudentByClass({
           date: this.date,
           class: option,

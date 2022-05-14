@@ -5,7 +5,7 @@
       <ion-back-button *ngIf="event"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button *ngIf="students.length > 0" (click)="toExportPage()">
+      <ion-button *ngIf="records.length > 0" (click)="toExportPage()">
         {{htmlControls.toolbar.buttons.export}}
       </ion-button>
     </ion-buttons>
@@ -15,66 +15,107 @@
 <ion-content class="ion-padding" id="stats">
   <ion-item>
     <ion-label>{{htmlControls.filter}}</ion-label>
-    <ion-select interface="popover" (ionCancel)="initializeStudents()" multiple="false" #filter
-      (ionChange)="queryData(filter.value)">
-      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}">{{option}}</ion-select-option>
+    <ion-select
+      interface="popover"
+      (ionCancel)="initializeStudents()"
+      multiple="false"
+      #filter
+      (ionChange)="sortData(filter.value)"
+    >
+      <ion-select-option *ngFor="let option of selectOptions" value="{{option}}"
+        >{{option}}</ion-select-option
+      >
     </ion-select>
   </ion-item>
-  <div *ngIf="query == 'Date'">
+  <ion-item>
+    <ion-label>{{htmlControls.table}}</ion-label>
+    <ion-select
+      interface="popover"
+      multiple="false"
+      #table
+      (ionChange)="getTable(table.value)"
+    >
+      <ion-select-option *ngFor="let option of tableOptions" value="{{option}}"
+        >{{option}}</ion-select-option
+      >
+    </ion-select>
+  </ion-item>
+  <div *ngIf="query === 'Total' || query === 'Monthly' ">
     <ion-item>
       <ion-label>{{htmlControls.year}}</ion-label>
-      <ion-select interface="popover" multiple="false" #year (ionChange)="queryDataByYear(year.value)">
-        <ion-select-option *ngFor="let year of years" value="{{year}}">{{year}}</ion-select-option>
+      <ion-select
+        interface="popover"
+        multiple="false"
+        #year
+        (ionChange)="queryDataByYear(year.value)"
+        value="{{yearQuery}}"
+      >
+        <ion-select-option *ngFor="let year of years" value="{{year}}"
+          >{{year}}</ion-select-option
+        >
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label>{{htmlControls.month}}</ion-label>
-      <ion-select interface="popover" multiple="false" #month (ionChange)="queryDataByMonth(month.value)">
-        <ion-select-option *ngFor="let month of months" value="{{month}}">{{month}}</ion-select-option>
+      <ion-select
+        interface="popover"
+        multiple="false"
+        #month
+        (ionChange)="queryDataByMonth(month.value)"
+        value="{{monthQuery}}"
+      >
+        <ion-select-option *ngFor="let month of months" value="{{month}}"
+          >{{month}}</ion-select-option
+        >
       </ion-select>
     </ion-item>
   </div>
-  <div id="table">
+
+  <!-- Total per Month Student Records Table -->
+  <div id="table" *ngIf="table.value === 'Total'">
     <table>
-      <caption [ngSwitch]="query">
-        <ng-template ngSwitchWhen="Date">{{htmlControls.tableTitle}}{{monthQuery}},
-          {{yearQuery}}</ng-template>
-        <ng-template ngSwitchDefault>{{htmlControls.tableTitle}}{{monthQuery}}, {{yearQuery}}</ng-template>
+      <caption>
+        {{htmlControls.tableTitle}}{{monthQuery}}, {{yearQuery}}
       </caption>
       <tr>
-        <th>
-          Id
-        </th>
-        <th>
-          {{htmlControls.tableHeaders.name}}
-        </th>
-        <th>
-          {{htmlControls.tableHeaders.attendance}}
-        </th>
-        <th>
-          {{htmlControls.tableHeaders.absence}}
-        </th>
-        <th>
-          {{htmlControls.tableHeaders.percent}}
-        </th>
+        <th>Id</th>
+        <th>{{htmlControls.tableHeaders.name}}</th>
+        <th>{{htmlControls.tableHeaders.attendance}}</th>
+        <th>{{htmlControls.tableHeaders.absence}}</th>
+        <th>{{htmlControls.tableHeaders.percent}}</th>
       </tr>
-      <tr *ngFor="let student of students">
-        <td>
-          {{student.id}}
-        </td>
-        <td>
-          {{student.fullName}}
-        </td>
-        <td>
-          {{student.attendance}}
-        </td>
-        <td>
-          {{student.absence}}
-        </td>
-        <td>
-          {{student.percent}}
-        </td>
+      <tr *ngFor="let student of records">
+        <td>{{student.id}}</td>
+        <td>{{student.fullName}}</td>
+        <td>{{student.attendance}}</td>
+        <td>{{student.absence}}</td>
+        <td>{{student.percent}}</td>
       </tr>
+    </table>
+  </div>
+  <div>
+    <!-- Records Per Month Table -->
+    <table *ngIf="query === 'Monthly'">
+      <caption></caption>
+      <tr>
+        <th>{{htmlControls.tableHeaders.date}}</th>
+        <th *ngFor="let student of studentNames">{{student}}</th>
+      </tr>
+      <ng-container *ngFor="let record of studentRecords">
+        <tr>
+          <td>{{record.date}}</td>
+          <ng-container *ngFor="let record of record.record">
+            <td *ngIf="record.attendance; else absent">
+              <ion-icon name="checkmark-outline"></ion-icon>
+            </td>
+            <ng-template #absent>
+              <td>
+                <ion-icon name="close-outline"></ion-icon>
+              </td>
+            </ng-template>
+          </ng-container>
+        </tr>
+      </ng-container>
     </table>
   </div>
 </ion-content>

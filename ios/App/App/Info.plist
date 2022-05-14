@@ -41,6 +41,11 @@
 	<string>Needed to generate a profile picture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Needed to generate a profile picture</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -1,5 +1,5 @@
 import { MONTHSLABELS } from './constants';
-import { IStudent, IEvent } from './models';
+import { IStudent, IEvent, ICalendar } from './models';
 
 export const capitalizeFirstLetter = (word) =>
   (word[0].toUpperCase() + word.slice(1, word.length)).trim();
@@ -28,8 +28,21 @@ export function formatDate(date: string) {
   return formattedDate;
 }
 
-export function formatDateToIso(date: string){
-  
+export function formatDateToIso(date: ICalendar) {
+  let month;
+  let year = date.year;
+  let day;
+  if (date.month < 10) {
+    month = `0${date.month}`;
+  } else {
+    month = date.month;
+  }
+  if (date.day < 10) {
+    day = `0${date.day}`;
+  } else {
+    day = date.day;
+  }
+  return `${year}-${month}-${day}`;
 }
 
 export function trimText(student: IStudent) {
@@ -72,4 +85,20 @@ export function formatStudentName(opts: IStudent) {
   } else {
     return student;
   }
+}
+
+export function getFullName(student: IStudent) {
+  const firstName =
+    student.firstName.split('')[0].toUpperCase() +
+    student.firstName.slice(1, student.firstName.length);
+  const lastName =
+    student.lastName.split('')[0].toUpperCase() +
+    student.lastName.slice(1, student.lastName.length);
+  let initial = '';
+  if (student.initial) {
+    initial =
+      student.initial.split('')[0].toUpperCase() +
+      student.initial.slice(1, student.initial.length);
+  }
+  return `${firstName} ${initial} ${lastName}`;
 }

@@ -104,7 +104,6 @@ export class EventFormComponent implements OnInit {
       studentIds: this.studentIds,
       hasEndDate: this.hasEndDate,
     };
-console.log(this.event)
     this.eventData.emit(event);
   }
 

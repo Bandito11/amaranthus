@@ -1,13 +1,10 @@
 import { ActivatedRoute } from '@angular/router';
-import { MONTHS, MESESLABELS } from './../common/constants';
+import { MONTHS, MESESLABELS, MESES } from './../common/constants';
 import { ExportPage } from './../export/export.page';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IRecord, ICalendar } from 'src/app/common/models';
+import { IRecord, ICalendar, IStudent } from 'src/app/common/models';
 import { MONTHSLABELS, YEARLABELS } from 'src/app/common/constants';
-import {
-  ModalController,
-  ToastController,
-} from '@ionic/angular';
+import { IonSelect, ModalController, ToastController } from '@ionic/angular';
 import { handleError } from 'src/app/common/handleError';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
@@ -18,76 +15,48 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./stats.page.scss'],
 })
 export class StatsPage implements OnInit {
-  students: IRecord[];
-  private unfilteredStudents: IRecord[] = [];
+  @ViewChild('filter') filterElement: IonSelect;
+  @ViewChild('table') tableElement: IonSelect;
+  @ViewChild('year') yearElement: IonSelect;
+  @ViewChild('month') monthElement: IonSelect;
+
+  records: IRecord[];
+  private initialRecords: IRecord[];
+
   query: string;
   monthQuery: string;
   months: string[] = [];
-  currentDate: Date = new Date();
+  currentDate: Date;
   yearQuery: string;
-  years: number[] = [...YEARLABELS];
+  years: number[];
   selectOptions: string[];
+  tableOptions: string[];
   bought: boolean;
-  @ViewChild('filter', { static: true }) filterElement;
   event;
   studentIds: string[];
-  htmlControls = {
+
+  htmlControls: {
     toolbar: {
-      title: '',
+      title: string;
       buttons: {
-        export: '',
-      },
-    },
-    filter: '',
-    year: '',
-    month: '',
-    tableTitle: '',
+        export: string;
+      };
+    };
+    table: string;
+    filter: string;
+    year: string;
+    month: string;
+    tableTitle: string;
     tableHeaders: {
-      name: '',
-      attendance: '',
-      absence: '',
-      percent: '',
-    },
+      name: string;
+      attendance: string;
+      absence: string;
+      percent: string;
+      date: string;
+    };
   };
 
-  LANGUAGE = {
-    english: {
-      toolbar: {
-        title: 'Stats',
-        buttons: {
-          export: 'EXPORT',
-        },
-      },
-      filter: 'Filter by: ',
-      year: 'Year: ',
-      month: 'Month: ',
-      tableTitle: 'Total Attendance in ',
-      tableHeaders: {
-        name: 'Name',
-        attendance: 'Attendance',
-        absence: 'Absence',
-        percent: 'Attendance %',
-      },
-    },
-    spanish: {
-      toolbar: {
-        title: 'Estadísticas',
-        buttons: {
-          export: 'Exportar',
-        },
-      },
-      filter: 'Filtrar por: ',
-      year: 'Año',
-      month: 'Mes',
-      tableTitle: 'Asistencia Total en ',
-      tableHeaders: {
-        name: 'Nombre',
-        attendance: 'Asistencia',
-        absence: 'Ausencia',
-        percent: 'Asistence %',
-      },
-    },
-  };
+  LANGUAGE;
   language;
 
   constructor(
@@ -97,42 +66,108 @@ export class StatsPage implements OnInit {
     private storage: Storage
   ) {}
 
-  ionViewWillEnter() {
-    this.storage.get('language').then((value) => {
-      if (value) {
-        this.language = value;
-      } else {
-        this.language = 'english';
-      }
-      this.htmlControls = this.LANGUAGE[this.language];
-      if (this.language === 'spanish') {
-        this.filterElement.value = 'Sin filtro';
-        this.selectOptions = [
-          'Id',
-          'Asistencia',
-          'Ausencia',
-          'Fecha',
-          'Nombre',
-          'Sin filtro',
-        ];
-        this.months = MESESLABELS;
-      } else {
-        this.selectOptions = [
-          'Id',
-          'Attendance',
-          'Absence',
-          'Date',
-          'Name',
-          'None',
-        ];
-        this.filterElement.value = 'None';
-        this.months = MESESLABELS;
-        this.months = MONTHSLABELS;
-      }
-      this.monthQuery = this.months[this.currentDate.getMonth()];
-      this.yearQuery = this.currentDate.getFullYear().toString();
-    });
-    this.query = '';
+  ngOnInit() {
+    this.currentDate = new Date();
+    this.records = [];
+    this.initialRecords = [];
+    this.years = [...YEARLABELS];
+    this.htmlControls = {
+      toolbar: {
+        title: '',
+        buttons: {
+          export: '',
+        },
+      },
+      table: '',
+      filter: '',
+      year: '',
+      month: '',
+      tableTitle: '',
+      tableHeaders: {
+        name: '',
+        attendance: '',
+        absence: '',
+        percent: '',
+        date: '',
+      },
+    };
+    this.LANGUAGE = {
+      english: {
+        toolbar: {
+          title: 'Stats',
+          buttons: {
+            export: 'EXPORT',
+          },
+        },
+        filter: 'Sort by: ',
+        year: 'Year: ',
+        month: 'Month: ',
+        table: 'Choose table: ',
+        tableTitle: 'Total Attendance in ',
+        tableHeaders: {
+          name: 'Name',
+          attendance: 'Attendance',
+          absence: 'Absence',
+          percent: 'Attendance %',
+          date: 'Date',
+        },
+      },
+      spanish: {
+        toolbar: {
+          title: 'Estadísticas',
+          buttons: {
+            export: 'Exportar',
+          },
+        },
+        filter: 'Ordenar por: ',
+        year: 'Año',
+        month: 'Mes',
+        table: 'Escoger tabla: ',
+        tableTitle: 'Asistencia Total en ',
+        tableHeaders: {
+          name: 'Nombre',
+          attendance: 'Asistencia',
+          absence: 'Ausencia',
+          percent: 'Asistence %',
+          date: 'Fecha',
+        },
+      },
+    };
+  }
+
+  async ionViewWillEnter() {
+    const language = await this.storage.get('language');
+    language ? (this.language = language) : (this.language = 'english');
+    this.htmlControls = this.LANGUAGE[this.language];
+    if (this.language === 'spanish') {
+      this.selectOptions = [
+        // 'Id',
+        'Asistencia',
+        'Ausencia',
+        'Fecha',
+        // 'Nombre',
+        'Ninguno',
+      ];
+      this.tableOptions = ['Total', 'Por mes'];
+      this.months = MESESLABELS;
+      this.filterElement.value = 'Ninguno';
+    } else {
+      this.selectOptions = [
+        // 'Id',
+        'Attendance',
+        'Absence',
+        'Date',
+        // 'Name',
+        'None',
+      ];
+      this.tableOptions = ['Total', 'Per Month'];
+      this.months = MONTHSLABELS;
+      this.filterElement.value = 'None';
+    }
+    this.tableElement.value = 'Total';
+    this.monthQuery = this.months[this.currentDate.getMonth()];
+    this.yearQuery = this.currentDate.getFullYear().toString();
+    this.query = this.tableElement.value;
     this.event = this.route.snapshot.paramMap.get('event');
     if (!this.event) {
       this.event = '';
@@ -145,13 +180,48 @@ export class StatsPage implements OnInit {
     this.getStudentsRecords();
   }
 
-  ngOnInit() {
-    this.students = [];
-    this.unfilteredStudents = [];
+  initializeStudents() {
+    this.records = this.initialRecords;
   }
 
-  initializeStudents() {
-    this.students = this.unfilteredStudents;
+  getAttendancePerDay(date: ICalendar) {
+    let studentIds = [];
+    if (this.studentIds.length > 0) {
+      studentIds = [...this.studentIds];
+    } else {
+      this.records.map((record) => studentIds.push(record.id));
+    }
+    const { names, records } = this.dbService.getAttendancePerDay({
+      date,
+      studentIds: studentIds,
+      event: this.event,
+    });
+    this.studentNames = [...names];
+    this.studentRecords = [...records];
+  }
+
+  studentNames;
+  studentRecords;
+
+  getTable(option) {
+    this.initializeStudents();
+    this.query = '';
+    switch (option) {
+      case 'Total':
+        this.query = 'Total';
+        this.queryDataByYear(new Date().getFullYear());
+        break;
+      case 'Per Month':
+      case 'Por mes':
+        this.query = 'Monthly';
+        const date:ICalendar = {
+          day: this.currentDate.getDate(),
+          year: this.currentDate.getFullYear(),
+          month: this.currentDate.getMonth()+1
+        }
+        this.getAttendancePerDay(date);
+        break;
+    }
   }
 
   /**
@@ -160,7 +230,7 @@ export class StatsPage implements OnInit {
    * @param {string} option
    * @memberof StatsPage
    */
-  queryData(option: string) {
+  sortData(option: string) {
     this.initializeStudents();
     this.query = '';
     switch (option) {
@@ -169,20 +239,15 @@ export class StatsPage implements OnInit {
         break;
       case 'Attendance':
       case 'Asistencia':
-        this.queryStudentsbyAttendance();
+        this.sortStudentsbyAttendance();
         break;
       case 'Absence':
       case 'Ausencia':
-        this.queryStudentsbyAbsence();
+        this.sortStudentsbyAbsence();
         break;
       case 'Name':
       case 'Nombre':
         this.queryStudentsName();
-        break;
-      case 'Date':
-      case 'Fecha':
-        this.query = 'Date';
-        this.queryDataByYear(new Date().getFullYear());
         break;
       default:
         this.initializeStudents();
@@ -202,12 +267,17 @@ export class StatsPage implements OnInit {
       day: null,
     };
     try {
-      const records = this.dbService.getAllStudentsRecords({
-        event: this.event,
-        date: date,
-      });
-      if (records['length']) {
-        this.students = [...records];
+      if (this.query === 'Total') {
+        const records = this.dbService.getQueriedRecords({
+          event: this.event,
+          date: date,
+          studentIds: this.studentIds,
+        });
+        if (records['length']) {
+          this.records = [...records];
+        }
+      } else if (this.query === 'Monthly') {
+        this.getAttendancePerDay(date);
       }
     } catch (error) {
       handleError(error);
@@ -222,20 +292,29 @@ export class StatsPage implements OnInit {
    */
   queryDataByMonth(month) {
     let date: ICalendar;
-    const index = parseInt(MONTHS[month]);
+    let index: number;
+    if (this.language === 'spanish') {
+      index = parseInt(MESES[month]);
+    } else {
+      index = parseInt(MONTHS[month]);
+    }
     date = {
       year: +this.yearQuery,
       month: index + 1,
       day: null,
     };
     try {
-      const records = this.dbService.getAllStudentsRecords({
+      if(this.query === 'Total'){
+      const records = this.dbService.getQueriedRecords({
         event: this.event,
         date: date,
+        studentIds: this.studentIds,
       });
       if (records['length']) {
-        this.students = [...records];
+        this.records = [...records];
         this.monthQuery = this.months[date.month - 1];
+      }} else if(this.query === 'Monthly'){
+        this.getAttendancePerDay(date);
       }
     } catch (error) {
       handleError(error);
@@ -251,26 +330,10 @@ export class StatsPage implements OnInit {
     try {
       const records = this.dbService.getQueriedRecords({
         event: this.event,
-        query: this.query,
+        studentIds: this.studentIds,
       });
-      if (records['length']) {
-        if (this.studentIds.length > 0) {
-          let list = [];
-          for (const id of this.studentIds) {
-            const found = records.find((student) => id === student.id);
-            if (found) {
-              list = [...list, found];
-            }
-          }
-          this.students = list;
-          this.unfilteredStudents = list;
-        } else {
-          this.students = [...records];
-          this.unfilteredStudents = [...records];
-        }
-      } else {
-        handleError(`Stats Page: No records in database were found`);
-      }
+      this.records = [...records];
+      this.initialRecords = [...records];
     } catch (error) {
       handleError(error);
     }
@@ -282,8 +345,8 @@ export class StatsPage implements OnInit {
    * @memberof StatsPage
    */
   queryStudentsName() {
-    this.students = [
-      ...this.students.sort((a, b) => {
+    this.records = [
+      ...this.records.sort((a, b) => {
         if (a.fullName.toLowerCase() < b.fullName.toLowerCase()) {
           return -1;
         }
@@ -300,9 +363,9 @@ export class StatsPage implements OnInit {
    *
    * @memberof StatsPage
    */
-  queryStudentsbyAttendance() {
-    this.students = [
-      ...this.students.sort((a, b) => {
+  sortStudentsbyAttendance() {
+    this.records = [
+      ...this.records.sort((a, b) => {
         if (a.attendance < b.attendance) {
           return 1;
         }
@@ -319,9 +382,9 @@ export class StatsPage implements OnInit {
    *
    * @memberof StatsPage
    */
-  queryStudentsbyAbsence() {
-    this.students = [
-      ...this.students.sort((a, b) => {
+  sortStudentsbyAbsence() {
+    this.records = [
+      ...this.records.sort((a, b) => {
         if (a.absence < b.absence) {
           return 1;
         }
@@ -339,8 +402,8 @@ export class StatsPage implements OnInit {
    * @memberof StatsPage
    */
   queryStudentsbyId() {
-    this.students = [
-      ...this.students.sort((a, b) => {
+    this.records = [
+      ...this.records.sort((a, b) => {
         if (a.id < b.id) {
           return -1;
         }
@@ -360,7 +423,7 @@ export class StatsPage implements OnInit {
   async toExportPage() {
     const modal = await this.modalCtrl.create({
       component: ExportPage,
-      componentProps: { students: this.students, event: this.event },
+      componentProps: { students: this.records, event: this.event },
     });
     await modal.present();
   }
