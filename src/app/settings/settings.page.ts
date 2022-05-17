@@ -94,6 +94,7 @@ export class SettingsPage implements OnInit {
     },
   };
   textArea: string;
+  userAgent: RegExpMatchArray;
 
   constructor(
     public emailComposer: EmailComposer,
@@ -127,6 +128,7 @@ export class SettingsPage implements OnInit {
 
     this.iap.getProducts();
     this.products = this.iap.products;
+    this.userAgent = navigator.userAgent.match('Windows');
   }
 
   setTextArea() {

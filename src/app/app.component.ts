@@ -24,7 +24,8 @@ export class AppComponent {
       if (this.platform.is('mobile') && this.platform.is('android')) {
         StatusBar.setBackgroundColor({ color: '#e60000' });
       }
-      if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
+
+      if (navigator.userAgent.match('Windows') || this.platform.is('mobileweb')) {
         this.storage.set('boughtMasterKey', true);
       }
       await SplashScreen.hide();
