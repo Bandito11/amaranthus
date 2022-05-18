@@ -45,7 +45,7 @@
     >
   </div>
   <div
-    *ngIf="!this.platform.is('desktop') && !this.platform.is('mobileweb') && !bought"
+    *ngIf="!userAgent  && !this.platform.is('mobileweb') && !bought"
   >
     <div *ngFor="let product of products">
       <div>

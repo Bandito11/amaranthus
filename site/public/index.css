@@ -1,7 +1,9 @@
- body{
-   margin: 0;
-   padding: 0;
- }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Work Sans', sans-serif;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -19,25 +21,37 @@ img {
 }
 
 .share {
-  padding: 12pt;
+  margin-top: 12pt;
+  margin-right: 12pt;
   display: inherit;
-  font-size: 14pt;
 }
 
 .share a {
-  padding-left: 10px;
+  margin-left: 10px;
+  font-size: 14pt;
 }
 
 .facebook-logo {
-  color: blue;
+  color: #4267b2;
 }
 
 .twitter-logo {
-  color: lightblue;
+  color: #1da1f2;
 }
 
 section {
-  padding: 10pt;
+  padding-left: 10pt;
+  padding-right: 10pt;
+}
+
+.presentation {
+  margin-bottom: 15pt;
+}
+
+.presentation h1 {
+  font-size: 30pt;
+  margin-left: 5pt;
+  margin-right: 5pt;
 }
 
 .presentation img {
@@ -45,12 +59,359 @@ section {
   height: auto;
   padding-right: 5pt;
 }
-.presentation-images {
+
+.store-images {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-left: 25pt;
+  margin-right: 25pt;
+}
+
+.portrait-images {
+  width: 60%;
+  margin-left: 55pt;
+  margin-right: 55pt;
+}
+
+.banner-image {
+  width: 60%;
+  margin-left: 55pt;
+  margin-right: 55pt;
+}
+
+
+footer{
+  display: flex;
   align-items: center;
-  margin-left: 5pt;
-  margin-right: 5pt;
-  /* justify-content: space-between; */
+  justify-content: center;
+}
+footer a:link {
+  text-decoration: none;  
+}
+footer a:hover{
+  text-decoration: none;
+}
+
+@media only screen and (min-width: 360px) and (min-height: 740px) {
+  .store-images {
+    margin-left: 16pt;
+    margin-right: 16pt;
+  }
+  .presentation .google-logo {
+    width: 106pt;
+    margin-top: 0.5pt;
+  }
+  .portrait-images {
+    margin-left: 53pt;
+    margin-right: 53pt;
+  }
+  .banner-image {
+    margin-left: 53pt;
+    margin-right: 53pt;
+  }
+}
+
+@media only screen and (min-width: 390px) {
+  .presentation h1 {
+    font-size: 32pt;
+  }
+  .store-images {
+    margin-left: 28pt;
+    margin-right: 28pt;
+  }
+  .presentation .google-logo {
+    /* width: 106pt; */
+    margin-top: 1.3pt;
+  }
+}
+
+@media only screen and (min-width: 412px) {
+  .store-images {
+    margin-left: 30pt;
+    margin-right: 30pt;
+  }
+  .portrait-images {
+    margin-left: 58pt;
+    margin-right: 58pt;
+  }
+  .banner-image {
+    margin-left: 58pt;
+    margin-right: 58pt;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .main-left{
+    padding: 15pt;
+  }
+  .intro {
+    margin-bottom: 60pt;
+  }
+  .store-images {
+    margin-left: 80pt;
+    margin-right: 80pt;
+  }
+  .banner-image {
+    width: 35%;
+    margin-left: 120pt;
+    margin-right: 120pt;
+  }
+
+  .row {
+    margin-bottom: 60pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 150pt;
+  }
+
+  .odd {
+    margin-bottom: 30pt;
+    flex-direction: row-reverse;
+  }
+
+  .third {
+    margin-bottom: 0;
+  }
+
+  .third img{
+    padding: 10pt;
+  }
+  .last {
+    margin-bottom: 0pt;
+  }
+
+  .last div {
+    margin-left: 30pt;
+  }
+
+  .row img {
+    width: 20%;
+  }
+  .third img {
+    width: 25%;
+  }
+  .last img {
+    width: 30%;
+  }
+  .feature-list li{
+    font-size:14pt;
+  }
+  .main {
+    display: flex;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  p{
+    font-size: 14pt;
+  }
+  .share a {
+    font-size: 16pt;
+  }
+  section {
+    padding-left: 50pt;
+    padding-right: 50pt;
+  }
+  .presentation h1 {
+    font-size: 50pt;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+  .intro {
+    margin-bottom: 90pt;
+  }
+  h2 {
+    margin-left: 50px;
+    margin-right: 50px;
+    font-size: 33pt;
+  }
+  .store-images {
+    margin-left: 150pt;
+    margin-right: 150pt;
+  }
+  .banner-image {
+    width: 35%;
+    margin-left: 160pt;
+    margin-right: 160pt;
+  }
+
+  section p {
+    font-size: 15pt;
+  }
+
+  .third{
+    margin-bottom: 60pt;
+  }
+  .last{
+    margin-bottom: 10pt;
+  }
+  .feature-list h2 {
+    margin-left: 0;
+  }
+  
+}
+
+@media only screen and (min-width: 1180px) {
+  body {
+    padding: 10pt;
+  }
+  header {
+    padding: 0;
+  }
+  .banner-image {
+    width: 35%;
+    margin-left: 240pt;
+    margin-right: 240pt;
+  }
+  .store-images {
+    margin-left: 265pt;
+    margin-right: 265pt;
+  }
+  .row {
+    margin-bottom: 180pt;
+  }
+
+  .odd {
+    margin-bottom: 50pt;
+  }
+
+  .third {
+    margin-bottom: 20pt;
+  }
+  section p {
+    font-size: 15pt;
+  }
+  .feature-list li {
+    font-size: 15pt;
+  }
+}
+
+@media only screen and (min-width: 1366px) {
+  .presentation h1 {
+    margin-left: 33pt;
+    margin-right: 33pt;
+  }
+  .banner-image {
+    width: 35%;
+    margin-left: 275pt;
+    margin-right: 275pt;
+  }
+  .store-images {
+    margin-left: 320pt;
+    margin-right: 320pt;
+  }
+  .intro {
+    margin-bottom: 120pt;
+  }
+  .odd {
+    margin-bottom: 80pt;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  section {
+    padding-left: 120pt;
+    padding-right: 120pt;
+    margin: 0;
+  }
+  .presentation h1 {
+    font-size: 90pt;
+    margin-left: 100pt;
+    margin-right: 100pt;
+  }
+  .banner-image {
+    width: 25%;
+    margin-left: 415pt;
+    margin-right: 415pt;
+  }
+  .store-images {
+    margin-left: 450pt;
+    margin-right: 450pt;
+  }
+  .row-comp {
+    margin-left: 80pt;
+    margin-right: 80pt;
+  }
+  .intro {
+    font-size: 50pt;
+    margin-bottom: 200pt;
+  }
+  .row {
+    margin-left: 100pt;
+    margin-right: 100pt;
+    margin-bottom: 180pt;
+  }
+  .odd {
+    margin-bottom: 80pt;
+  }
+  .third {
+    margin-bottom: 50pt;
+  }
+  .last {
+    margin-bottom: 50pt;
+  }
+  .feature-list {
+    margin: 130pt;
+    margin-top: 0;
+  }
+}
+
+@media only screen and (min-width: 2560px) {
+  .main-right{
+    width: 10%;
+  }
+  .main-left{
+    width: auto;
+  }
+  section {
+    padding-left: 50pt;
+    padding-right: 50pt;
+    margin: 0;
+  }
+  .presentation h1 {
+    font-size: 100pt;
+    margin-left: 200pt;
+    margin-right: 200pt;
+  }
+  .banner-image {
+    width: 20%;
+    margin-left: 550pt;
+    margin-right: 550pt;
+  }
+  .store-images {
+    margin-left: 600pt;
+    margin-right: 600pt;
+  }
+  .intro {
+    font-size: 70pt;
+    margin-left: 320pt;
+    margin-right: 320pt;
+    margin-bottom: 180pt;
+  }
+  .row-comp {
+    margin-left: 480pt;
+    margin-right: 480pt;
+  }
+  .row {
+    margin-left: 10pt;
+    margin-right: 10pt;
+    margin-bottom: 180pt;
+  }
+  .odd {
+    margin-bottom: 180pt;
+  }
+  .third {
+    margin-bottom: 150pt;
+  }
+  .last {
+    margin-bottom: 50pt;
+  }
+  .feature-list {
+    margin-top: 150pt;
+    margin-left: 350pt;
+  }
 }
