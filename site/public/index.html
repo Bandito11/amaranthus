@@ -18,8 +18,12 @@
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css?family=Lora:400,700,700i"
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,700;1,500&display=swap"
       rel="stylesheet"
     />
 
@@ -30,7 +34,7 @@
     <title>Attendance Log Tracker: Attendance Management App</title>
     <meta
       name="description"
-      content="Best, cheapest and easiest way to manage daily attendance of your students or clients and keeping a digital log where you can create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
+      content="Fastest and easiest way to manage daily attendance of your students or clients and create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
     />
 
     <!-- Google / Search Engine Tags -->
@@ -40,7 +44,7 @@
     />
     <meta
       itemprop="description"
-      content="Best, cheapest and easiest way to manage daily attendance of your students or clients and keeping a digital log where you can create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
+      content="Fastest and easiest way to manage daily attendance of your students or clients and create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
     />
     <meta
       itemprop="image"
@@ -56,7 +60,7 @@
     />
     <meta
       property="og:description"
-      content="Best, cheapest and easiest way to manage daily attendance of your students or clients and keeping a digital log where you can create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
+      content="Fastest and easiest way to manage daily attendance of your students or clients and create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
     />
     <meta
       property="og:image"
@@ -71,7 +75,7 @@
     />
     <meta
       name="twitter:description"
-      content="Best, cheapest and easiest way to manage daily attendance of your students or clients and keeping a digital log where you can create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
+      content="Fastest and easiest way to manage daily attendance of your students or clients and create reports automatically. Available for the App Store, Play Store and Microsoft Store. "
     />
     <meta
       name="twitter:image"
@@ -83,95 +87,164 @@
 
   <body>
     <header>
-      <div class="image-link">
-        <a target="_blank" href="https://attendancelogtracker.com">
-          <img src="assets/web_hi_res.png" alt="Attendance Log Tracker Icon" />
-        </a>
-      </div>
+      <a
+        class="image-link"
+        target="_blank"
+        href="https://attendancelogtracker.com"
+      >
+        <img src="assets/web_hi_res.png" alt="Attendance Log Tracker Icon" />
+      </a>
       <div class="share">
         <div>Share:</div>
         <a target="_blank" href="https://www.facebook.com/attendancelogtracker">
           <ion-icon name="logo-facebook" class="facebook-logo"></ion-icon
         ></a>
-        <a
-          target="_blank"
-          class="last"
-          href="https://twitter.com/attendancelog"
-        >
+        <a target="_blank" href="https://twitter.com/attendancelog">
           <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
         </a>
       </div>
     </header>
 
-    <section>
-      <div class="presentation">
-        <h1>
-          Let your device manage attendance and concentrate on the important
-          things that matter.
-        </h1>
-        <div class="presentation-images">
-          <a
-            href="https://play.google.com/store/apps/details?id=xyz.attendancelog.amaranthus&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
-            ><img
-              alt="Get it on Google Play"
-              src="assets/Google_Play_Store_badge.svg"
-          /></a>
-          <a
-            href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
-          >
-            <img
-              class="center"
-              id="apple-icon"
-              alt="Get it on App Store"
-              src="./assets/App-Store.svg"
-            />
-          </a>
+    <section class="main">
+      <div class="main-left">
+        <div class="presentation">
+          <h1>
+            Let your smartphone handle attendance and focus on what matters.
+          </h1>
+          <div class="store-images">
+            <a
+              href="https://play.google.com/store/apps/details?id=xyz.attendancelog.amaranthus&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
+              ><img
+                class="google-logo"
+                alt="Get it on Google Play"
+                src="assets/Google_Play_Store_badge.svg"
+            /></a>
+            <a
+              href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
+            >
+              <img alt="Get it on App Store" src="./assets/app-store.svg" />
+            </a>
+          </div>
+        </div>
+        <div>
+          <img
+            class="banner-image"
+            src="assets/profile-page.png"
+            alt="pic of profile screen"
+          />
+          <h2 class="intro">
+            Introducing, Attendance Log Tracker for iPhone, iPads and Android
+            devices.
+          </h2>
+          <div class="row-comp">
+            <div class="row">
+              <div>
+                <p>
+                  This app makes your job easier when it comes to taking
+                  attendance.
+                </p>
+
+                <p>
+                  As in you don't have to use a cumbersome notebook and manually
+                  enter that data to a spreadsheet app to create reports
+                  anymore.
+                </p>
+              </div>
+              <img
+                class="portrait-images"
+                src="assets/home-page.png"
+                alt="pic of home screen"
+              />
+            </div>
+            <div class="row odd">
+              <p>
+                You simply take attendance by pressing a button on the screen,
+                and when you're done, export the data as a file, that you can
+                open in your favorite apps like Microsoft Excel, Google Sheets
+                or Numbers for Macbook.
+              </p>
+              <img
+                class="portrait-images"
+                src="assets/export-page.png"
+                alt="pic of export screen"
+              />
+            </div>
+            <div class="row third">
+              <div>
+                <p>
+                  The main window has a list of all the students created, where
+                  the user chooses the person they want to mark as present or
+                  absent.
+                </p>
+                <p>Attendance is displayed in tables.</p>
+              </div>
+              <img src="assets/stats-page.png" alt="pic of stats screen" />
+            </div>
+            <div class="row odd last">
+              <div>
+                <p>
+                  The iPad and Android Tablets, like the Samsung Galaxy Tab, are
+                  included with an extra window tab where users use a signup
+                  form that customers can sign for themselves, marking
+                  themselves as present.
+                </p>
+                <p>
+                  Designed as feedback from clients that wanted to have this
+                  feature for their business, such as gyms or private trainers,
+                  but it can be used for conferences where the participants can
+                  mark themselves as present while the presenter starts the
+                  talk.
+                </p>
+              </div>
+              <img
+                src="assets/signup-page-iPad.png"
+                alt="pic of signup screen"
+              />
+            </div>
+          </div>
+          <div class="feature-list">
+            <h2>Features</h2>
+            <ul>
+              <li>Simply take attendance with a press of a button.</li>
+              <li>
+                The data is arranged in tables that present information on total
+                attendance and attendance per day.
+              </li>
+              <li>
+                The data is exported in spreadsheet files (.xlsx), comma
+                separated values (.csv) and tab delimited text in a text file
+                (.txt).
+              </li>
+              <li>
+                Being able to create attendance for special events, such as
+                conferences, school tours or clients by area.
+              </li>
+              <li>
+                The information is entirely yours and will not be shared with
+                private tertiary entities.
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div>
-        <img src="assets/pic1.png" alt="image of app screen" />
-        <div>
-          <h3>
-            Introducing Attendance Log Tracker! The best attendance taking software on
-            the internet!
-          </h3>
-          <h4>Free features:</h4>
-          <ul>
-            <li>Take attendance with a tap of a button!</li>
-            <li>
-              Everybody you add will be stored in your smartphone storage so can
-              forget about the names of your roster and concentrate on the
-              important things.
-            </li>
-            <li>
-              Keep track of your roster of students or group with an easily to
-              visualize table.
-            </li>
-            <li>
-              Be able to export data as a text tab delimited or csv file and use
-              your data in your favorite spreadsheet app.
-            </li>
-            <li>
-              Don't know what csv or text tab delimited files are? Just export
-              your data in spreadsheet format and use it in Google Sheets or
-              Microsoft Excel Spreadsheets without a sweat!
-            </li>
-            <li>Be able to create up to 10 users at a time.</li>
-          </ul>
-          <h5>Paid Features:</h5>
-          <ul>
-            <li>
-              Unlimited user creation in DB. Everything else is free to try!
-            </li>
-          </ul>
-        </div>
+      <div class="main-right">
+        <a
+          class="twitter-timeline"
+          href="https://twitter.com/attendancelog?ref_src=twsrc%5Etfw"
+          >Tweets by attendancelog</a
+        >
       </div>
     </section>
+    <!-- <footer>
+      <a href="/privacy-policy.html">Privacy Policy</a>
+    </footer> -->
 
-    <a class="twitter-timeline" href="https://twitter.com/attendancelog?ref_src=twsrc%5Etfw">Tweets by attendancelog</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-
-    <!-- Library -->
+    <!-- External Libraries -->
+    <script
+      async
+      src="https://platform.twitter.com/widgets.js"
+      charset="utf-8"
+    ></script>
     <script
       type="module"
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
@@ -180,5 +253,20 @@
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
+    <script>
+      const a = document.getElementsByClassName('twitter-timeline');
+      if (window.innerWidth >= 768) {
+        a[0].setAttribute('data-height', '100%');
+      }
+      // window.onresize = resize;
+
+      // function resize(value) {
+      //   if (value.target.innerWidth >= 768) {
+      //     a[0].setAttribute('data-height', '100%');
+      //   } else {
+      //     a[0].setAttribute('data-height', '200px');
+      //   }
+      // }
+    </script>
   </body>
 </html>
