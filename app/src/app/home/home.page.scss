@@ -1,0 +1,72 @@
+#home {
+  cdk-virtual-scroll-viewport {
+    height: 74%;
+    width: 100%;
+  }
+  @media screen and (orientation: landscape) {
+    cdk-virtual-scroll-viewport {
+      height: 52%;
+      width: 100%;
+    }
+  }
+
+   // Android Screens
+   @media screen and (min-height: 740px) {
+    cdk-virtual-scroll-viewport {
+      height: 76%;
+      width: 100%;
+    }
+  }
+
+
+
+  // iPad screens
+  @media screen and (min-height: 768px) {
+    cdk-virtual-scroll-viewport {
+      height: 85%;
+      width: 100%;
+    }
+  }
+
+  //iPhone
+  @media screen and (min-height: 780px) {
+    cdk-virtual-scroll-viewport {
+      height: 76%;
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-height: 844px) {
+    cdk-virtual-scroll-viewport {
+      height: 79%;
+      width: 100%;
+    }
+  }
+
+  // Android Screens
+  @media screen and (min-height: 851px) {
+    cdk-virtual-scroll-viewport {
+      height: 80%;
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-height: 1024px) {
+    cdk-virtual-scroll-viewport {
+      height: 83%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 1180px) {
+    cdk-virtual-scroll-viewport {
+      height: 87%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 1366px) {
+    cdk-virtual-scroll-viewport {
+      height: 89%;
+      width: 100%;
+    }
+  }
+}

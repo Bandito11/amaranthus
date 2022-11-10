@@ -1,0 +1,119 @@
+<div id="event-form">
+  <div *ngIf="event.logo; else noLogo" class="logo-image">
+    <img [src]="imgSrc" alt="A picture for the logo for the event" />
+  </div>
+  <ng-template #noLogo>
+    <p>({{ htmlControls.optional }})</p>
+  </ng-template>
+  <ion-button (click)="getPicture()" type="button" color="primary">{{
+    htmlControls.picture
+  }}</ion-button>
+  <ion-button (click)="resetPicture()" type="button" color="secondary">{{
+    htmlControls.reset
+  }}</ion-button>
+  <ion-item>
+    <ion-label stacked>{{ htmlControls.eventName }}</ion-label>
+    <ion-input
+      type="text"
+      #name
+      placeholder="{{ htmlControls.placeholder }}"
+      [(ngModel)]="event.name"
+    ></ion-input>
+    <ion-icon id="form-icon" name="warning" *ngIf="!name.value"></ion-icon>
+  </ion-item>
+
+  <!--Start Date Control-->
+  <ion-item *ngIf="!event.infiniteDates && event.startDate; else noStartDate">
+    <ion-label>{{ htmlControls.start }} {{ event.startDate }}</ion-label>
+    <ion-button fill="clear" id="open-start-date">
+      <ion-icon icon="calendar"></ion-icon>
+    </ion-button>
+    <ion-modal trigger="open-start-date">
+      <ng-template>
+        <ion-datetime
+          #startDate
+          presentation="date"
+          max="2050-12-31"
+          (ionChange)="event.startDate = formatDate(startDate.value)"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+  <ng-template #noStartDate>
+    <ion-item>
+      <ion-label>{{ htmlControls.start }}</ion-label>
+      <ion-button fill="clear" id="open-start-date" disabled="true">
+        <ion-icon icon="calendar"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ng-template>
+
+  <!--End Date Control-->
+  <ion-item *ngIf="!event.infiniteDates && event.startDate; else checkDisabled">
+    <ion-label>{{ htmlControls.hasEnd }}</ion-label>
+    <ion-checkbox [(ngModel)]="hasEndDate"></ion-checkbox>
+  </ion-item>
+  <ng-template #checkDisabled>
+    <ion-item>
+      <ion-label>{{ htmlControls.hasEnd }}</ion-label>
+      <ion-checkbox disabled="true"></ion-checkbox>
+    </ion-item>
+  </ng-template>
+  <ion-item *ngIf="!event.infiniteDates && hasEndDate">
+    <ion-label>{{ htmlControls.end }} {{ event.endDate }}</ion-label>
+    <ion-button fill="clear" id="open-end-date">
+      <ion-icon icon="calendar"></ion-icon>
+    </ion-button>
+    <ion-modal trigger="open-end-date">
+      <ng-template>
+        <ion-datetime
+          #endDate
+          presentation="date"
+          max="2050-12-31"
+          (ionChange)="event.endDate = formatDate(endDate.value)"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+  <ion-item>
+    <ion-label>{{ htmlControls.run }}</ion-label>
+    <ion-checkbox
+      [(ngModel)]="event.infiniteDates"
+      color="primary"
+      checked="false"
+    ></ion-checkbox>
+  </ion-item>
+
+  <ion-list lines="none">
+    <ion-searchbar
+      placeholder="{{ htmlControls.search }}"
+      (ionInput)="search($event)"
+    ></ion-searchbar>
+    <cdk-virtual-scroll-viewport
+      itemSize="56"
+      minBufferPx="900"
+      maxBufferPx="1350"
+    >
+      <app-event-students-list
+        *cdkVirtualFor="let student of students"
+        [htmlControls]="htmlControls"
+        [student]="student"
+        [studentIds]="studentIds"
+        (studentIdsData)="assignStudentId($event)"
+      ></app-event-students-list>
+    </cdk-virtual-scroll-viewport>
+  </ion-list>
+
+  <ion-button expand="full" (click)="submit()">Submit</ion-button>
+  <ion-button expand="full" color="secondary" (click)="addAll()"
+    >Add All</ion-button
+  >
+  <ion-button
+    expand="full"
+    color="tertiary"
+    (click)="deleteEvent()"
+    *ngIf="!this.create"
+  >
+    Delete</ion-button
+  >
+</div>

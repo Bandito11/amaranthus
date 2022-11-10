@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title *ngIf="language !== 'english'">{{htmlControls.title}}{{student.firstName}}</ion-title>
+    <ion-title *ngIf="language == 'english'">{{student.firstName}}{{htmlControls.title}}</ion-title>
+    <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+       <ion-button (click)="goToEdit(student.id)">
+        {{htmlControls.buttons.edit}}
+       </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+  <div class="profile-image">
+    <img [src]="picture" />
+  </div>
+  <div class="text text-box">
+    <p class="text id">
+      <span class="bold label">ID: </span>{{student.id}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.name}}</span> {{student.firstName}}
+      <span *ngIf="student.initial">{{student.initial}}</span> {{student.lastName}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.address}}</span>{{student.address}}
+    </p>
+    <p class="text" *ngIf="student.phoneNumber">
+      <span class="bold label">{{htmlControls.phone}}</span>{{student.phoneNumber}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.city}}</span>{{student.town}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.state}}</span>{{student.state}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.class}}</span>{{student.class}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.gender}}</span>{{student.gender}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.father}}</span> {{student.fatherName}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.mother}}</span> {{student.motherName}}
+    </p>
+    <h2>{{htmlControls.emergency.title}}</h2>
+    <p class="text">
+      <span class="bold label">{{htmlControls.name}}</span>{{student.emergencyContactName}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.emergency.relationship}}</span>{{student.emergencyRelationship}}
+    </p>
+    <p class="text">
+      <span class="bold label">{{htmlControls.phone}}</span>{{student.emergencyContactPhoneNumber}}
+    </p>
+    <div class="text">
+      <p *ngIf="student.isActive == true">
+          {{htmlControls.active}}
+      </p>
+      <p *ngIf="student.isActive == false">
+          {{htmlControls.inactive}}
+      </p>
+    </div>
+    <h2>{{htmlControls.notes.title}}</h2>
+    <div class="text" id="notes">
+        <ul id="notes-text" *ngFor="let note of notes">
+          <li><span class="bold label">{{htmlControls.notes.date}}</span> {{note.date}}</li>
+          <li><span class="bold label">{{htmlControls.notes.notes}}</span> {{note.note}}</li>
+        </ul>
+    </div>
+  </div>
+</ion-content>

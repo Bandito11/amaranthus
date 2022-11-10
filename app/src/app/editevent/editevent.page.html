@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
+    <ion-buttons slot="start">
+      <app-cancel></app-cancel>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <app-event-form
+    [event]="event"
+    [hasEndDate]="hasEndDate"
+    [students]="students"
+    [studentIds]="studentIds"
+    [htmlControls]="htmlControls"
+    [imgSrc]="imgSrc"
+    [language]="language"
+    (eventData)="editEvent($event)"
+    (queryData)="searchStudent($event)"
+    (deleteEventData)="deleteEvent($event)"
+  ></app-event-form>
+</ion-content>

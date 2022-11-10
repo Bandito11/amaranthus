@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{htmlControls.toolbar.title}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button *ngIf="modalVal" (click)="cancel()">
+        {{htmlControls.toolbar.buttons.cancel}}
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!modalVal" (click)="goToLogin()">
+        {{htmlControls.toolbar.buttons.password}}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" id="clientlogin">
+  <div>
+    <img src="assets/cartoon-desk.jpg" alt="A cluttered desk">
+    <form #clientLoginForm (ngSubmit)="checkUser(credentials.value)">
+      <ion-item lines="none">
+        <ion-label position="stacked">{{htmlControls.id}}</ion-label>
+        <ion-input #credentials type="text" placeholder="{{htmlControls.placeholder}}"></ion-input>
+      </ion-item>
+
+      <!-- <ion-item>
+        <ion-label position="stacked">{{htmlControls.phone}}</ion-label>
+        <ion-input #password type="password"></ion-input>
+      </ion-item> -->
+
+      <ion-button type="submit" expand="full">{{htmlControls.submit}}</ion-button>
+    </form>
+  </div>
+</ion-content>

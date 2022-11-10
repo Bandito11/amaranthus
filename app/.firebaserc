@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "central-list-190609"
+  },
+  "targets": {
+    "central-list-190609": {
+      "hosting": {
+        "app": [
+          "app.attendancelogtracker.com"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

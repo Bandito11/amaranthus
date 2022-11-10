@@ -1,0 +1,7 @@
+{
+  "name": "Attendance Log Tracker",
+  "type": "angular",
+  "integrations": {
+    "capacitor": {}
+  }
+}

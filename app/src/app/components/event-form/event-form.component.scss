@@ -1,0 +1,44 @@
+#event-form {
+  #logo {
+    display: inline-flex;
+  }
+  #logo p {
+    font-size: 16px;
+  }
+  #form-icon {
+    color: var(--ion-color-danger);
+  }
+
+  #input {
+    display: inline-flex;
+  }
+
+  #inputFile {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+
+  cdk-virtual-scroll-viewport {
+    height: 350px;
+    width: 100%;
+  }
+
+
+}
+
+ion-modal {
+  --width: 290px;
+  --height: 382px;
+  --border-radius: 8px;
+}
+
+ion-modal ion-datetime {
+  height: 382px;
+}
