@@ -11,9 +11,9 @@
       function gtag() {
         dataLayer.push(arguments);
       }
-      gtag('js', new Date());
+      gtag("js", new Date());
 
-      gtag('config', 'UA-112761417-1');
+      gtag("config", "UA-112761417-1");
     </script>
 
     <meta charset="utf-8" />
@@ -26,9 +26,6 @@
       href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,700;1,500&display=swap"
       rel="stylesheet"
     />
-
-    <!--Custom css-->
-    <link rel="stylesheet" href="./index.css" />
 
     <!-- HTML Meta Tags -->
     <title>Attendance Log Tracker: Attendance Management App</title>
@@ -83,168 +80,191 @@
     />
 
     <!-- Meta Tags Generated via http://heymeta.com -->
+
+    <!--Custom css-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+    <link href="./index.css" rel="stylesheet" />
   </head>
 
   <body>
-    <header>
-      <a
-        class="image-link"
-        target="_blank"
-        href="https://attendancelogtracker.com"
-      >
-        <img src="assets/web_hi_res.png" alt="Attendance Log Tracker Icon" />
-      </a>
-      <div class="share">
-        <div>Share:</div>
-        <a target="_blank" href="https://www.facebook.com/attendancelogtracker">
-          <ion-icon name="logo-facebook" class="facebook-logo"></ion-icon
-        ></a>
-        <a target="_blank" href="https://twitter.com/attendancelog">
-          <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
+    <!-- As a link -->
+    <nav class="navbar bg-light">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand"
+          target="_blank"
+          href="https://attendancelogtracker.com"
+        >
+          <img
+            src="assets/web_hi_res.png"
+            alt="Attendance Log Tracker Icon"
+            width="30"
+            height="30"
+          />
+        </a>
+        <span class="navbar-text">
+          Share:
+          <a
+            target="_blank"
+            href="https://www.facebook.com/attendancelogtracker"
+          >
+            <ion-icon name="logo-facebook" class="facebook-logo"></ion-icon
+          ></a>
+          <a target="_blank" href="https://twitter.com/attendancelog">
+            <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
+          </a>
+        </span>
+      </div>
+    </nav>
+
+    <section>
+      <div class="container presentation text-center px-lg-5">
+        <h1>
+          Let your smartphone handle attendance and focus on what matters.
+        </h1>
+        <a
+          href="https://play.google.com/store/apps/details?id=xyz.attendancelog.amaranthus&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
+          ><img
+            id="google-logo"
+            alt="Get it on Google Play"
+            src="assets/Google_Play_Store_badge.svg"
+        /></a>
+        <a
+          href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
+        >
+          <img alt="Get it on App Store" src="./assets/app-store.svg" />
         </a>
       </div>
-    </header>
+      <div class="banner-image mx-auto">
+        <img
+          class="banner-image pt-3"
+          src="assets/profile-page.png"
+          alt="pic of profile screen"
+        />
+      </div>
+      <div class="pt-4 text-center">
+        <h2>
+          Introducing, Attendance Log Tracker for iPhone, iPads and Android
+          devices.
+        </h2>
+      </div>
+      <div class="p-1 container text-center">
+        <div class="row">
+          <div class="col-sm p-md-5">
+            <p>
+              This app makes your job easier when it comes to taking attendance.
+            </p>
 
-    <section class="main">
-      <div class="main-left">
-        <div class="presentation">
-          <h1>
-            Let your smartphone handle attendance and focus on what matters.
-          </h1>
-          <div class="store-images">
-            <a
-              href="https://play.google.com/store/apps/details?id=xyz.attendancelog.amaranthus&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
-              ><img
-                class="google-logo"
-                alt="Get it on Google Play"
-                src="assets/Google_Play_Store_badge.svg"
-            /></a>
-            <a
-              href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
-            >
-              <img alt="Get it on App Store" src="./assets/app-store.svg" />
-            </a>
+            <p>
+              As in you don't have to use a cumbersome notebook and manually
+              enter that data to a spreadsheet app to create reports anymore.
+            </p>
+          </div>
+          <div class="protrait-images mx-auto col-sm">
+            <img
+              class="portrait-images"
+              src="assets/home-page.png"
+              alt="pic of home screen"
+            />
           </div>
         </div>
-        <div>
-          <img
-            class="banner-image"
-            src="assets/profile-page.png"
-            alt="pic of profile screen"
-          />
-          <h2 class="intro">
-            Introducing, Attendance Log Tracker for iPhone, iPads and Android
-            devices.
-          </h2>
-          <div class="row-comp">
-            <div class="row">
-              <div>
-                <p>
-                  This app makes your job easier when it comes to taking
-                  attendance.
-                </p>
-
-                <p>
-                  As in you don't have to use a cumbersome notebook and manually
-                  enter that data to a spreadsheet app to create reports
-                  anymore.
-                </p>
-              </div>
-              <img
-                class="portrait-images"
-                src="assets/home-page.png"
-                alt="pic of home screen"
-              />
-            </div>
-            <div class="row odd">
-              <p>
-                You simply take attendance by pressing a button on the screen,
-                and when you're done, export the data as a file, that you can
-                open in your favorite apps like Microsoft Excel, Google Sheets
-                or Numbers for Macbook.
-              </p>
-              <img
-                class="portrait-images"
-                src="assets/export-page.png"
-                alt="pic of export screen"
-              />
-            </div>
-            <div class="row third">
-              <div>
-                <p>
-                  The main window has a list of all the students created, where
-                  the user chooses the person they want to mark as present or
-                  absent.
-                </p>
-                <p>Attendance is displayed in tables.</p>
-              </div>
-              <img src="assets/stats-page.png" alt="pic of stats screen" />
-            </div>
-            <div class="row odd last">
-              <div>
-                <p>
-                  The iPad and Android Tablets, like the Samsung Galaxy Tab, are
-                  included with an extra window tab where users use a signup
-                  form that customers can sign for themselves, marking
-                  themselves as present.
-                </p>
-                <p>
-                  Designed as feedback from clients that wanted to have this
-                  feature for their business, such as gyms or private trainers,
-                  but it can be used for conferences where the participants can
-                  mark themselves as present while the presenter starts the
-                  talk.
-                </p>
-              </div>
-              <img
-                src="assets/signup-page-iPad.png"
-                alt="pic of signup screen"
-              />
-            </div>
+        <div class="row pt-1">
+          <div class="col-sm order-sm-1 p-md-5">
+            <p>
+              You simply take attendance by pressing a button on the screen, and
+              when you're done, export the data as a file, that you can open in
+              your favorite apps like Microsoft Excel, Google Sheets or Numbers
+              for Macbook.
+            </p>
           </div>
-          <div class="feature-list">
-            <h2>Features</h2>
-            <ul>
-              <li>Simply take attendance with a press of a button.</li>
-              <li>
-                The data is arranged in tables that present information on total
-                attendance and attendance per day.
-              </li>
-              <li>
-                The data is exported in spreadsheet files (.xlsx), comma
-                separated values (.csv) and tab delimited text in a text file
-                (.txt).
-              </li>
-              <li>
-                Being able to create attendance for special events, such as
-                conferences, school tours or clients by area.
-              </li>
-              <li>
-                The information is entirely yours and will not be shared with
-                private tertiary entities.
-              </li>
-            </ul>
+          <div class="protrait-images mx-auto col-sm">
+            <img
+              class="portrait-images"
+              src="assets/export-page.png"
+              alt="pic of export screen"
+            />
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-sm">
+            <p>
+              The main window has a list of all the students created, where the
+              user chooses the person they want to mark as present or absent.
+            </p>
+            <p>Attendance is displayed in tables.</p>
+          </div>
+          <div class="landscape-images mx-auto col-sm">
+            <img
+              class="landscape-images"
+              src="assets/stats-page.png"
+              alt="pic of stats screen"
+            />
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-sm order-sm-1">
+            <p>
+              The iPad and Android Tablets, like the Samsung Galaxy Tab, are
+              included with an extra window tab where users use a signup form
+              that customers can sign for themselves, marking themselves as
+              present.
+            </p>
+            <p>
+              Designed as feedback from clients that wanted to have this feature
+              for their business, such as gyms or private trainers, but it can
+              be used for conferences where the participants can mark themselves
+              as present while the presenter starts the talk.
+            </p>
+          </div>
+          <div class="landscape-images mx-auto col-sm p-md-1">
+            <img
+              class="landscape-images"
+              src="assets/signup-page-iPad.png"
+              alt="pic of signup screen"
+            />
           </div>
         </div>
       </div>
-      <div class="main-right">
+      <div class="feature-list px-2 pt-1">
+        <h2>Features</h2>
+        <ul>
+          <li>Simply take attendance with a press of a button.</li>
+          <li>
+            The data is arranged in tables that present information on total
+            attendance and attendance per day.
+          </li>
+          <li>
+            The data is exported in spreadsheet files (.xlsx), comma separated
+            values (.csv) and tab delimited text in a text file (.txt).
+          </li>
+          <li>
+            Being able to create attendance for special events, such as
+            conferences, school tours or clients by area.
+          </li>
+          <li>
+            The information is entirely yours and will not be shared with
+            private tertiary entities.
+          </li>
+        </ul>
+      </div>
+      <!-- <div class="main-right">
         <a
           class="twitter-timeline"
           href="https://twitter.com/attendancelog?ref_src=twsrc%5Etfw"
           >Tweets by attendancelog</a
-        >
-      </div>
+      
+      </div> -->
     </section>
-    <!-- <footer>
+    <footer class="text-center">
       <a href="/privacy-policy.html">Privacy Policy</a>
-    </footer> -->
+    </footer>
 
     <!-- External Libraries -->
-    <script
-      async
-      src="https://platform.twitter.com/widgets.js"
-      charset="utf-8"
-    ></script>
     <script
       type="module"
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
@@ -253,11 +273,25 @@
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- <script
+      async
+      src="https://platform.twitter.com/widgets.js"
+      charset="utf-8"
+    ></script> -->
+
     <script>
-      const a = document.getElementsByClassName('twitter-timeline');
-      if (window.innerWidth >= 768) {
-        a[0].setAttribute('data-height', '100%');
-      }
+      // Twitter Timeline
+      // const a = document.getElementsByClassName('twitter-timeline');
+      // if (window.innerWidth >= 768) {
+      //   a[0].setAttribute('data-height', '100%');
+      // }
       // window.onresize = resize;
 
       // function resize(value) {
