@@ -6,12 +6,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && cp src/404.html www",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "jetifier",
-    "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy"
+    "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy",
+    "deploy:web": "ionic build && cp src/404.html www && firebase deploy --only hosting:app-123"
   },
   "private": true,
   "dependencies": {
