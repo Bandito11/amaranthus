@@ -5,7 +5,6 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular';
-import { ISimpleAlertOptions } from '../common/models';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
@@ -34,7 +33,7 @@ export class LoginPage {
   LANGUAGE = {
     english: {
       toolbar: {
-        title: 'Enter Form',
+        title: 'Check In',
         buttons: {
           cancel: 'Close',
           password: 'Set Password',
@@ -47,7 +46,7 @@ export class LoginPage {
     },
     spanish: {
       toolbar: {
-        title: 'Forma de Entrada',
+        title: 'Registro',
         buttons: {
           cancel: 'Cerrar',
           password: 'Contraseña',
