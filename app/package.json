@@ -38,7 +38,7 @@
     "@capacitor/splash-screen": "^1.2.2",
     "@capacitor/status-bar": "^1.0.8",
     "@ionic-native/market": "^5.36.0",
-    "@ionic/angular": "^6.1.4",
+    "@ionic/angular": "^6.3.8",
     "@ionic/pwa-elements": "^3.1.1",
     "@ionic/storage": "2.3.0",
     "cordova-plugin-email-composer": "^0.9.2",

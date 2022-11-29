@@ -49,7 +49,7 @@ export class EventFormComponent implements OnInit {
     this.queryData.emit(event.target.value);
   }
 
-  formatDate(value: string) {
+  formatDate(value) {
     return format(parseISO(value), 'yyyy-MM-dd');
   }
 
