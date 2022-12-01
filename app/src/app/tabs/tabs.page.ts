@@ -13,7 +13,6 @@ export class TabsPage implements DoCheck, OnInit {
 
   counter = 0;
   viewIsLarge: boolean;
-  pages;
   selectedTab: string;
 
   htmlControls = {
@@ -21,9 +20,8 @@ export class TabsPage implements DoCheck, OnInit {
     home: '',
     calendar: '',
     stats: '',
-    // roster: '', // Do not delete!
     settings: '',
-    login: '',
+    checkIn: '',
   };
 
   LANGUAGE = {
@@ -32,18 +30,16 @@ export class TabsPage implements DoCheck, OnInit {
       home: 'Home',
       calendar: 'Calendar',
       stats: 'Stats',
-      // roster: 'Roster', // Do not delete!
       settings: 'Settings',
-      login: 'Login',
+      checkIn: 'Check In',
     },
     spanish: {
       menu: 'Menú',
       home: 'Inicio',
       calendar: 'Calendario',
       stats: 'Estadísticas',
-      // roster: 'Registro', // Do not delete!
       settings: 'Configuración',
-      login: 'Sesión',
+      checkIn: 'Registro',
     },
   };
 
@@ -57,25 +53,7 @@ export class TabsPage implements DoCheck, OnInit {
         this.htmlControls = this.LANGUAGE['english'];
       }
 
-      if (value === 'spanish') {
-        this.pages = [
-          { text: 'Inicio', route: '/tabs/tabs/home' },
-          { text: 'Calendario', route: '/tabs/tabs/calendar' },
-          { text: 'Estadísticas', route: '/tabs/tabs/stats' },
-          // { text: 'Registro', route: '/tabs/tabs/roster' }, // Do not delete!
-          { text: 'Configuración', route: '/tabs/tabs/settings' },
-          { text: 'Sesión', route: '/tabs/tabs/login' },
-        ];
-      } else {
-        this.pages = [
-          { text: 'Home', route: '/tabs/tabs/home' },
-          { text: 'Calendar', route: '/tabs/tabs/calendar' },
-          { text: 'Stats', route: '/tabs/tabs/stats' },
-          // { text: 'Roster', route: '/tabs/tabs/roster' }, // Do not delete!
-          { text: 'Settings', route: '/tabs/tabs/settings' },
-          { text: 'Login', route: '/tabs/tabs/login' },
-        ];
-      }
+
     });
   }
 

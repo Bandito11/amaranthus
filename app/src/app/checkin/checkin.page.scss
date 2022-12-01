@@ -1,0 +1,59 @@
+#clientlogin {
+  ion-item {
+    $base-padding: 1em;
+    padding-top: $base-padding;
+    padding-bottom: $base-padding;
+  }
+
+  @media screen and (min-width: 768px) {
+    div {
+      $base-padding: 9em;
+      padding-left: $base-padding + 4em;
+      padding-right: $base-padding + 4em;
+      padding-top: $base-padding - 9em;
+    }
+
+    img{
+      width: 60vw;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    div {
+      $base-padding: 16em;
+      padding-left: $base-padding + 2em;
+      padding-right: $base-padding + 2em;
+      padding-top: $base-padding - 16em;
+    }
+
+    img {
+      width: 80vw;
+    }
+  }
+
+  @media screen and (min-width: 1440px) {
+    div {
+      $base-padding: 16em;
+      padding-left: $base-padding + 17em;
+      padding-right: $base-padding + 17em;
+      padding-top: $base-padding - 16em;
+    }
+
+    img {
+      width: 30vw;
+    }
+  }
+
+  @media screen and (min-width: 2560px) {
+    div {
+      $base-padding: 20em;
+      padding-left: $base-padding + 40em;
+      padding-right: $base-padding + 40em;
+      padding-top: $base-padding - 16em;
+    }
+
+    img {
+      width: 25vw;
+    }
+  }
+}

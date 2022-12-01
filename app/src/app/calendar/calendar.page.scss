@@ -59,7 +59,7 @@
   }
   @media screen and (min-height: 844px) {
     cdk-virtual-scroll-viewport {
-      height: 49%;
+      height: 42%;
       width: 100%;
     }
   }
@@ -69,9 +69,21 @@
       width: 100%;
     }
   }
+  @media screen and (min-height: 852px) {
+    cdk-virtual-scroll-viewport {
+      height: 42%;
+      width: 100%;
+    }
+  }
   @media screen and (min-height: 900px) {
     cdk-virtual-scroll-viewport {
       height: 58%;
+      width: 100%;
+    }
+  }
+  @media screen and (min-height: 932px) {
+    cdk-virtual-scroll-viewport {
+      height: 54%;
       width: 100%;
     }
   }

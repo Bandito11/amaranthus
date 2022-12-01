@@ -4,6 +4,10 @@ body {
   font-family: "Work Sans", sans-serif;
 }
 
+ion-icon{
+  font-size: 1.5em;
+}
+
 .image-link img {
   width: 30pt;
 }

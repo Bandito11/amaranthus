@@ -38,14 +38,14 @@
     </ion-tab-button>
 
     <ion-tab-button
-      tab="login"
+      tab="check-in"
       *ngIf=" this.platform.is('desktop') || this.platform.is('ipad') || this.platform.is('tablet')"
     >
       <ion-icon name="log-in"></ion-icon>
       <ion-label
         *ngIf="this.platform.is('tablet') || this.platform.is('ipad') || this.platform.is('desktop')"
       >
-        {{htmlControls.login}}
+        {{htmlControls.checkIn}}
       </ion-label>
     </ion-tab-button>
   </ion-tab-bar>
@@ -73,9 +73,9 @@
       <ion-label> {{htmlControls.settings}} </ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="login">
+    <ion-tab-button tab="check-in">
       <ion-icon name="log-in"></ion-icon>
-      <ion-label> {{htmlControls.login}} </ion-label>
+      <ion-label> {{htmlControls.checkIn}} </ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

@@ -5,17 +5,16 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular';
-import { ISimpleAlertOptions } from '../common/models';
 import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-checkin',
+  templateUrl: './checkin.page.html',
+  styleUrls: ['./checkin.page.scss'],
 })
-export class LoginPage {
-  homeURL = '/tabs/tabs/login';
+export class CheckInPage {
+  homeURL = '/tabs/checkin';
   @Input() modalVal: string;
 
   @Input() htmlControls = {
@@ -34,7 +33,7 @@ export class LoginPage {
   LANGUAGE = {
     english: {
       toolbar: {
-        title: 'Enter Form',
+        title: 'Check In',
         buttons: {
           cancel: 'Close',
           password: 'Set Password',
@@ -47,7 +46,7 @@ export class LoginPage {
     },
     spanish: {
       toolbar: {
-        title: 'Forma de Entrada',
+        title: 'Registro',
         buttons: {
           cancel: 'Cerrar',
           password: 'Contraseña',
@@ -219,7 +218,7 @@ export class LoginPage {
             handler: async (val) => {
               if (val['password']) {
                 const modal = await this.modalCtrl.create({
-                  component: LoginPage,
+                  component: CheckInPage,
                   backdropDismiss: false,
                   componentProps: { modalVal: val.password },
                 });
@@ -255,7 +254,7 @@ export class LoginPage {
             handler: async (val) => {
               if (val['password']) {
                 const modal = await this.modalCtrl.create({
-                  component: LoginPage,
+                  component: CheckInPage,
                   backdropDismiss: false,
                   componentProps: { modalVal: val.password },
                 });

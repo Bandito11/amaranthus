@@ -4,7 +4,7 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
@@ -85,12 +85,12 @@ const routes: Routes = [
         ],
       },
       {
-        path: 'login',
+        path: 'check-in',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../login/login.module').then((m) => m.LoginPageModule),
+              import('../checkin/checkin.module').then((m) => m.CheckInPageModule),
           },
         ],
       },
@@ -108,16 +108,16 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'tabs/home',
+        redirectTo: 'home',
         pathMatch: 'full',
       },
     ],
   },
-  {
-    path: '',
-    redirectTo: 'tabs/home',
-    pathMatch: 'full',
-  },
+  // {
+  //   path: '',
+  //   redirectTo: 'tabs/home',
+  //   pathMatch: 'full',
+  // },
 ];
 
 @NgModule({
