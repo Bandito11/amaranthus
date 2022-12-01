@@ -21,7 +21,7 @@ export class TabsPage implements DoCheck, OnInit {
     calendar: '',
     stats: '',
     settings: '',
-    login: '',
+    checkIn: '',
   };
 
   LANGUAGE = {
@@ -31,7 +31,7 @@ export class TabsPage implements DoCheck, OnInit {
       calendar: 'Calendar',
       stats: 'Stats',
       settings: 'Settings',
-      login: 'Check In',
+      checkIn: 'Check In',
     },
     spanish: {
       menu: 'Menú',
@@ -39,7 +39,7 @@ export class TabsPage implements DoCheck, OnInit {
       calendar: 'Calendario',
       stats: 'Estadísticas',
       settings: 'Configuración',
-      login: 'Registro',
+      checkIn: 'Registro',
     },
   };
 

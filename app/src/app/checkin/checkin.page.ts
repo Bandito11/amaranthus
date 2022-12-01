@@ -9,12 +9,12 @@ import { Storage } from '@ionic/storage';
 import { DatabaseService } from '../services/database.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-checkin',
+  templateUrl: './checkin.page.html',
+  styleUrls: ['./checkin.page.scss'],
 })
-export class LoginPage {
-  homeURL = '/tabs/tabs/login';
+export class CheckInPage {
+  homeURL = '/tabs/checkin';
   @Input() modalVal: string;
 
   @Input() htmlControls = {
@@ -218,7 +218,7 @@ export class LoginPage {
             handler: async (val) => {
               if (val['password']) {
                 const modal = await this.modalCtrl.create({
-                  component: LoginPage,
+                  component: CheckInPage,
                   backdropDismiss: false,
                   componentProps: { modalVal: val.password },
                 });
@@ -254,7 +254,7 @@ export class LoginPage {
             handler: async (val) => {
               if (val['password']) {
                 const modal = await this.modalCtrl.create({
-                  component: LoginPage,
+                  component: CheckInPage,
                   backdropDismiss: false,
                   componentProps: { modalVal: val.password },
                 });
