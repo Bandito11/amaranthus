@@ -25,7 +25,7 @@ export class HomePage implements OnInit {
   filterOptions: string[];
   date: ICalendar;
   toggle;
-  homeURL = '/tabs/tabs/home';
+  homeURL = '/tabs/home';
   htmlControls = {
     toolbar: {
       title: '',
