@@ -381,7 +381,7 @@ export class EditEventPage implements OnInit {
                 });
                 await toast.present();
                 this.navCtrl
-                  .navigateRoot('/tabs/tabs/home/events')
+                  .navigateRoot('/tabs/home/events')
                   .then(() => this.modalCtrl.dismiss());
               } catch (error) {
                 handleError(error);
@@ -415,9 +415,6 @@ export class EditEventPage implements OnInit {
                   position: 'top',
                 });
                 await toast.present();
-                // this.navCtrl
-                //   .navigateRoot('/tabs/tabs/home/events')
-                //   .then(() => this.modalCtrl.dismiss());
                 await this.modalCtrl.dismiss();
                 await this.navCtrl.pop();
               } catch (error) {
