@@ -4,6 +4,10 @@ body {
   font-family: "Work Sans", sans-serif;
 }
 
+.header{
+  font-weight: 500;
+}
+
 ion-icon{
   font-size: 1.5em;
 }
