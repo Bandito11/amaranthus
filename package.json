@@ -1,0 +1,33 @@
+{
+  "name": "attendance-log-tracker",
+  "version": "1.0.0",
+  "description": "Attendance Management Software for iOS and Android",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve:app": "cd app && ionic serve",
+    "serve:web": "cd site && firebase serve",
+    "build:ios": "cd app && ionic capacitor build ios",
+    "build:android": "cd app && ionic capacitor build android",
+    "deploy:app": "cd app && ionic build --prod && firebase deploy",
+    "deploy:web": "cd site && firebase deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bandito11/Attendance-Log-Tracker.git"
+  },
+  "keywords": [
+    "app",
+    "attendance",
+    "software",
+    "app",
+    "mobile",
+    "desktop"
+  ],
+  "author": "Esteban Morales",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bandito11/Attendance-Log-Tracker/issues"
+  },
+  "homepage": "https://github.com/Bandito11/Attendance-Log-Tracker#readme"
+}
