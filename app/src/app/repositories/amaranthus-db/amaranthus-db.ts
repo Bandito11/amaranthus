@@ -644,7 +644,7 @@ export class AmaranthusDBProvider {
       ...results,
       ...formattedStudent,
     };
-    if (!results.picture.match('default')) {
+    // if (!results.picture.match('default')) {
       if (typeof results.picture === 'object') {
         results.picture = await this.cameraTools.readAsBase64(
           (results.picture as any).changingThisBreaksApplicationSecurity
@@ -661,7 +661,7 @@ export class AmaranthusDBProvider {
         type: 'image',
       });
       results.picture = name;
-    }
+    // }
     studentsColl.update(results);
   }
 
@@ -694,7 +694,11 @@ export class AmaranthusDBProvider {
         notesColl.remove(note);
       });
     }
+    try {
     if (!students.picture.match('default')) {
+      this.file.deleteFile(students.picture);
+    }
+    } catch (error) {
       this.file.deleteFile(students.picture);
     }
   }
