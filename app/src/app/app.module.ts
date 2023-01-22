@@ -13,7 +13,6 @@ import { ExportPageModule } from './export/export.module';
 import { EditEventPageModule } from './editevent/editevent.module';
 import { StatsPageModule } from './stats/stats.module';
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
 
 @NgModule({
@@ -34,7 +33,6 @@ import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
         InAppPurchase2,
         Market,
         EmailComposer,
-        FileOpener,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
     ],
     bootstrap: [AppComponent]

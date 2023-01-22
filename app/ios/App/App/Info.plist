@@ -20,14 +20,16 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Will be used to take picture to edit profile of students</string>
+	<string>To be able to add profile pictures from device</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Will be used to edit profile</string>
+	<string>To be able to add profile pictures from device</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Will be used when editing profile pictures</string>
+	<string>To be able to add profile pictures from device</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

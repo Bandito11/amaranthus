@@ -40,7 +40,7 @@ export class ExportPage {
   event: string;
   date: string;
   dateControl;
-  recordsPerMonth: { names: any[]; records: any[]; };
+  recordsPerMonth: { names: any[]; records: any[] };
 
   constructor(
     private loading: LoadingController,
@@ -118,6 +118,24 @@ export class ExportPage {
     }
   }
 
+  async successMessage() {
+    let message;
+    if (this.language === 'spanish') {
+      message = `¡El archivo ha sido creado!`;
+    } else {
+      message = `The file was created!`;
+    }
+    const toast = await this.toastController.create({
+      message,
+
+      duration: 1000,
+      color: 'success',
+      position: 'top',
+    });
+    await toast.present();
+    return;
+  }
+
   /**
    *
    *
@@ -161,29 +179,18 @@ export class ExportPage {
         });
       }
       if (xlsxData) {
-        const path = await this.file.exportFile({
+        await this.file.exportFile({
           fileName: fileName,
           data: xlsxData,
           type: 'xlsx',
         });
         await loading.dismiss();
-        let message;
-        if (this.language === 'spanish') {
-          message = `¡El archivo ha sido creado en ${path}!`;
-        } else {
-          message = `The file was created on ${path}!`;
-        }
-        const toast = await this.toastController.create({
-          message,
-
-          duration: 1000,
-          color: 'success',
-          position: 'top',
-        });
-        await toast.present();
+        this.successMessage();
+        await this.modal.dismiss();
         return;
       }
       await loading.dismiss();
+      await this.modal.dismiss();
       handleError('Error creating the file');
     } catch (error) {
       // If XLSX Provider err
@@ -242,44 +249,21 @@ export class ExportPage {
         });
       }
       if (textTabResponse) {
-        try {
-          const path = await this.file.exportFile({
-            fileName: fileName,
-            data: textTabResponse,
-            type: 'txt',
-          });
-          await loading.dismiss();
-          let message;
-          if (this.language === 'spanish') {
-            message = `¡El archivo ha sido creado en ${path}!`;
-          } else {
-            message = `The file was created on ${path}!`;
-          }
-          const toast = await this.toastController.create({
-            message,
-            duration: 1000,
-            color: 'success',
-            position: 'top',
-          });
-          await toast.present();
-          await this.modal.dismiss();
-        } catch (error) {
-          // If FileProvider err
-          await loading.dismiss();
-          const toast = await this.toastController.create({
-            message: error,
-            duration: 1000,
-            color: 'danger',
-            position: 'top',
-          });
-          await toast.present();
-        }
+        await this.file.exportFile({
+          fileName: fileName,
+          data: textTabResponse,
+          type: 'txt',
+        });
+        await loading.dismiss();
+        this.successMessage();
+        await this.modal.dismiss();
         return;
       }
       await loading.dismiss();
-      handleError('Error creating the file');
+      handleError('Error creating the file: ' + textTabResponse);
     } catch (error) {
       // If TextTabDelimited Provider err
+      handleError(error);
       await loading.dismiss();
       let message;
       if (this.language === 'spanish') {
@@ -342,34 +326,17 @@ export class ExportPage {
         });
       }
       if (csvResponse) {
-        try {
-          const path = await this.file.exportFile({
-            fileName: fileName,
-            data: csvResponse,
-            type: 'csv',
-          });
-          await loading.dismiss();
-          let message;
-          if (this.language === 'spanish') {
-            message = `¡El archivo ha sido creado en ${path}!`;
-          } else {
-            message = `The file was created on ${path}!`;
-          }
-          const toast = await this.toastController.create({
-            message,
-            duration: 1000,
-            color: 'success',
-            position: 'top',
-          });
-          await toast.present();
-          await this.modal.dismiss();
-        } catch (error) {
-          // If FileProvider err
-          await loading.dismiss();
-          this.modal.dismiss(error);
-        }
+        await this.file.exportFile({
+          fileName: fileName,
+          data: csvResponse,
+          type: 'csv',
+        });
+        await loading.dismiss();
+        this.successMessage();
+        await this.modal.dismiss();
         return;
       }
+      this.modal.dismiss();
       await loading.dismiss();
       handleError('Error creating the file');
     } catch (error) {
