@@ -1,4 +1,4 @@
-import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { Share } from '@capacitor/share';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import {
@@ -8,12 +8,14 @@ import {
   WriteFileOptions,
   ReadFileOptions,
 } from '@capacitor/filesystem';
+import { Storage } from '@ionic/storage';
+import { FileOpener } from '@capacitor-community/file-opener';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileProvider {
-  constructor(private fileOpener: FileOpener, private platform: Platform) {}
+  constructor(private platform: Platform, private storage: Storage) {}
 
   /**
    *
@@ -25,47 +27,20 @@ export class FileProvider {
    * @memberof FileProvider
    */
   async exportFile(opts: { fileName: string; data: any; type: string }) {
-    try {
-      if (this.platform.is('mobile')) {
-        const results = await this.writeToMobile(opts);
-        if (this.platform.is('mobileweb')) {
-          return results;
-        }
-        await this.toFileOpener({ type: opts.type, path: results });
-        return results;
-      }
-      if (this.platform.is('desktop')) {
-        return this.writeToDesktop(opts);
-      }
-    } catch (error) {
-      throw error;
+    const results = await this.writeToDevice(opts);
+    if (this.platform.is('mobileweb')) {
+      return results;
     }
+    await this.shareFile(results);
+    return results;
   }
 
   /**
    *
-   * @param {{ fileName: string, text: any }} opts
+   * @param {{ fileName: string, data: any, type: string }} opts
    * @memberof FileProvider
    */
-  writeToDesktop(opts: { fileName: string; data: any }) {
-      let path = ``;
-      if (navigator.userAgent.match('Macintosh')) {
-        //FIXME: process.env.HOME is supposed to be the user's home directory
-        // path = `${process.env.HOME}/Documents/${opts.fileName}`;
-      } else if (navigator.userAgent.match('Windows')) {
-        // FIXME: process.env.USERPROFILE is supposed to be the user's home directory
-        // path = `${process.env.USERPROFILE}\\Documents\\${opts.fileName}`;
-      }
-      return path + ' ' + opts.data;
-  }
-
-  /**
-   *
-   *
-   * @param {{ fileName: string, data: any }} opts
-   * @memberof FileProvider
-   */
-  async writeToMobile(opts: { fileName: string; data: any; type: string }) {
+  async writeToDevice(opts: { fileName: string; data: any; type: string }) {
     const options: WriteFileOptions = {
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
@@ -76,10 +51,11 @@ export class FileProvider {
       options.encoding = Encoding.UTF8;
     }
     const results = await Filesystem.writeFile(options);
+
     return results.uri;
   }
 
-  async readFromMobile(opts: { type: string; path: string }) {
+  async readFromDevice(opts: { type: string; path: string }) {
     const options: ReadFileOptions = {
       path: `AttendanceLog/${opts.path}`,
       directory: Directory.Library,
@@ -91,7 +67,7 @@ export class FileProvider {
     return result.data;
   }
 
-  async deleteFile( path: string ) {
+  async deleteFile(path: string) {
     await Filesystem.deleteFile({
       path: `AttendanceLog/${path}`,
       directory: Directory.Library,
@@ -105,23 +81,35 @@ export class FileProvider {
    * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    */
-  async toFileOpener(opts: { path: string; type: string }) {
-    try {
-      let result;
-      if (opts.type === 'xlsx') {
-        result = await this.fileOpener.open(
-          opts.path,
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-      }
-      if (opts.type === 'txt') {
-        result = await this.fileOpener.open(opts.path, 'text/plain');
-      }
-      if (opts.type === 'csv') {
-        result = await this.fileOpener.open(opts.path, 'text/csv');
-      }
-    } catch (error) {
-      throw error;
+  async shareFile(path: string) {
+    const language = await this.storage.get('language');
+    let text =
+      'Share your records with someone or save it on your personal device.';
+
+    let title = `Share file?`;
+    if (language === 'spanish') {
+      title = `¿Compartir documento?`;
+      text =
+        'Comparte tu documento con alguien o guardalo en tu dispositivo personal.';
     }
+    const dialogTitle = title;
+    if (this.platform.is('android')) {
+      FileOpener.open({ filePath: path });
+    } else if (this.platform.is('desktop')) {
+      Share.share({
+        url: path,
+        title,
+        dialogTitle,
+        text,
+      });
+    } else {
+      await Share.share({
+        url: path,
+        title,
+        dialogTitle,
+        text,
+      });
+    }
+    return;
   }
 }

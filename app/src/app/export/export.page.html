@@ -52,10 +52,10 @@
     <ion-button
       fill="solid"
       color="primary"
-      (click)="exportAsText()"
+      (click)="exportAsXLSX()"
       expand="block"
     >
-      {{htmlControls.texttab}}
+      {{htmlControls.xlsx}}
     </ion-button>
     <ion-button
       fill="solid"
@@ -65,13 +65,13 @@
     >
       {{htmlControls.csv}}
     </ion-button>
-    <ion-button
+    <!-- <ion-button
       fill="solid"
       color="tertiary"
-      (click)="exportAsXLSX()"
+      (click)="exportAsText()"
       expand="block"
     >
-      {{htmlControls.xlsx}}
-    </ion-button>
+      {{htmlControls.texttab}}
+    </ion-button> -->
   </ion-list>
 </ion-content>
