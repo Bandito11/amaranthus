@@ -9,15 +9,13 @@ import {
   ReadFileOptions,
 } from '@capacitor/filesystem';
 import { Storage } from '@ionic/storage';
+import { FileOpener } from '@capacitor-community/file-opener';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileProvider {
-  constructor(
-    private platform: Platform,
-    private storage: Storage
-  ) {}
+  constructor(private platform: Platform, private storage: Storage) {}
 
   /**
    *
@@ -29,19 +27,12 @@ export class FileProvider {
    * @memberof FileProvider
    */
   async exportFile(opts: { fileName: string; data: any; type: string }) {
-    if (this.platform.is('mobile')) {
-      const results = await this.writeToMobile(opts);
-      if (this.platform.is('mobileweb')) {
-        return results;
-      }
-      await this.shareFile(results);
+    const results = await this.writeToDevice(opts);
+    if (this.platform.is('mobileweb')) {
       return results;
     }
-    if (this.platform.is('desktop')) {
-      const results = await this.exportToDesktop(opts);
-      await this.shareFile(results);
-      return results;
-    }
+    await this.shareFile(results);
+    return results;
   }
 
   /**
@@ -49,7 +40,7 @@ export class FileProvider {
    * @param {{ fileName: string, data: any, type: string }} opts
    * @memberof FileProvider
    */
-  async exportToDesktop(opts: { fileName: string; data: any; type: string }) {
+  async writeToDevice(opts: { fileName: string; data: any; type: string }) {
     const options: WriteFileOptions = {
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
@@ -64,27 +55,7 @@ export class FileProvider {
     return results.uri;
   }
 
-  /**
-   *
-   *
-   * @param {{ fileName: string, data: any, type: string }} opts
-   * @memberof FileProvider
-   */
-  async writeToMobile(opts: { fileName: string; data: any; type: string }) {
-    const options: WriteFileOptions = {
-      path: `AttendanceLog/${opts.fileName}`,
-      data: opts.data,
-      directory: Directory.Library,
-      recursive: true,
-    };
-    if (opts.type !== 'xlsx') {
-      options.encoding = Encoding.UTF8;
-    }
-    const results = await Filesystem.writeFile(options);
-    return results.uri;
-  }
-
-  async readFromMobile(opts: { type: string; path: string }) {
+  async readFromDevice(opts: { type: string; path: string }) {
     const options: ReadFileOptions = {
       path: `AttendanceLog/${opts.path}`,
       directory: Directory.Library,

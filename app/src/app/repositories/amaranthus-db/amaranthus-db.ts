@@ -427,7 +427,7 @@ export class AmaranthusDBProvider {
         results[i] = {
           ...results[i],
           logo: await this.dataUrlToObjectUrl(
-            await this.file.readFromMobile({
+            await this.file.readFromDevice({
               type: 'image',
               path: results[i].logo,
             })
@@ -448,7 +448,7 @@ export class AmaranthusDBProvider {
         results[i] = {
           ...results[i],
           logo: await this.dataUrlToObjectUrl(
-            await this.file.readFromMobile({
+            await this.file.readFromDevice({
               type: 'image',
               path: results[i].logo,
             })
@@ -465,7 +465,7 @@ export class AmaranthusDBProvider {
       results = {
         ...results,
         logo: await this.dataUrlToObjectUrl(
-          await this.file.readFromMobile({
+          await this.file.readFromDevice({
             type: 'image',
             path: results.logo,
           })
@@ -482,7 +482,7 @@ export class AmaranthusDBProvider {
           students[i] = {
             ...students[i],
             picture: await this.dataUrlToObjectUrl(
-              await this.file.readFromMobile({
+              await this.file.readFromDevice({
                 type: 'image',
                 path: students[i].picture,
               })
@@ -835,7 +835,7 @@ export class AmaranthusDBProvider {
       results = {
         ...results,
         picture: await this.dataUrlToObjectUrl(
-          await this.file.readFromMobile({
+          await this.file.readFromDevice({
             type: 'image',
             path: results.picture,
           })
@@ -971,7 +971,7 @@ export class AmaranthusDBProvider {
     for (let i = 0; i < records.length; i++) {
       if (records[i].picture && !records[i].picture.match('default')) {
         records[i].picture = await this.dataUrlToObjectUrl(
-          await this.file.readFromMobile({
+          await this.file.readFromDevice({
             type: 'image',
             path: records[i].picture,
           })
@@ -1140,7 +1140,7 @@ export class AmaranthusDBProvider {
           students[i] = {
             ...students[i],
             picture: await this.dataUrlToObjectUrl(
-              await this.file.readFromMobile({
+              await this.file.readFromDevice({
                 type: 'image',
                 path: students[i].picture,
               })
@@ -1235,7 +1235,7 @@ export class AmaranthusDBProvider {
           studentRecords[i] = {
             ...studentRecords[i],
             picture: await this.dataUrlToObjectUrl(
-              await this.file.readFromMobile({
+              await this.file.readFromDevice({
                 type: 'image',
                 path: studentRecords[i].picture,
               })
