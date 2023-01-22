@@ -93,7 +93,9 @@ export class FileProvider {
         'Comparte tu documento con alguien o guardalo en tu dispositivo personal.';
     }
     const dialogTitle = title;
-    if (this.platform.is('desktop')) {
+    if (this.platform.is('android')) {
+      FileOpener.open({ filePath: path });
+    } else if (this.platform.is('desktop')) {
       Share.share({
         url: path,
         title,
