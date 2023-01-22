@@ -309,7 +309,7 @@ export class AmaranthusDBProvider {
           name: event.name,
           picture: event.logo,
         });
-        await this.file.writeToMobile({
+        await this.file.writeToDevice({
           fileName: name,
           data,
           type: 'image',
@@ -336,7 +336,7 @@ export class AmaranthusDBProvider {
           name: formattedEvent.name,
           picture: formattedEvent.logo,
         });
-        await this.file.writeToMobile({
+        await this.file.writeToDevice({
           fileName: name,
           data,
           type: 'image',
@@ -361,7 +361,7 @@ export class AmaranthusDBProvider {
             name: event.name,
             picture: event.logo,
           });
-          await this.file.writeToMobile({
+          await this.file.writeToDevice({
             fileName: name,
             data,
             type: 'image',
@@ -604,7 +604,7 @@ export class AmaranthusDBProvider {
           name: `${formattedStudent.id}-${formattedStudent.firstName}${formattedStudent.lastName}`,
           picture: formattedStudent.picture,
         });
-        await this.file.writeToMobile({
+        await this.file.writeToDevice({
           fileName: name,
           data,
           type: 'image',
@@ -655,7 +655,7 @@ export class AmaranthusDBProvider {
         name: pictureName,
         picture: results.picture,
       });
-      await this.file.writeToMobile({
+      await this.file.writeToDevice({
         fileName: name,
         data,
         type: 'image',
