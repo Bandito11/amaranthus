@@ -95,6 +95,7 @@ export class SettingsPage implements OnInit {
   };
   textArea: string;
   userAgent: RegExpMatchArray;
+  userAgentMac: RegExpMatchArray;
 
   constructor(
     public emailComposer: EmailComposer,
@@ -126,9 +127,12 @@ export class SettingsPage implements OnInit {
     this.htmlControls = this.LANGUAGE[this.language];
     this.setTextArea();
 
+    if(this.platform.is('capacitor')){
     this.iap.getProducts();
     this.products = this.iap.products;
+  }
     this.userAgent = navigator.userAgent.match('Windows');
+    this.userAgentMac = navigator.userAgent.match('Macintosh');
   }
 
   setTextArea() {
@@ -172,8 +176,7 @@ export class SettingsPage implements OnInit {
   openMarketPage() {
     if (this.platform.is('android')) {
       this.market.open('xyz.attendancelog.amaranthus');
-    }
-    if (this.platform.is('ios')) {
+    }else if (this.platform.is('ios')) {
       this.market.open('id1366019347');
     }
   }

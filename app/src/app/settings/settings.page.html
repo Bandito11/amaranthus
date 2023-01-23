@@ -32,7 +32,9 @@
     </ion-button>
   </div>
   <hr />
-  <div *ngIf="bought">
+  <div
+    *ngIf="bought && (!this.platform.is('desktop') && !this.platform.is('mobileweb'))"
+  >
     <h2>{{htmlControls.feedback.title}}</h2>
     <p>{{htmlControls.feedback.message}}</p>
     <textarea #message value="{{textArea}}"></textarea>
@@ -45,14 +47,13 @@
     >
   </div>
   <div
-    *ngIf="!userAgent  && !this.platform.is('mobileweb') && !bought"
+    *ngIf="this.platform.is('capacitor')  && (!userAgent && !this.platform.is('mobileweb')) && !bought"
   >
-    <div *ngFor="let product of products">
-      <div>
+    <ion-list lines="none" *ngFor="let product of products">
+      <ion-item>
         <ion-icon name="pricetag"></ion-icon>
         <span> {{product.title}} </span>
-        <p>{{product.description}}</p>
-      </div>
+      </ion-item>
       <ion-button color="primary" (click)="buyProduct(product)">
         {{htmlControls.buy}}{{product.price}} {{product.currency}}!
       </ion-button>
@@ -63,7 +64,7 @@
         &nbsp;
         <ion-icon name="happy"> </ion-icon>
       </ion-button>
-    </div>
+    </ion-list>
   </div>
   <hr />
 </ion-content>
