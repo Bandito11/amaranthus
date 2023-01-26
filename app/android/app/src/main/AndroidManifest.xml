@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="xyz.attendancelog.amaranthus">
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -26,9 +21,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.SENDTO"/>
-                <data android:scheme="mailto"/>
             </intent-filter>
+
         </activity>
 
         <provider
@@ -38,8 +32,11 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths"></meta-data>
         </provider>
     </application>
 
+    <!-- Permissions -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
