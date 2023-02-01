@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, Platform, ToastController } from '@ionic/angular';
 import { AppPurchaseProvider } from '../providers/app-purchase/app-purchase';
-import { Market } from '@ionic-native/market/ngx';
 import { Storage } from '@ionic/storage';
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 import { IAPProduct } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
 import { productKey } from '../common/constants';
 import { handleError } from '../common/handleError';
+import { Market } from '@awesome-cordova-plugins/market';
 
 @Component({
   selector: 'app-settings',
@@ -103,8 +103,7 @@ export class SettingsPage implements OnInit {
     public storage: Storage,
     public platform: Platform,
     public iap: AppPurchaseProvider,
-    public toastController: ToastController,
-    public market: Market
+    public toastController: ToastController
   ) {}
 
   async ngOnInit() {
@@ -127,10 +126,10 @@ export class SettingsPage implements OnInit {
     this.htmlControls = this.LANGUAGE[this.language];
     this.setTextArea();
 
-    if(this.platform.is('capacitor')){
-    this.iap.getProducts();
-    this.products = this.iap.products;
-  }
+    if (this.platform.is('capacitor')) {
+      this.iap.getProducts();
+      this.products = this.iap.products;
+    }
     this.userAgent = navigator.userAgent.match('Windows');
     this.userAgentMac = navigator.userAgent.match('Macintosh');
   }
@@ -175,9 +174,9 @@ export class SettingsPage implements OnInit {
 
   openMarketPage() {
     if (this.platform.is('android')) {
-      this.market.open('xyz.attendancelog.amaranthus');
-    }else if (this.platform.is('ios')) {
-      this.market.open('id1366019347');
+      Market.open('xyz.attendancelog.amaranthus');
+    } else if (this.platform.is('ios')) {
+      Market.open('id1366019347');
     }
   }
 

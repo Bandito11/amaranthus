@@ -3,7 +3,6 @@ import { EditPageModule } from './edit/edit.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { Market } from '@ionic-native/market/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -31,7 +30,6 @@ import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
     ],
     providers: [
         InAppPurchase2,
-        Market,
         EmailComposer,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
     ],
