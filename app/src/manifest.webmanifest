@@ -1,6 +1,6 @@
 {
   "name": "Attendance Log Tracker",
-  "short_name": "app",
+  "short_name": "ATL app",
   "theme_color": "#e60000",
   "background_color": "#fafafa",
   "display": "standalone",
