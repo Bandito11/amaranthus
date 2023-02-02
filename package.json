@@ -10,7 +10,7 @@
     "web:serve": "cd site && firebase serve",
     "build:ios": "cd app && ionic capacitor build ios",
     "build:android": "cd app && ionic capacitor build android",
-    "app:deploy": "cd app && ionic build --prod && deploy:web",
+    "app:deploy": "cd app && ionic build --prod && npm run deploy:web",
     "web:deploy": "cd site && firebase deploy"
   },
   "repository": {
