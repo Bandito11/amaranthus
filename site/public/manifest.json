@@ -78,8 +78,7 @@
     },
     {
       "src": "assets/AppImages/windows11/Wide310x150Logo.scale-400.png",
-      "sizes": "1240x600",
-      "purpose": "any"
+      "sizes": "1240x600"
     },
     {
       "src": "assets/AppImages/windows11/LargeTile.scale-100.png",
@@ -159,7 +158,8 @@
     },
     {
       "src": "assets/AppImages/windows11/SplashScreen.scale-400.png",
-      "sizes": "2480x1200"
+      "sizes": "2480x1200",
+      "purpose": "any"
     },
     {
       "src": "assets/AppImages/windows11/Square44x44Logo.targetsize-16.png",
