@@ -108,12 +108,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "assets/icons/icon-1024x1024.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ],
   "description": "Management of attendance for iPhones, Android, Windows and Macbook. You can also export data to spreadsheets.",
