@@ -6,7 +6,7 @@ android {
         applicationId "xyz.attendancelog.amaranthus"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 824
+        versionCode 826
         versionName "0.9.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
