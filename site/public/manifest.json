@@ -2,11 +2,11 @@
   "background_color": "#ffffff",
   "description": "Fastest and easiest way to manage daily attendance of your students or clients and create reports automatically. Available for the App Store, Play Store and Microsoft Store.",
   "dir": "auto",
-  "display": "standalone",
+  "display": "browser",
   "name": "Attendance Log Tracker",
   "orientation": "any",
   "scope": "/",
-  "short_name": "Attendance Log Tracker app",
+  "short_name": "ATL site",
   "start_url": "/",
   "theme_color": "#e60000",
   "categories": [
@@ -80,7 +80,6 @@
       "sizes": "512x512"
     }
   ],
-  "shortcuts": [],
   "lang": "en",
   "prefer_related_applications": false
 }
