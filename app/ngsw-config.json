@@ -22,11 +22,10 @@
       "resources": {
         "files": [
           "/assets/**",
-          "assets/**/*",
           "/assets/icon/**",
           "/assets/icons/**",
           "/assets/profilePics/**",
-          "/svg/**",
+          "/svg/*.svg",
           "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
