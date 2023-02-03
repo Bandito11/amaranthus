@@ -13,11 +13,14 @@ import { EditEventPageModule } from './editevent/editevent.module';
 import { StatsPageModule } from './stats/stats.module';
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BrowserModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production}),
         IonicModule.forRoot(),
         AppRoutingModule,
         CreatePageModule,
@@ -26,7 +29,10 @@ import { InAppPurchase2 } from '@awesome-cordova-plugins/in-app-purchase-2/ngx';
         ExportPageModule,
         EditEventPageModule,
         StatsPageModule,
-        IonicStorageModule.forRoot()
+        IonicStorageModule.forRoot(),
+        ServiceWorkerModule.register('ngsw-worker.js', {
+          enabled: environment.production,
+        })
     ],
     providers: [
         InAppPurchase2,

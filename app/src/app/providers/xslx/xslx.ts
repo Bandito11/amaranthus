@@ -125,7 +125,7 @@ export class XLSXProvider {
     const workSheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
     const workBook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workBook, workSheet, title);
-    if (this.platform.is('mobileweb')) {
+    if (this.platform.is('desktop') || this.platform.is('mobileweb')) {
       XLSX.writeFile(workBook, opts.fileName);
       return 'success';
     } else {

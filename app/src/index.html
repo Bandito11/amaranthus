@@ -4,25 +4,13 @@
     <meta charset="UTF-8" />
     <title>Attendance Log Tracker</title>
 
-    <script>
-      const head = document.querySelector('head');
-      const base = document.createElement('base');
-      if (navigator.userAgent.match('Electron')) {
-        base.href = './';
-        head.appendChild(base);
-      } else {
-        base.href = '/';
-        head.appendChild(base);
-      }
-    </script>
+    <base href="/" />
     <meta
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
-
-    <meta name="theme-color" content="#e60000" />
 
     <link rel="icon" type="image/png" href="assets/icon/favicon.ico" />
 
@@ -34,6 +22,9 @@
     <!-- add to homescreen for ios -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#e60000" />
   </head>
 
   <body>

@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve:app": "cd app && ionic serve --browser=\"google chrome\"",
-    "serve:web": "cd site && firebase serve",
+    "app:serve": "cd app && ionic serve --browser=\"google chrome\"",
+    "app:web:serve": "cd app && ionic build --prod && firebase serve",
+    "web:serve": "cd site && firebase serve",
     "build:ios": "cd app && ionic capacitor build ios",
     "build:android": "cd app && ionic capacitor build android",
-    "deploy:app": "cd app && ionic build --prod && firebase deploy",
-    "deploy:web": "cd site && firebase deploy"
+    "app:deploy": "cd app && ionic build --prod && npm run deploy:web",
+    "web:deploy": "cd site && firebase deploy"
   },
   "repository": {
     "type": "git",

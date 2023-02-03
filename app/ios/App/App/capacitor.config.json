@@ -2,5 +2,5 @@
 	"appId": "xyz.attendancelog.amaranthus",
 	"appName": "Attendance Log Tracker",
 	"webDir": "www",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": true
 }

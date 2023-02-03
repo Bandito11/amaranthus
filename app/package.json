@@ -12,7 +12,7 @@
     "e2e": "ng e2e",
     "postinstall": "jetifier",
     "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy",
-    "deploy:web": "ionic build && cp src/404.html www && firebase deploy --only hosting:app-123"
+    "deploy:web": "ionic build --prod && cp src/404.html www && firebase deploy --only hosting:app-123"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +23,7 @@
     "@angular/platform-browser": "~13.2.2",
     "@angular/platform-browser-dynamic": "~13.2.2",
     "@angular/router": "~13.2.2",
+    "@angular/service-worker": "~13.2.2",
     "@awesome-cordova-plugins/core": "6.3.0",
     "@awesome-cordova-plugins/email-composer": "^6.3.0",
     "@awesome-cordova-plugins/in-app-purchase-2": "^6.3.0",
