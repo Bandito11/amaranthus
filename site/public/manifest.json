@@ -19,6 +19,7 @@
   ],
   "lang": "en",
   "prefer_related_applications": false,
+  "iarc_rating_id": "41f7bc83-6ac0-4df1-b186-2df67586bcea",
   "icons": [
     {
       "src": "assets/AppImages/windows11/SmallTile.scale-100.png",
