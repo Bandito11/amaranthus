@@ -1,3 +1,4 @@
+import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { IonicStorageAdapter } from './adapter';
 import * as Loki from 'lokijs';
@@ -47,7 +48,8 @@ export class AmaranthusDBProvider {
     private storage: Storage,
     public cameraTools: CameraToolsService,
     public file: FileProvider,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public platform: Platform
   ) {}
 
   async initializeDatabase() {
@@ -620,6 +622,13 @@ export class AmaranthusDBProvider {
   async insertStudent(student: IStudent) {
     if (studentsColl.data.length > 9) {
       const boughtMasterKey = await this.storage.get(productKey);
+      if (
+        navigator.userAgent.match('Windows') ||
+        this.platform.is('mobileweb') ||
+        this.platform.is('pwa')
+      ) {
+        await this.storage.set(productKey, true);
+      }
       if (boughtMasterKey === true) {
         await this.insertStudentIntoDB(student);
       } else {
@@ -645,22 +654,22 @@ export class AmaranthusDBProvider {
       ...formattedStudent,
     };
     // if (!results.picture.match('default')) {
-      if (typeof results.picture === 'object') {
-        results.picture = await this.cameraTools.readAsBase64(
-          (results.picture as any).changingThisBreaksApplicationSecurity
-        );
-      }
-      const pictureName = `${results.id}-${results.firstName}${results.lastName}`;
-      const { name, data } = this.getPictureName({
-        name: pictureName,
-        picture: results.picture,
-      });
-      await this.file.writeToDevice({
-        fileName: name,
-        data,
-        type: 'image',
-      });
-      results.picture = name;
+    if (typeof results.picture === 'object') {
+      results.picture = await this.cameraTools.readAsBase64(
+        (results.picture as any).changingThisBreaksApplicationSecurity
+      );
+    }
+    const pictureName = `${results.id}-${results.firstName}${results.lastName}`;
+    const { name, data } = this.getPictureName({
+      name: pictureName,
+      picture: results.picture,
+    });
+    await this.file.writeToDevice({
+      fileName: name,
+      data,
+      type: 'image',
+    });
+    results.picture = name;
     // }
     studentsColl.update(results);
   }
@@ -695,9 +704,9 @@ export class AmaranthusDBProvider {
       });
     }
     try {
-    if (!students.picture.match('default')) {
-      this.file.deleteFile(students.picture);
-    }
+      if (!students.picture.match('default')) {
+        this.file.deleteFile(students.picture);
+      }
     } catch (error) {
       this.file.deleteFile(students.picture);
     }
