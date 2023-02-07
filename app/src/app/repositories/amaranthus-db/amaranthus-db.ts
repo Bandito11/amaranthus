@@ -1282,8 +1282,6 @@ export class AmaranthusDBProvider {
         },
       });
     } catch (error) {
-      const studentsColl =
-        (await this.initializeDatabase()) as Collection<IStudent>;
       students = studentsColl.find({ isActive: { $eq: true } });
     }
     this.deleteInvalidCharacters();
