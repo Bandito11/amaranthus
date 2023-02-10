@@ -13,12 +13,13 @@ ion-icon {
 }
 
 #attendance-logo {
-  width: 25pt;
-}
-.image-link img {
-  width: 30pt;
+  width: 26pt;
 }
 
+#logos {
+  margin-right: 15pt;
+  margin-top: 1pt;
+}
 .facebook-logo {
   color: #4267b2;
 }
@@ -53,6 +54,8 @@ ion-icon {
 
 footer {
   display: block;
+  margin-right: 25pt;
+  margin-bottom: 15pt;
 }
 footer a {
   margin-left: 10pt;
