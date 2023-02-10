@@ -1,17 +1,20 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
 }
 
-.header{
+.header {
   font-weight: 500;
 }
 
-ion-icon{
-  font-size: 1.5em;
+ion-icon {
+  font-size: 20pt;
 }
 
+#attendance-logo {
+  width: 25pt;
+}
 .image-link img {
   width: 30pt;
 }
@@ -32,6 +35,10 @@ ion-icon{
   width: 100pt;
 }
 
+#microsoft-logo {
+  width: 82pt;
+}
+
 .banner-image {
   width: 110pt;
 }
@@ -44,6 +51,12 @@ ion-icon{
   width: 200pt;
 }
 
+footer {
+  display: block;
+}
+footer a {
+  margin-left: 10pt;
+}
 footer a:link {
   text-decoration: none;
 }
@@ -60,6 +73,5 @@ footer a:hover {
 @media only screen and (min-width: 1024px) {
   .presentation h1 {
     font-size: 50pt;
-
   }
 }

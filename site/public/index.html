@@ -1,21 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Global Site Tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-112761417-1"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "UA-112761417-1");
-    </script>
-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
@@ -81,46 +66,36 @@
 
     <!-- Meta Tags Generated via http://heymeta.com -->
 
-    <!--Custom css-->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
+
+    <!--Custom css-->
     <link href="index.css" rel="stylesheet" />
     <link rel="manifest" href="manifest.json" />
   </head>
 
   <body>
     <!-- As a link -->
-    <nav class="navbar bg-light">
-      <div class="container-fluid">
-        <a
-          class="navbar-brand"
-          target="_blank"
-          href="https://attendancelogtracker.com"
-        >
-          <img
-            src="assets/web_hi_res.png"
-            alt="Attendance Log Tracker Icon"
-            width="30"
-            height="30"
-          />
+    <nav class="navbar bg-light container-fluid">
+      <a class="navbar-brand" href="https://attendancelogtracker.com">
+        <img
+          id="attendance-logo"
+          src="assets/web_hi_res.png"
+          alt="Attendance Log Tracker Icon"
+        />
+      </a>
+      <span>
+        <a target="_blank" href="https://www.facebook.com/attendancelogtracker">
+          <ion-icon name="logo-facebook" class="facebook-logo"></ion-icon
+        ></a>
+        <a target="_blank" href="https://twitter.com/attendancelog">
+          <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
         </a>
-        <span class="navbar-text">
-          Share:
-          <a
-            target="_blank"
-            href="https://www.facebook.com/attendancelogtracker"
-          >
-            <ion-icon name="logo-facebook" class="facebook-logo"></ion-icon
-          ></a>
-          <a target="_blank" href="https://twitter.com/attendancelog">
-            <ion-icon name="logo-twitter" class="twitter-logo"></ion-icon>
-          </a>
-        </span>
-      </div>
+      </span>
     </nav>
 
     <section>
@@ -129,6 +104,11 @@
           Let your smartphone handle attendance and focus on what matters.
         </h1>
         <a
+          href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
+        >
+          <img alt="Get it on App Store" src="./assets/app-store.svg" />
+        </a>
+        <a
           href="https://play.google.com/store/apps/details?id=xyz.attendancelog.amaranthus&hl=en&gl=US&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
           ><img
             id="google-logo"
@@ -136,10 +116,12 @@
             src="assets/Google_Play_Store_badge.svg"
         /></a>
         <a
-          href="https://itunes.apple.com/us/app/attendance-log-tracker/id1366019347?mt=8"
-        >
-          <img alt="Get it on App Store" src="./assets/app-store.svg" />
-        </a>
+          href="https://apps.microsoft.com/store/detail/attendance-log-tracker/9N3HQP029Q59?rtc=1"
+          ><img
+            id="microsoft-logo"
+            src="assets/windows-store.png"
+            alt="Get it on the Microsoft Store"
+        /></a>
       </div>
       <div class="banner-image mx-auto">
         <img
@@ -261,8 +243,9 @@
       
       </div> -->
     </section>
-    <footer class="text-center">
+    <footer class="text-end">
       <a href="/privacy-policy.html">Privacy Policy</a>
+      <a target="_blank" href="https://attendifyapp.com">Attendify</a>
     </footer>
 
     <!-- External Libraries -->
