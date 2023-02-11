@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import {
   LoadingController,
   ModalController,
+  Platform,
+  PlatformConfig,
   ToastController,
 } from '@ionic/angular';
 import { CSVProvider } from '../providers/csv/csv';
@@ -43,6 +45,7 @@ export class ExportPage {
   recordsPerMonth: { names: any[]; records: any[] };
 
   constructor(
+    private platform: Platform,
     private loading: LoadingController,
     private modal: ModalController,
     private csv: CSVProvider,
@@ -120,10 +123,19 @@ export class ExportPage {
 
   async successMessage() {
     let message;
+    const android = this.platform.is('android');
     if (this.language === 'spanish') {
-      message = `¡El archivo ha sido creado!`;
+      if (android) {
+        message = `¡El archivo ha sido creado en Android/data/xyz.attendancelog.amaranthus/files/!`;
+      } else {
+        message = `¡El archivo ha sido creado!`;
+      }
     } else {
-      message = `The file was created!`;
+      if (android) {
+        message = `The file was created in Android/data/xyz.attendancelog.amaranthus/files/!`;
+      } else {
+        message = `The file was created!`;
+      }
     }
     const toast = await this.toastController.create({
       message,

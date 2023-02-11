@@ -12,7 +12,8 @@
     "e2e": "ng e2e",
     "postinstall": "jetifier",
     "generate-resources": "cordova-res ios --skip-config --copy && cordova-res android --skip-config --copy",
-    "deploy:web": "ionic build --prod && cp src/404.html www && firebase deploy --only hosting:app-123"
+    "deploy:web": "ionic build --prod && cp src/404.html www && firebase deploy --only hosting:app-123",
+    "sync": "ionic build --prod && ionic cap sync"
   },
   "private": true,
   "dependencies": {
@@ -28,7 +29,6 @@
     "@awesome-cordova-plugins/email-composer": "^6.3.0",
     "@awesome-cordova-plugins/in-app-purchase-2": "^6.3.0",
     "@awesome-cordova-plugins/market": "6.3.0",
-    "@capacitor-community/file-opener": "^1.0.4",
     "@capacitor/android": "4.6.2",
     "@capacitor/camera": "4.1.4",
     "@capacitor/core": "^4.6.2",

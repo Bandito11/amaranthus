@@ -1,9 +1,5 @@
 [
 	{
-		"pkg": "@capacitor-community/file-opener",
-		"classpath": "com.ryltsov.alex.plugins.file.opener.FileOpenerPlugin"
-	},
-	{
 		"pkg": "@capacitor/camera",
 		"classpath": "com.capacitorjs.plugins.camera.CameraPlugin"
 	},

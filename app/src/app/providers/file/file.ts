@@ -9,7 +9,6 @@ import {
   ReadFileOptions,
 } from '@capacitor/filesystem';
 import { Storage } from '@ionic/storage';
-import { FileOpener } from '@capacitor-community/file-opener';
 
 @Injectable({
   providedIn: 'root',
@@ -27,12 +26,14 @@ export class FileProvider {
    * @memberof FileProvider
    */
   async exportFile(opts: { fileName: string; data: any; type: string }) {
-    const results = await this.writeToDevice(opts);
-    if (this.platform.is('mobileweb')) {
-      return results;
+    if (
+      this.platform.is('mobileweb') &&
+      navigator.userAgent.toLowerCase().match('windows')
+    ) {
+      return;
     }
-    await this.shareFile(results);
-    return results;
+    const data = await this.writeToDevice(opts);
+    await this.shareFile({ data, type: opts.type });
   }
 
   /**
@@ -45,6 +46,25 @@ export class FileProvider {
       path: `AttendanceLog/${opts.fileName}`,
       data: opts.data,
       directory: Directory.Library,
+      recursive: true,
+    };
+    if (opts.type !== 'xlsx') {
+      options.encoding = Encoding.UTF8;
+    }
+    const results = await Filesystem.writeFile(options);
+
+    return results.uri;
+  }
+
+  async writeToAndroidExternal(opts: {
+    fileName: string;
+    data: any;
+    type: string;
+  }) {
+    const options: WriteFileOptions = {
+      path: `Attendance-Log-Tracker/${opts.fileName}`,
+      data: opts.data,
+      directory: Directory.ExternalStorage,
       recursive: true,
     };
     if (opts.type !== 'xlsx') {
@@ -81,7 +101,7 @@ export class FileProvider {
    * @returns {Promise<IResponse<any>>}
    * @memberof FileProvider
    */
-  async shareFile(path: string) {
+  async shareFile(arg0: { type: string; data: string }) {
     const language = await this.storage.get('language');
     let text =
       'Share your records with someone or save it on your personal device.';
@@ -94,22 +114,28 @@ export class FileProvider {
     }
     const dialogTitle = title;
     if (this.platform.is('android')) {
-      FileOpener.open({ filePath: path });
+      const date = new Date();
+      const filename = `student-report.${arg0.type}`;
+      await this.writeToAndroidExternal({
+        data: arg0.data,
+        type: arg0.type,
+        fileName: filename,
+      });
     } else if (this.platform.is('desktop')) {
       Share.share({
-        url: path,
+        url: arg0.data,
         title,
         dialogTitle,
         text,
       });
     } else {
       await Share.share({
-        url: path,
+        url: arg0.data,
         title,
         dialogTitle,
         text,
       });
     }
-    return;
+    return null;
   }
 }
