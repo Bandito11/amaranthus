@@ -324,7 +324,7 @@ export class EventProfilePage implements OnInit {
   async editEvent() {
     const modal = await this.modal.create({
       component: EditEventPage,
-      componentProps: { id: this.id },
+      componentProps: { id: this.id }
     });
     modal.present();
     modal.onDidDismiss().then((res) => {

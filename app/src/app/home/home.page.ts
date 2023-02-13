@@ -258,6 +258,7 @@ export class HomePage implements OnInit {
   async goToCreate() {
     const modal = await this.modalCtrl.create({
       component: CreatePage,
+      cssClass: 'create-modal'
     });
     modal.present();
     modal.onDidDismiss().then((_) => {
