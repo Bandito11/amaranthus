@@ -24,3 +24,73 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+//////////// Edit Modal////////////
+@media screen and (min-width: 1024px) {
+    ion-modal.edit-modal {
+      --min-height: 700px;
+    }
+  }
+  
+  @media screen and (min-width: 1112px) {
+    ion-modal.edit-modal {
+      --min-height: 750px;
+    }
+  }
+  
+  @media screen and (min-width: 1200px) {
+    ion-modal.edit-modal {
+      --min-height: 900px;
+    }
+  }
+  
+  @media screen and (min-width: 2560px) {
+    ion-modal.edit-modal {
+      --min-height: 1470px;
+    }
+  }
+  ////////Create Modal///////////
+  @media screen and (min-width: 1024px) {
+    ion-modal.create-modal {
+      --min-height: 700px;
+    }
+  }
+  
+  @media screen and (min-width: 1112px) {
+    ion-modal.create-modal {
+      --min-height: 750px;
+    }
+  }
+  
+  @media screen and (min-width: 1200px) {
+    ion-modal.create-modal {
+      --min-height: 900px;
+    }
+  }
+  
+  @media screen and (min-width: 2560px) {
+    ion-modal.create-modal {
+      --min-height: 1470px;
+    }
+  }
+  
+  ////////Export Modal///////////
+  @media screen and (min-width: 768px) {
+    ion-modal.export-modal {
+      --min-height: 750px;
+    }
+  }
+  
+  @media screen and (min-width: 1112px) {
+    ion-modal.export-modal {
+      --min-height: 750px;
+    }
+  }
+  
+  @media screen and (min-width: 1368px) {
+    ion-modal.export-modal {
+      --min-height: 880px;
+    }
+  }
+  
+  

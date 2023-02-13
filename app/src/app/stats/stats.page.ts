@@ -424,6 +424,7 @@ export class StatsPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: ExportPage,
       componentProps: { students: this.records, event: this.event },
+      cssClass: 'export-modal'
     });
     await modal.present();
   }

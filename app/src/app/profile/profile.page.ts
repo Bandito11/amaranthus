@@ -134,6 +134,7 @@ export class ProfilePage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: EditPage,
       componentProps: { id: id },
+      cssClass: 'edit-modal'
     });
     modal.onWillDismiss().then(() => this.getStudentFromDB(id));
     modal.present();
