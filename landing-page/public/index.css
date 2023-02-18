@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .header {
@@ -50,6 +50,10 @@ ion-icon {
 
 .landscape-images {
   width: 200pt;
+}
+
+ul{
+  list-style-type: none;
 }
 
 footer {
