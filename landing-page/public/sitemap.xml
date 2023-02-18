@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" >
+   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
    <url>
-      <loc>https://attendancelog.xyz/</loc>
+      <loc>https://attendancelogtracker.com/</loc>
       <image:image>
-       <image:loc>https://attendancelog.xyz/assets/pic1.png</image:loc>
-       <image:caption>Main menu of Attendance Log Tracker app for iOS</image:caption>
-    </image:image>
-   </url>
-</urlset> 
+         <image:loc>https://attendancelog.xyz/assets/web_hi_res.png</image:loc>
+         <image:caption>Main menu of Attendance Log Tracker app for iOS</image:caption>
+      </image:image>
+      <url>
+         <loc>https://attendancelogtracker.com/privacy-policy.html</loc>
+         <image:image>
+            <image:loc>https://attendancelog.xyz/assets/web_hi_res.png</image:loc>
+            <image:caption>Privacy Policy of Attendance Log Tracker app for iOS</image:caption>
+         </image:image>
+      </url>
+   </urlset> 
