@@ -14,7 +14,7 @@ import { DatabaseService } from '../services/database.service';
   styleUrls: ['./checkin.page.scss'],
 })
 export class CheckInPage {
-  homeURL = '/tabs/checkin';
+  homeURL = '/checkin';
   @Input() modalVal: string;
 
   @Input() htmlControls = {

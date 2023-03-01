@@ -14,7 +14,7 @@ import { IEvent } from '../common/models';
 export class EventsPage implements OnInit {
   selectOptions: string[] = ['Attendance', 'Absence', 'Name', 'Date', 'None'];
   events: (IEvent & LokiObj & { attendance; absence; totalMembers })[];
-  homeURL = '/tabs/home/events';
+  homeURL = '/home/events';
   htmlControls = {
     toolbar: {
       title: '',

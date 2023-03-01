@@ -45,7 +45,7 @@ export class EventProfilePage implements OnInit {
 
   infiniteDate: boolean;
 
-  homeURL = '/tabs/home/events/profile';
+  homeURL = '/home/events/profile';
 
   htmlControls = {
     toolbar: {

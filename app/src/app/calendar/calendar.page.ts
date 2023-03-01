@@ -85,7 +85,7 @@ export class CalendarPage implements DoCheck {
     private storage: Storage,
     private dbService: DatabaseService
   ) {
-    this.homeURL = '/tabs/calendar';
+    this.homeURL = '/calendar';
     this.LANGUAGE = {
       spanish: {
         profile: 'Perfil',

@@ -1,5 +1,5 @@
-import { IonTabBar, Platform } from '@ionic/angular';
-import { Component, DoCheck, OnInit, ViewChild } from '@angular/core';
+import {  Platform } from '@ionic/angular';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 declare const window: Window;

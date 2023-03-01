@@ -381,7 +381,7 @@ export class EditEventPage implements OnInit {
                 });
                 await toast.present();
                 this.navCtrl
-                  .navigateRoot('/tabs/home/events')
+                  .navigateRoot('/home/events')
                   .then(() => this.modalCtrl.dismiss());
               } catch (error) {
                 handleError(error);
