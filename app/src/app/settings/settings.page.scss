@@ -7,3 +7,112 @@
         font-size: 12px;
     }
 }
+
+feedback-container{
+    position:absolute;
+    right:0;
+    top: 30em;
+    margin-right: 15px;
+}
+
+@media screen and (min-width: 360px) {
+    feedback-container{
+        top: 35em;
+    }
+}
+
+@media screen and (min-width: 375px) {
+    feedback-container{
+        top: 31em;
+    }
+}
+
+@media screen and (min-width: 390px) {
+    feedback-container{
+        top: 40em;
+    }
+}
+
+@media screen and (min-width: 412px) {
+    feedback-container{
+        top: 44em;
+    }
+}
+
+@media screen and (min-width: 512px) {
+    feedback-container{
+        top: 32em;
+    }
+}
+
+@media screen and (min-width: 717px) {
+    feedback-container{
+        top: 20em;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    feedback-container{
+        top: 52em;
+    }
+}
+
+@media screen and (min-width: 820px) {
+    feedback-container{
+        top: 62em;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    feedback-container{
+        top: 74em;
+    }
+}
+
+@media screen and (min-width: 1180px) {
+    feedback-container{
+        top: 41em;
+    }
+}
+
+@media screen and (min-width: 1368px) {
+    feedback-container{
+        top: 47em;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    feedback-container{
+        top: 56em;
+    }
+}
+
+@media screen and (min-width: 3024px) {
+    feedback-container{
+        top: 110em;
+    }
+}
+
+@media screen and (min-width: 3456px) {
+    feedback-container{
+        top: 125em;
+    }
+}
+
+@media screen and (min-width: 1024px) and (max-height: 768px) {
+    feedback-container{
+        top: 38em;
+    }
+}
+
+@media screen and (min-width: 1366px) and (max-height: 1024px) {
+    feedback-container{
+        top: 52em;
+    }
+}
+
+@media screen and (min-width: 1368px) and (max-height: 912px) {
+    feedback-container{
+        top: 47em;
+    }
+}

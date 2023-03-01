@@ -32,7 +32,7 @@
     </ion-button>
   </div>
   <hr />
-  <div
+  <!-- <div
     *ngIf="bought && (!this.platform.is('desktop') && !this.platform.is('mobileweb'))"
   >
     <h2>{{htmlControls.feedback.title}}</h2>
@@ -45,7 +45,7 @@
       (click)="sendEmail(message.value)"
       >{{htmlControls.feedback.button}}</ion-button
     >
-  </div>
+  </div> -->
   <div
     *ngIf="this.platform.is('capacitor')  && (!userAgent && !this.platform.is('mobileweb')) && !bought"
   >
@@ -67,4 +67,8 @@
     </ion-list>
   </div>
   <hr />
+  <feedback-container
+    component-key="$2b$10$NoIEQ/BidShmOli5KauoweDXaR.uK9wKBPJcDr9DULHE7r6H7GoVm"
+    shadow="true"
+  ></feedback-container>
 </ion-content>
