@@ -1,0 +1,13 @@
+{
+  "entries": [
+    "./components/feedback-component/feedback-component.js",
+    "./containers/feedback-container/feedback-container.js"
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "3.1.0",
+    "typescriptVersion": "4.9.5"
+  },
+  "collections": [],
+  "bundles": []
+}

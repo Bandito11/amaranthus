@@ -1,0 +1,2 @@
+import{p as e,b as n}from"./p-e1480549.js";export{s as setNonce}from"./p-e1480549.js";const o=()=>{const n=import.meta.url;const o={};if(n!==""){o.resourcesUrl=new URL(".",n).href}return e(o)};o().then((e=>n([["p-ef258d5f",[[1,"feedback-container",{componentKey:[1,"component-key"],shadow:[4],hidden:[32],feedbackCreated:[32]},[[0,"cancelClicked","cancelClickedHandler"],[0,"feedbackCreated","feedbackCreatedHandler"]]],[1,"feedback-component",{componentKey:[1,"component-key"],shadow:[4]}]]]],e)));
+//# sourceMappingURL=feedback.esm.js.map
